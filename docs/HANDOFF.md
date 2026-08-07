@@ -82,19 +82,14 @@ silence a nudge is the wrong reason — `koan-wrap` §4 says unsure ⇒ keep).
 ## Next steps
 What survives is small on purpose; do not repopulate it to feel busy.
 
-1. **(human) Verify the public install path** from a machine or profile
-   *without* the local clone — `/plugin marketplace add un5table/koan` +
-   `/plugin install koan@koan` — and confirm the SessionStart hook stays silent
-   in a healthy repo. (Publish itself is done: public repo with fresh history,
-   full history in the private `koan-archive` — [[D-041]].)
-2. **Five real [[D-027]] violations in the field**, found by the hash check that
+1. **Five real [[D-027]] violations in the field**, found by the hash check that
    was then rejected (the check was noisy; these findings are not). Each names a
    commit as the repo's current position in `## Current state`; the repo+hash
    list lives in `docs/FIELD.local.md` (gitignored). The fix is one line each —
    say what the work is, not where git is.
-3. **Re-measure trail before the next core addition, not after** ([[D-030]]). The
+2. **Re-measure trail before the next core addition, not after** ([[D-030]]). The
    seat now holds by one run on one model, and the trend is monotone downward.
-4. **Watch whether `method` is ever opened.** [[D-033]]'s standing risk, and this
+3. **Watch whether `method` is ever opened.** [[D-033]]'s standing risk, and this
    set is more exposed than `benchmarks`: a session changing tooling has no
    directory cue equivalent to "touching `benchmarks/`". Signal: a change that
    re-argues something [[D-036]] or [[D-037]] settled. Two sets is the limit — a
@@ -106,9 +101,16 @@ What survives is small on purpose; do not repopulate it to feel busy.
   it. The cuts themselves were checked: a fable-5 Stage 1 run (2026-08-07)
   shows every probed rule intact — see
   `benchmarks/results/2026-08-07-stage1-fable5-post-d040.md`.
-- **The marketplace install is untested end-to-end** — it needs the repo public
-  first; the spec (root `.claude-plugin/marketplace.json`, relative `./dist/claude`
-  source) was verified against the docs, not against a real add+install.
+- **The marketplace install is verified from a clean profile, not a clean
+  machine** (2026-08-07): empty `CLAUDE_CONFIG_DIR`, `plugin marketplace add
+  un5table/koan` + `plugin install koan@koan` both succeeded fetching from
+  public GitHub; the cached install carries all 6 skills + the hook bundle at
+  the current build stamp; the installed hook is silent on healthy and
+  non-koan fixtures, speaks on a broken one, exit 0 on all paths; the bundled
+  lint engine loads standalone from the cache. Still unobserved: a coworker's
+  box, and Claude Code invoking the hook at a real session open from a
+  marketplace install (the mechanism [[D-035]] proved used the skills-dir
+  install).
 - **The sweep has field exposure only through the linter, not the skills.** All 14
   repos were linted with the swept engine and 13 are clean, but no consuming repo
   has been observed *using* a skill from the six-skill build — the plugin is
