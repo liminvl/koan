@@ -1,0 +1,19 @@
+{
+  "name": "koan",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Zen discipline for coding agents: build less, lose less. One source, many environments.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Saul McClintock",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node build/build.mjs",
+    "selfcheck": "node benchmarks/selfcheck.mjs",
+    "selfcheck:record": "node benchmarks/selfcheck.mjs --record",
+    "push": "node push.mjs",
+    "bench:selftest": "node benchmarks/behavior/run.mjs --selftest && node benchmarks/continuity/run.mjs --selftest && node benchmarks/triggers.mjs --selftest",
+    "debt": "node src/lifecycle/lint.mjs --path . --debt",
+    "test": "npm run build && npm run selfcheck && npm run bench:selftest"
+  }
+}

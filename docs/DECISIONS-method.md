@@ -1,0 +1,29 @@
+# Decisions — method
+
+> A **domain decision set**: live decisions about **how koan is built, measured
+> and maintained** — not about what it ships. Read this before changing the
+> tooling, the gates, or the way a change is judged. NOT auto-loaded — the main
+> log carries a pointer in *Domain decision sets*.
+> Same rules as docs/DECISIONS.md: choice + why only, IDs are permanent.
+>
+> The line is: **a consumer never experiences anything decided here.** Rules that
+> govern what earns a place in the shipped kit ([[D-013]], [[D-022]], [[D-023]],
+> [[D-030]]) stay in the main log — a session arguing whether a rule earns its
+> seat needs them in context, and moving them would save budget by hiding the
+> rules that stop bad additions.
+
+### D-036: Ablation sweep — the apparatus is priced by the same rule as the skill
+- **Decision:** Cut, in one pass: the Stage 1 **outcome** arm (`benchmarks/outcome/`); the `koan-debt` skill (folded into `koan-lint --debt`, 7 skills → 6); the ingest pipeline (frozen, its Stage 0 budget check retired); lint **check 8** (retired rituals); the `lite` intensity level and Intensity's worked example; the **Delegation** section; the hand-listed bundle manifest (replaced by a directory hash); the "No Node?" fallbacks duplicating each engine's checks. Lint **check 11** was section-scoped to `## Current state`. Every **build-artifact** ceiling was **lowered** to the new size + ~5%.
+- **Why:** An outside review found ~5× more machinery judging the artifact than artifact, and three of four key files above 95% occupancy — the state `budgets.json` itself calls a wall. Each cut answers the ladder's first rung, applied to koan's own tooling: outcome decided nothing in seven ingests; ingest changed `src/` zero times; check 8 hardcoded koan's own rename history and needed a subroutine to stop self-triggering; the bundle manifest's omission *was* the [[D-034]] bug. **Delegation** was the sharpest case: the one rule in the kit written from external model guidance rather than an observed koan failure, carrying no probe and no gate — the exact provenance [[D-013]] exists to reject. A standard that bends once for a rule the author liked is not doing the work. The freed budget is returned, not respent — a ratchet that only loosens is not a budget. **Corrected same day:** the ratchet-down applies to build artifacts this repo controls, not to the DECISIONS ceiling shipped to consumers; lowering that to 25k fired on two healthy field repos and was reverted.
+- **Alternatives rejected:** gating the outcome cut on one more benchmark run (three sittings of "should we cut this?" is the decision); keeping `koan-debt` as its own skill (a SKILL.md wrapping a grep, and fewer skills relieves the collision pressure [[D-025]] polices); teaching the harvester to parse wrapped comments (unwrapping the one comment is smaller).
+- **Status:** implemented · _2026-08-05_ — `npm test` green; the directory hash was seen discriminating on a perturbed bundled file before being trusted.
+- **Load-bearing:** the precedent that koan's *own* tooling is priced by the build-less ladder, not exempt from it, and that an ungated rule is cut rather than grandfathered. [[D-030]]'s "a null dates" protects a rule whose gate flipped and later went quiet; it protects neither an **instrument** that costs API spend and has decided nothing, nor a rule that never had a gate to date.
+- **Revisit if:** a behavior question arrives that only a loc-counting probe can answer (rebuild it then, smaller), or the compressed log proves to have lost reasoning a session needed.
+
+### D-037: A check is pinned against shapes this repo doesn't have
+- **Decision:** Every lint check is pinned in `benchmarks/lint-fixtures.mjs` — a table of synthetic doc shapes plus what the linter must say about each — and Stage 0 fails when a pin breaks. **Negative pins (a shape the check must stay silent on) count equally with positive ones.** The ad-hoc domain-set block in selfcheck is absorbed. Adding a check without a pin is the thing review looks for.
+- **Why:** Three times a thing verified against koan alone broke everywhere else: [[D-025]] (routing unasserted), [[D-034]] (`/koan-lint` dead on arrival in every consumer while all gates stayed green), and the 2026-08-05 field survey (three defects at once, invisible for weeks). Each got a one-off fix and the pattern didn't — [[D-034]]'s entry even says its lesson generalizes, and the next instance still needed a manual survey to find. Dogfooding can only exercise the shapes koan's docs happen to take, and those docs are *kept clean*, so the branches that matter most to a consumer are precisely the unreachable ones: check 9's five exemptions, check 12's harden gate, every false-positive path. The negative pins carry the weight because all three field defects were checks firing on healthy shapes, not checks missing faults — and a warning that fires on healthy repos teaches the reader to skip the check ([[D-019]]).
+- **Alternatives rejected:** periodically re-linting the 14 real field repos (not offline, needs those repos present, and it is the machinery-over-artifact instinct [[D-036]] just cut); a `koan-wrap` habit of "test your check" (the same class of unenforced intention that let Delegation in).
+- **Status:** implemented · _2026-08-05_ — 33 pins. Seen failing before being trusted: each of the three field defects was reintroduced into the engine and the suite caught it (plus a fourth, un-stripping quoted spans in the harvester).
+- **Load-bearing:** the general form of [[D-034]] — an instrument is verified against the conditions it will meet, not the ones its author has.
+- **Revisit if:** the pins start being edited to match the engine rather than the engine fixed to match the pins — that inverts the gate — or maintaining them costs more than the field defects they catch.

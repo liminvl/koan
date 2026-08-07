@@ -1,0 +1,12 @@
+{
+  "_comment": "Per-artifact char ceilings. A new feature that pushes a build over its ceiling has to earn it — raise the number deliberately, in the same commit, and say why. That friction is the anti-bloat gate. These ration attention, not context window or cost: every artifact here is well under 1% of a frontier context window, so the numbers do NOT move when windows grow. Keep ~5% headroom — a ceiling a build already sits flush against (koan-wrap was at 6098/6100) stops being a budget and becomes a wall that blocks the next edit. The ratchet turns BOTH ways: after an ablation, lower every ceiling back to the new size + ~5%, or the freed space silently becomes budget for the next feature (2026-08-05).",
+  "artifacts": {
+    "dist/agents/AGENTS.md": 5400,
+    "dist/claude/skills/koan/SKILL.md": 6700,
+    "dist/claude/skills/koan-wrap/SKILL.md": 7200,
+    "dist/claude/skills/koan-init/SKILL.md": 5100,
+    "dist/claude/skills/koan-readback/SKILL.md": 1700,
+    "dist/claude/skills/koan-lint/SKILL.md": 2000,
+    "dist/claude/skills/koan-jazz/SKILL.md": 4600
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "_comment": "Cold-resume questions a fresh agent must answer from the fixture ALONE. `expect` = canonical keys BOTH arms are judged against (same question, same right answer). `unwrapped` = the literal phrases carrying each fact in fixture-unwrapped/notes.md — the offline fairness/discrimination anchors for the un-wrapped arm, which phrases facts differently than the koan docs. selftest proves each answer is derivable from its corpus (fair) and that removing its source lines makes it underivable (the test discriminates).",
+  "questions": [
+    { "q": "What is the single most important next step?", "expect": ["DELETE endpoint"], "unwrapped": ["DELETE", "remove(id)"] },
+    { "q": "Why is the store in-memory instead of a database?", "expect": ["YAGNI", "DATABASE_URL"], "unwrapped": ["no deploy target", "DATABASE_URL"] },
+    { "q": "Which file shows how data access is written?", "expect": ["src/store.js"], "unwrapped": ["src/store.js"] },
+    { "q": "What open question needs a human decision?", "expect": ["Should list() return completed"], "unwrapped": ["should list() hand back completed"] },
+    { "q": "What must never move into middleware?", "expect": ["Auth in handlers"], "unwrapped": ["auth belongs in handlers"] }
+  ]
+}

@@ -1,0 +1,4 @@
+#!/bin/sh
+# koan pre-commit gate: build + selfcheck + benchmark selftests, all offline.
+# Wired once per clone: git config core.hooksPath hooks
+npm test

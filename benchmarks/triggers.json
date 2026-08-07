@@ -1,0 +1,20 @@
+{
+  "comment": "Pinned trigger prompts for benchmarks/triggers.mjs (Stage 0). Paraphrase how users actually talk; never paste a description. Each prompt must rank its skill strictly first across all shipped descriptions.",
+  "collisionCeiling": 0.75,
+  "prompts": [
+    { "prompt": "This feels over-engineered — can we solve it with less code?", "expect": "koan" },
+    { "prompt": "What's the simplest thing that could work here? YAGNI applies.", "expect": "koan" },
+    { "prompt": "Wrapping up for today — update the handoff before I go.", "expect": "koan-wrap" },
+    { "prompt": "Checkpoint our progress before I run /compact.", "expect": "koan-wrap" },
+    { "prompt": "Fresh session — play back your understanding of where this project stands before doing any work.", "expect": "koan-readback" },
+    { "prompt": "We've been working in Cursor lately — sanity-check your context before coding.", "expect": "koan-readback" },
+    { "prompt": "Run the checks on our decision log — any duplicate IDs or dangling citations?", "expect": "koan-lint" },
+    { "prompt": "Are the koan docs still healthy? Validate them.", "expect": "koan-lint" },
+    { "prompt": "Set up the session-continuity scaffolding in this new repo.", "expect": "koan-init" },
+    { "prompt": "Start this fresh project with the koan template files.", "expect": "koan-init" },
+    { "prompt": "List all the shortcuts we deferred — what did we mark as later?", "expect": "koan-lint" },
+    { "prompt": "Harvest the koan: comments into a ledger of what's still owed.", "expect": "koan-lint" },
+    { "prompt": "I want to spike a wild idea somewhere throwaway before committing to it.", "expect": "koan-jazz" },
+    { "prompt": "Let's jam on a design without the usual rules — nothing that touches main.", "expect": "koan-jazz" }
+  ]
+}

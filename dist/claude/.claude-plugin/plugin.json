@@ -1,0 +1,13 @@
+{
+  "name": "koan",
+  "version": "0.1.0",
+  "description": "Zen discipline for coding agents: build less, lose less.",
+  "skills": [
+    "./skills/koan",
+    "./skills/koan-init",
+    "./skills/koan-jazz",
+    "./skills/koan-lint",
+    "./skills/koan-readback",
+    "./skills/koan-wrap"
+  ]
+}

@@ -1,0 +1,222 @@
+[
+  {
+    "date": "2026-06-30",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4603,
+      "dist/claude/skills/koan/SKILL.md": 8210,
+      "dist/claude/skills/koan-wrap/SKILL.md": 5891,
+      "dist/claude/skills/koan-init/SKILL.md": 3809,
+      "dist/claude/skills/koan-readback/SKILL.md": 1408,
+      "dist/claude/skills/koan-lint/SKILL.md": 1758
+    }
+  },
+  {
+    "date": "2026-06-30",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4603,
+      "dist/claude/skills/koan/SKILL.md": 8210,
+      "dist/claude/skills/koan-wrap/SKILL.md": 5891,
+      "dist/claude/skills/koan-init/SKILL.md": 3809,
+      "dist/claude/skills/koan-readback/SKILL.md": 1408,
+      "dist/claude/skills/koan-lint/SKILL.md": 1758,
+      "dist/claude/skills/koan-debt/SKILL.md": 1469
+    }
+  },
+  {
+    "date": "2026-07-03",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4555,
+      "dist/claude/skills/koan/SKILL.md": 8264,
+      "dist/claude/skills/koan-wrap/SKILL.md": 5867,
+      "dist/claude/skills/koan-init/SKILL.md": 3803,
+      "dist/claude/skills/koan-readback/SKILL.md": 1405,
+      "dist/claude/skills/koan-lint/SKILL.md": 1751,
+      "dist/claude/skills/koan-debt/SKILL.md": 1456
+    }
+  },
+  {
+    "date": "2026-07-03",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4896,
+      "dist/claude/skills/koan/SKILL.md": 8251,
+      "dist/claude/skills/koan-wrap/SKILL.md": 5867,
+      "dist/claude/skills/koan-init/SKILL.md": 3803,
+      "dist/claude/skills/koan-readback/SKILL.md": 1405,
+      "dist/claude/skills/koan-lint/SKILL.md": 1751,
+      "dist/claude/skills/koan-debt/SKILL.md": 1456
+    }
+  },
+  {
+    "date": "2026-07-04",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4896,
+      "dist/claude/skills/koan/SKILL.md": 8251,
+      "dist/claude/skills/koan-wrap/SKILL.md": 5975,
+      "dist/claude/skills/koan-init/SKILL.md": 3803,
+      "dist/claude/skills/koan-readback/SKILL.md": 1405,
+      "dist/claude/skills/koan-lint/SKILL.md": 1751,
+      "dist/claude/skills/koan-debt/SKILL.md": 1456
+    }
+  },
+  {
+    "date": "2026-07-04",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4896,
+      "dist/claude/skills/koan/SKILL.md": 8251,
+      "dist/claude/skills/koan-wrap/SKILL.md": 5975,
+      "dist/claude/skills/koan-init/SKILL.md": 3803,
+      "dist/claude/skills/koan-readback/SKILL.md": 1547,
+      "dist/claude/skills/koan-lint/SKILL.md": 1751,
+      "dist/claude/skills/koan-debt/SKILL.md": 1456
+    }
+  },
+  {
+    "date": "2026-07-04",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4896,
+      "dist/claude/skills/koan/SKILL.md": 8251,
+      "dist/claude/skills/koan-wrap/SKILL.md": 5975,
+      "dist/claude/skills/koan-init/SKILL.md": 4674,
+      "dist/claude/skills/koan-readback/SKILL.md": 1547,
+      "dist/claude/skills/koan-lint/SKILL.md": 1751,
+      "dist/claude/skills/koan-debt/SKILL.md": 1456
+    }
+  },
+  {
+    "date": "2026-07-11",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4934,
+      "dist/claude/skills/koan/SKILL.md": 8289,
+      "dist/claude/skills/koan-wrap/SKILL.md": 6013,
+      "dist/claude/skills/koan-init/SKILL.md": 4712,
+      "dist/claude/skills/koan-readback/SKILL.md": 1585,
+      "dist/claude/skills/koan-lint/SKILL.md": 1789,
+      "dist/claude/skills/koan-debt/SKILL.md": 1494
+    }
+  },
+  {
+    "date": "2026-08-01",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4934,
+      "dist/claude/skills/koan/SKILL.md": 8207,
+      "dist/claude/skills/koan-wrap/SKILL.md": 6098,
+      "dist/claude/skills/koan-init/SKILL.md": 4820,
+      "dist/claude/skills/koan-readback/SKILL.md": 1564,
+      "dist/claude/skills/koan-lint/SKILL.md": 1789,
+      "dist/claude/skills/koan-debt/SKILL.md": 1494
+    }
+  },
+  {
+    "date": "2026-08-01",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4934,
+      "dist/claude/skills/koan/SKILL.md": 8207,
+      "dist/claude/skills/koan-wrap/SKILL.md": 6098,
+      "dist/claude/skills/koan-init/SKILL.md": 4820,
+      "dist/claude/skills/koan-readback/SKILL.md": 1564,
+      "dist/claude/skills/koan-lint/SKILL.md": 1789,
+      "dist/claude/skills/koan-debt/SKILL.md": 1494,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4428
+    }
+  },
+  {
+    "date": "2026-08-01",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4934,
+      "dist/claude/skills/koan/SKILL.md": 8207,
+      "dist/claude/skills/koan-wrap/SKILL.md": 6098,
+      "dist/claude/skills/koan-init/SKILL.md": 4820,
+      "dist/claude/skills/koan-readback/SKILL.md": 1564,
+      "dist/claude/skills/koan-lint/SKILL.md": 1789,
+      "dist/claude/skills/koan-debt/SKILL.md": 1494,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4428
+    }
+  },
+  {
+    "date": "2026-08-01",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4934,
+      "dist/claude/skills/koan/SKILL.md": 9315,
+      "dist/claude/skills/koan-wrap/SKILL.md": 6090,
+      "dist/claude/skills/koan-init/SKILL.md": 4820,
+      "dist/claude/skills/koan-readback/SKILL.md": 1564,
+      "dist/claude/skills/koan-lint/SKILL.md": 1789,
+      "dist/claude/skills/koan-debt/SKILL.md": 1494,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4428
+    }
+  },
+  {
+    "date": "2026-08-01",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4934,
+      "dist/claude/skills/koan/SKILL.md": 9315,
+      "dist/claude/skills/koan-wrap/SKILL.md": 6180,
+      "dist/claude/skills/koan-init/SKILL.md": 4820,
+      "dist/claude/skills/koan-readback/SKILL.md": 1564,
+      "dist/claude/skills/koan-lint/SKILL.md": 1789,
+      "dist/claude/skills/koan-debt/SKILL.md": 1494,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4428
+    }
+  },
+  {
+    "date": "2026-08-02",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4934,
+      "dist/claude/skills/koan/SKILL.md": 9315,
+      "dist/claude/skills/koan-wrap/SKILL.md": 6792,
+      "dist/claude/skills/koan-init/SKILL.md": 4820,
+      "dist/claude/skills/koan-readback/SKILL.md": 1564,
+      "dist/claude/skills/koan-lint/SKILL.md": 1789,
+      "dist/claude/skills/koan-debt/SKILL.md": 1494,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4428
+    }
+  },
+  {
+    "date": "2026-08-06",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4929,
+      "dist/claude/skills/koan/SKILL.md": 8530,
+      "dist/claude/skills/koan-wrap/SKILL.md": 6791,
+      "dist/claude/skills/koan-init/SKILL.md": 4819,
+      "dist/claude/skills/koan-readback/SKILL.md": 1563,
+      "dist/claude/skills/koan-lint/SKILL.md": 1794,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4427
+    }
+  },
+  {
+    "date": "2026-08-06",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4929,
+      "dist/claude/skills/koan/SKILL.md": 8530,
+      "dist/claude/skills/koan-wrap/SKILL.md": 6791,
+      "dist/claude/skills/koan-init/SKILL.md": 4819,
+      "dist/claude/skills/koan-readback/SKILL.md": 1563,
+      "dist/claude/skills/koan-lint/SKILL.md": 1794,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4427
+    }
+  },
+  {
+    "date": "2026-08-06",
+    "sizes": {
+      "dist/agents/AGENTS.md": 4929,
+      "dist/claude/skills/koan/SKILL.md": 7422,
+      "dist/claude/skills/koan-wrap/SKILL.md": 6791,
+      "dist/claude/skills/koan-init/SKILL.md": 4819,
+      "dist/claude/skills/koan-readback/SKILL.md": 1563,
+      "dist/claude/skills/koan-lint/SKILL.md": 1794,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4427
+    }
+  },
+  {
+    "date": "2026-08-07",
+    "sizes": {
+      "dist/agents/AGENTS.md": 5166,
+      "dist/claude/skills/koan/SKILL.md": 6402,
+      "dist/claude/skills/koan-wrap/SKILL.md": 6791,
+      "dist/claude/skills/koan-init/SKILL.md": 4819,
+      "dist/claude/skills/koan-readback/SKILL.md": 1563,
+      "dist/claude/skills/koan-lint/SKILL.md": 1794,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4405
+    }
+  }
+]
