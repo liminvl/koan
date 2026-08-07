@@ -75,6 +75,10 @@ silence a nudge is the wrong reason — `koan-wrap` §4 says unsure ⇒ keep).
 - **Published** ([[D-041]]): fresh single-commit history to public
   `un5table/koan`, tagged `v0.1.0`; full history pushed to the private
   `un5table/koan-archive` and kept locally on `archive/full-history`.
+- **`koan-readback` output format** (user request): blank line between playback
+  bullets, plus two closing sections — `### Recommended Next Steps` and
+  `### Open Questions for the Sentient Meatsack (Human)` (omitted when empty).
+  Ceiling 1700 → 2050 to fund it; pushed to the user-level plugin.
 
 ## In progress
 - Nothing half-coded.

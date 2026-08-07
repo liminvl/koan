@@ -19,12 +19,18 @@ A misread that becomes code is the expensive kind.
    Open `docs/DECISIONS-archive.md` only if a current task touches an archived ID.
 2. Cross-check against git: `git log --oneline -10` + `git status`. Where
    HANDOFF's Current state disagrees, git wins — flag the mismatch.
-3. Play it back, in **≤10 bullets**:
+3. Play it back, in **≤10 bullets** with a blank line between each (readability
+   beats density here):
    - the **Objective** and current state (from HANDOFF),
    - the architecture + hard constraints (from CLAUDE.md),
-   - the live decisions you must not silently reverse (top DECISIONS entries),
-   - the **next step** you'd take, and which canonical example you'd follow.
-4. Ask the human to correct any bullet. **Stop and wait** — don't start work yet.
+   - the live decisions you must not silently reverse (top DECISIONS entries).
+4. Close with two headed sections:
+   - **`### Recommended Next Steps`** — a short numbered list: what you'd do
+     next, and which canonical example you'd follow.
+   - **`### Open Questions for the Sentient Meatsack (Human)`** — anything only
+     the human can answer (HANDOFF's open questions, mismatches you can't
+     resolve). Omit the section if there are none.
+5. Ask the human to correct any of it. **Stop and wait** — don't start work yet.
 
 ## Then
 Once they confirm, proceed. For a large delegation, do ONE small task first and
