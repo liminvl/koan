@@ -3,8 +3,6 @@ node_modules/
 .env.*
 .claude/
 docs/FIELD.local.md
-ingest/sources/*
-!ingest/sources/README.md
-!ingest/sources/rtk-probe.sh
+ingest/
 benchmarks/runs/
 *.log

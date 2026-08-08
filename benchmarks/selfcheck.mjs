@@ -69,9 +69,9 @@ if (!distMissing) {
   if (!t.errors.length) console.log(`  triggers: ${t.checked} prompts routed over ${t.skills} skills.`);
 }
 
-// 5. (retired 2026-08-05) The ingest budget check. `ingest/` is frozen — seven
-// ingests produced zero src changes, so nothing is growing for a ceiling to
-// catch. Re-add it if external ingests resume.
+// 5. (retired 2026-08-05) The ingest budget check. `ingest/` was frozen — seven
+// ingests produced zero src changes — then deleted from the tree entirely
+// (2026-08-07, D-041). Re-add it if external ingests resume.
 
 // 6. Shipped skill dirs are self-contained — every .mjs a skill ships must LOAD
 // from where it lands. Source imports always resolve (src/lifecycle/ holds both

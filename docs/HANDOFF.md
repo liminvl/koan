@@ -79,6 +79,10 @@ silence a nudge is the wrong reason — `koan-wrap` §4 says unsure ⇒ keep).
   bullets, plus two closing sections — `### Recommended Next Steps` and
   `### Open Questions for the Sentient Meatsack (Human)` (omitted when empty).
   Ceiling 1700 → 2050 to fund it; pushed to the user-level plugin.
+- **`ingest/` deleted from the tree** (user request, recorded in [[D-041]]'s
+  status): dev archaeology, no functional references; README lineage now states
+  the seven-no-change fact without the directory; record kept in the archive.
+  The whole dir is gitignored so local source clones stay invisible.
 
 ## In progress
 - Nothing half-coded.

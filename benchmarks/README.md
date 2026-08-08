@@ -25,8 +25,8 @@ isn't earning its tokens. A **core seat** needs the flip replicated — ≥2 of 
 runs on the promotion model (D-022); one flip is provisional. When reading
 replicates, **variance is a second signal**: passing runs that converge on one
 shape mean the wording binds; scattered interpretations mean fix the *form* of
-the rule, not the sample count (superpowers ingest — see `ingest/distill.md`
-"Form follows failure").
+the rule, not the sample count ("form follows failure" — the superpowers
+ingest, D-026).
 
 The **outcome** arm (loc-counting probes on pinned tasks) was deleted 2026-08-05:
 it converged on every model it ever ran and decided nothing in seven ingests. Its

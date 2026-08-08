@@ -91,7 +91,6 @@ GUIDE.md        the user manual — concepts, when to use what, scenarios, FAQ
 src/            the single source of truth (skill + lifecycle + lint engine + templates)
 build/          one source → per-environment targets (+ generation canary)
 push.mjs        copy a build into an existing project
-ingest/         FROZEN — the record of seven external ingests (all no-change)
 benchmarks/     Stage 0 (selfcheck) · Stage 1 (behavior) · Stage 2 (continuity)
 docs/           koan's own HANDOFF + DECISIONS — it dogfoods itself
 ```
@@ -106,7 +105,8 @@ whole benchmark arm, a skill, and the ingest pipeline on exactly that rule
 
 Lineage: the build-less half descends from
 [ponytail](https://github.com/DietrichGebert/ponytail), the lose-less half from a
-handoff workflow. `ingest/` holds the frozen record of seven external ingests —
-all of which changed nothing, which is why the pipeline is closed.
+handoff workflow. Seven external repos and guides were ingested during
+development; all seven changed nothing, which is why the ingest pipeline is
+closed and its record lives in the development archive, not this tree.
 
 MIT © Saul McClintock
