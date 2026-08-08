@@ -23,7 +23,9 @@ the frontier tier ([[D-030]]): on claude-opus-5 onecheck and greenfield flip,
 trail does not; trail still flips on fable-5 + sonnet-5.
 Results: `benchmarks/results/` (outcome runs preserved as a record).
 The log holds two domain sets ([[D-033]]): `benchmarks` and `method` — the
-splitting line is **a consumer never experiences anything decided in a set**.
+splitting line is **a consumer never experiences anything decided in a set**;
+topic-first routing is settled rejected, and a split now ships a constitution
+read-trigger line ([[D-042]]).
 14 field repos consume the user-level plugin; all lint-clean except 5 advisory
 archive candidates left deliberately (both logs have headroom, and archiving to
 silence a nudge is the wrong reason — `koan-wrap` §4 says unsure ⇒ keep).
@@ -51,38 +53,19 @@ silence a nudge is the wrong reason — `koan-wrap` §4 says unsure ⇒ keep).
   `docs/DECISIONS-benchmarks.md`; how the kit is priced and checked in
   `docs/DECISIONS-method.md` ([[D-033]]).
 
-## Changes this session (2026-08-07, twenty-fifth sitting — meta review + publish prep)
-- **[[D-040]]** — safety carve-out condensed into a core Rules bullet (canary
-  phrases moved to CORE); Never + Boundaries + Intensity/`ultra` deleted;
-  koan-jazz's "every **Never**" pointer reworded. Ceilings ratcheted both ways:
-  AGENTS 5200 → 5400 (deliberate growth), koan 7800 → 6700, jazz 4700 → 4600.
-- **[[D-041]]** — light scrub (local path in `ingest/lessons/handoff-kit.md`,
-  employer context in `ingest/LESSONS.md`, the private-remote line here, the
-  field repo+hash list → gitignored `docs/FIELD.local.md`); root
-  `.claude-plugin/marketplace.json` added and the generated inner one removed
-  from `build/targets/claude.mjs`; README restructured to lead with the
-  marketplace install; `.claude/` gitignored; LESSONS queue marked historical.
-- The 2026-08-05 field-survey section was pruned from this file — its durable
-  findings live in [[D-036]]/[[D-037]] and the `lint.mjs` comments (one fact,
-  one home); the live residue (14 consumers, 5 advisory candidates) moved to
-  Current state.
-- **Stage 1 run on fable-5 post-cuts** — no regression on any probed rule;
-  trail null (baseline minted the entry); jazz split on the isolation column
-  only. Written up in `results/2026-08-07-stage1-fable5-post-d040.md`.
-- **`GUIDE.md` added** — the newcomer manual (why, per-skill when/how, the
-  three-file model, scenarios, FAQ). README now leads newcomers there; skill
-  files stay the authoritative rule wording, the guide only summarizes.
-- **Published** ([[D-041]]): fresh single-commit history to public
-  `un5table/koan`, tagged `v0.1.0`; full history pushed to the private
-  `un5table/koan-archive` and kept locally on `archive/full-history`.
-- **`koan-readback` output format** (user request): blank line between playback
-  bullets, plus two closing sections — `### Recommended Next Steps` and
-  `### Open Questions for the Sentient Meatsack (Human)` (omitted when empty).
-  Ceiling 1700 → 2050 to fund it; pushed to the user-level plugin.
-- **`ingest/` deleted from the tree** (user request, recorded in [[D-041]]'s
-  status): dev archaeology, no functional references; README lineage now states
-  the seven-no-change fact without the directory; record kept in the archive.
-  The whole dir is gitignored so local source clones stay invisible.
+## Changes this session (2026-08-08, twenty-sixth sitting — decision-routing question)
+- **[[D-042]]** minted: topic-first decision routing (design/infra/security logs
+  loaded on inference) rejected — the auto-loaded main log stays the home for
+  cross-cutting decisions. The shipped gap the question exposed is closed:
+  `koan-wrap` §4 now tells a splitter to add a constitution read-trigger line
+  (`Touching <area>? Read docs/DECISIONS-<domain>.md first.`) and §5's parity
+  item checks it. koan-wrap 6791 → 7008 chars, under its 7200 ceiling; the
+  growth was signed off 2026-08-08.
+- **D-020 and D-031 archived** — both implemented, their hook-deferral chain
+  closed by D-035, remaining citations historical or fixture-class. Freed
+  ~2.2k, which D-042 then spent: DECISIONS 29,565 → 29,315.
+- `npm test` green post-change (build + selfcheck + bench selftests);
+  selfcheck's grow-warning on koan-wrap is the priced [[D-042]] spend.
 
 ## In progress
 - Nothing half-coded.
@@ -90,20 +73,30 @@ silence a nudge is the wrong reason — `koan-wrap` §4 says unsure ⇒ keep).
 ## Next steps
 What survives is small on purpose; do not repopulate it to feel busy.
 
-1. **Five real [[D-027]] violations in the field**, found by the hash check that
+1. **Commit this session's work** (D-042 + archive pass + wrap §4/§5) — the
+   pre-commit hook re-runs `npm test`. Then refresh the installed plugin:
+   `node push.mjs --target plugin --force` + `/reload-plugins` (`--check`
+   reports koan-wrap stale, 2026-08-08).
+2. **Before the next D-entry, archive a candidate first** ([[D-039]] likeliest) —
+   this session's pass only broke even; the log sits ~685 chars from its ceiling.
+3. **Five real [[D-027]] violations in the field**, found by the hash check that
    was then rejected (the check was noisy; these findings are not). Each names a
    commit as the repo's current position in `## Current state`; the repo+hash
    list lives in `docs/FIELD.local.md` (gitignored). The fix is one line each —
    say what the work is, not where git is.
-2. **Re-measure trail before the next core addition, not after** ([[D-030]]). The
+4. **Re-measure trail before the next core addition, not after** ([[D-030]]). The
    seat now holds by one run on one model, and the trend is monotone downward.
-3. **Watch whether `method` is ever opened.** [[D-033]]'s standing risk, and this
+5. **Watch whether `method` is ever opened.** [[D-033]]'s standing risk, and this
    set is more exposed than `benchmarks`: a session changing tooling has no
    directory cue equivalent to "touching `benchmarks/`". Signal: a change that
    re-argues something [[D-036]] or [[D-037]] settled. Two sets is the limit — a
    third means the main log is the wrong shape, not that another file is needed.
 
 ## Not yet verified
+- **The §4 read-trigger guidance has no field exposure** ([[D-042]]) — no
+  consumer has split a domain set since it shipped; the first real split is its
+  test. Both of this repo's sets already had hand-written triggers, so dogfood
+  can't exercise it.
 - **The promoted safety rule has no behavior probe** ([[D-040]]) — the canary
   verifies its presence in AGENTS.md; nothing measures whether consumers act on
   it. The cuts themselves were checked: a fable-5 Stage 1 run (2026-08-07)

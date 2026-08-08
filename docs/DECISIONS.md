@@ -42,13 +42,6 @@
 - **Load-bearing:** the default answer to "where does this rule go" — cited by [[D-028]], [[D-029]], [[D-030]], [[D-033]], [[D-034]].
 - **Revisit if:** an ingested lesson needs a core/AGENTS seat — then [[D-013]]'s delta gate applies, not this policy.
 
-### D-020: handoff-kit ingest — sign-off line, greenfield interview, fit-test
-- **Decision:** Adopted three lessons from `handoff-kit` (independent reimplementation, same author): a `human sign-off:` line in the Checks template; a greenfield-interview step in `koan-init` §3a; a fit-test one-liner in `distill.md`'s bar. Deferred a `SessionStart` staleness hook.
-- **Why:** handoff-kit distilled the same field deployment as [[D-019]] on the same day and converged on the same lint/routing lessons — cross-validation. Its three new ideas each closed a real gap: Checks over-claimed "done", `koan-init` had no empty-repo path, scope discipline had no quotable test.
-- **Alternatives rejected:** adopting the hook then (no shared hook mechanism across targets).
-- **Status:** implemented · _2026-07-04_ — the hook deferral closed by [[D-035]].
-- **Revisit if:** the fit-test blocks a lesson that should land.
-
 ### D-022: A core seat needs a replicated flip — 2 of 3 runs
 - **Decision:** Promoting a rule into `koan:core` requires its [[D-013]] delta gate flipping in **≥2 of 3 runs** on the model the promotion cites. Routine probe sampling stays n=1. Existing seats keep their n=1 evidence.
 - **Why:** LLM runs are stochastic; one flip can be noise, and a core seat is a permanent token spend in every consumer's context. Bounding replication to promotion time keeps cost proportional to stakes.
@@ -102,14 +95,6 @@
 - **Load-bearing:** every future demotion argument routes through this; it is why converged probes were not cut on their nulls alone (see [[D-036]] for what finally cut one, and why that reasoning differs).
 - **Revisit if:** the supported tier narrows to one model; a rule goes null tier-wide and demoting it measurably costs nothing; or sonnet-5 drops below 2-of-3 on the next refresh — trail is one run from demotion and should be re-measured before the next core addition, not after.
 
-### D-031: Drift of installed copies is caught on the push channel
-- **Decision:** Staleness of *installed* koan copies is detected by `push.mjs --check` — dry-run stamp compare, writes nothing, exit 1 on drift. Not a Stage 0 check. `--check` measures only surfaces the destination already adopted.
-- **Why:** The stamp guard already detected this; what was missing was a way to *ask* it without writing. So the fix is an invocation, not a second detector. selfcheck is the tempting home and the wrong one — it is offline and deterministic by contract, while `~/.claude/skills` is machine state. Drift matters where koan is *used*, not where it is built.
-- **Alternatives rejected:** a selfcheck check (machine-dependent gate); a drift-audit subsystem (a second detector for a solved detection problem); a `koan-wrap` step (permanent tokens for a rare event).
-- **Status:** implemented · _2026-08-01_
-- **Load-bearing:** third arrival of the deferred SessionStart hook ([[D-020]], [[D-025]]), closed by [[D-035]].
-- **Revisit if:** `--check` goes unrun for months, or a non-Claude target grows a hook mechanism.
-
 ### D-033: The auto-loaded log splits by domain, not by settledness
 - **Decision:** A third home for decisions: a **domain decision set**, `docs/DECISIONS-<domain>.md`, holding *live* entries that only bind work inside one area. Never `@`-imported; IDs listed in the main log's *Domain decision sets*. First set: `benchmarks`. The line is **how a thing is built** (moves) vs **what ships** (stays).
 - **Why:** The ceiling was hit by entries triage found *unarchivable* three sittings running — growth on merit. Archiving keys on settledness, which no longer discriminated; a third of the budget was methodology every non-benchmark session paid for and never used. Also fixed the rule that made archiving impossible: "cited by ≥2" counted *fixture* mentions.
@@ -162,6 +147,13 @@
 - **Status:** implemented · _2026-08-07_ — supersedes [[D-035]]'s "a marketplace plugin (infrastructure for one consumer)" rejection on that one point: there are consumers now. The hook ships unchanged inside the plugin. Later same day: `ingest/` deleted from the tree — dev archaeology with zero functional references (digests of repos a public reader can't see); the record survives in the archive and in the archived entries here.
 - **Revisit if:** the marketplace path fails a real coworker install, or npm distribution becomes load-bearing.
 
+### D-042: Decision routing stays audience-based; a split set ships with a read-trigger
+- **Decision:** Topic-first routing of the log — per-topic sets (design/infra/security) loaded when a session infers the topic — is rejected as the primary mechanism. The main log stays auto-loaded for cross-cutting decisions; a set is split only for entries that bind one area ([[D-033]]). A split now also ships its trigger: `koan-wrap` §4 adds a constitution read-trigger line (`Touching <area>? Read docs/DECISIONS-<domain>.md first.`), checked by §5's parity item.
+- **Why:** An on-demand file helps only if the session opens it, and koan's claim ([[D-039]]) is insurance for exactly the sessions that won't infer to — weak models, cold resumes. [[D-030]]'s cost asymmetry applies: a redundant in-context entry wastes chars; a missed one silently re-litigates a settled choice. Topic taxonomies also fracture cross-cutting decisions (one choice is design+infra+security at once), and per-topic budgets dissolve the ceiling pressure that forces distillation. The real gap was the trigger: this repo's CLAUDE.md hand-wrote "Touching `benchmarks/`? Read …" because the set index records *that* a set exists, not *when* to open it — and the shipped kit never taught that line.
+- **Alternatives rejected:** topic-first sets (above); a lint check that a set's filename appears in the constitution (fires on healthy repos that route via the index — [[D-037]]'s noise class; an observed drifted-out-of-mind set buys it); teaching sets in the `koan-init` templates (a greenfield repo is months from its first split; wrap §4 is the point of temptation).
+- **Status:** implemented · _2026-08-08_
+- **Revisit if:** a field repo shows a set no session opened despite the trigger line, or [[D-033]]'s "a set drifts out of mind" clause fires anyway.
+
 ## Domain decision sets
 Live decisions scoped to one domain — full entries out of context, IDs permanent.
 <!-- Every D-nnn below is read as a set index entry (check 4) — keep prose here
@@ -189,5 +181,7 @@ moving them would buy budget by hiding the rules that stop bad additions.
 - **D-010** — Renamed to "koan"; persona is the zen craftsperson — implemented · archived
 - **D-011** — Stage 2 scoring is two-layer — strict floor + calibrated LLM judge — implemented · archived
 - **D-016** — Outcome scope tasks run on an open-ended workspace channel — implemented · archived (revisit-if fired; resolved by D-017)
+- **D-020** — handoff-kit ingest — sign-off line, greenfield interview, fit-test — implemented · archived
 - **D-024** — No koan-compact skill — checkpoint before /compact, on free channels — implemented · archived
 - **D-026** — superpowers ingest — form-follows-failure; descriptions carry triggers — implemented · archived
+- **D-031** — Drift of installed copies is caught on the push channel — implemented · archived

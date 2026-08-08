@@ -102,8 +102,10 @@ citation; defines a cross-cutting invariant; is the active frontier. Unsure ⇒ 
 **domain decision set**: `docs/DECISIONS-<domain>.md` for live entries that only
 bind one area (e.g. `benchmarks/`). Move what governs *how a thing is built*;
 keep what governs *what ships*. Never `@`-import a set — on-demand is the point —
-and list its IDs under `## Domain decision sets` so citations resolve. Split at
-≥5 such entries; below that, archive or compress.
+and list its IDs under `## Domain decision sets` so citations resolve. Add a
+read-trigger to the constitution: `Touching <area>? Read docs/DECISIONS-<domain>.md
+first.` — the index records that the set exists; the trigger says when to open it.
+Split at ≥5 such entries; below that, archive or compress.
 
 **Mechanics:** move the **full entry verbatim** (never trim reasoning, never
 delete). Leave a one-line stub in **Archived decisions index**: `- **D-0NN** —
@@ -120,7 +122,8 @@ correct. Same mechanics for a domain set, listed under its own heading.
 - Skim CLAUDE.md/AGENTS.md for any line this session falsified — fix or flag.
 - Any fact now in two of CLAUDE.md / HANDOFF.md / DECISIONS.md? Delete the twin.
 - Index ↔ archive parity: every stub has one full entry and vice versa; every
-  domain-set ID is listed in the main log, and nothing listed there is missing.
+  domain-set ID is listed in the main log, nothing listed there is missing, and
+  each set has a constitution read-trigger.
 
 ## Report
 One template, always:
@@ -129,4 +132,4 @@ Wrapped: HANDOFF <chars>/15k · DECISIONS <chars>/30k · archived <IDs or none> 
 Next session starts at: <one line>
 ```
 Do not commit unless asked — and if asked, nothing you just wrote should need correcting.
-<!-- koan v0.1.0 · build 11ae7fad -->
+<!-- koan v0.1.0 · build ac3f7efe -->

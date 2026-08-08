@@ -73,3 +73,18 @@
 - **Alternatives rejected:** the SDLC workflow skills, anti-rationalization tables, the always-on invocation router — all fail the fit-test or duplicate koan's rules.
 - **Status:** implemented · _2026-07-11_
 - **Revisit if:** a stripped description mis-routes in a real harness, or the claude-plugin target is built (superpowers' `docs/porting-to-a-new-harness.md` + its `startup|clear|compact` SessionStart matcher are the reference shape for the D-020/D-024 hooks).
+
+### D-020: handoff-kit ingest — sign-off line, greenfield interview, fit-test
+- **Decision:** Adopted three lessons from `handoff-kit` (independent reimplementation, same author): a `human sign-off:` line in the Checks template; a greenfield-interview step in `koan-init` §3a; a fit-test one-liner in `distill.md`'s bar. Deferred a `SessionStart` staleness hook.
+- **Why:** handoff-kit distilled the same field deployment as [[D-019]] on the same day and converged on the same lint/routing lessons — cross-validation. Its three new ideas each closed a real gap: Checks over-claimed "done", `koan-init` had no empty-repo path, scope discipline had no quotable test.
+- **Alternatives rejected:** adopting the hook then (no shared hook mechanism across targets).
+- **Status:** implemented · _2026-07-04_ — the hook deferral closed by [[D-035]].
+- **Revisit if:** the fit-test blocks a lesson that should land.
+
+### D-031: Drift of installed copies is caught on the push channel
+- **Decision:** Staleness of *installed* koan copies is detected by `push.mjs --check` — dry-run stamp compare, writes nothing, exit 1 on drift. Not a Stage 0 check. `--check` measures only surfaces the destination already adopted.
+- **Why:** The stamp guard already detected this; what was missing was a way to *ask* it without writing. So the fix is an invocation, not a second detector. selfcheck is the tempting home and the wrong one — it is offline and deterministic by contract, while `~/.claude/skills` is machine state. Drift matters where koan is *used*, not where it is built.
+- **Alternatives rejected:** a selfcheck check (machine-dependent gate); a drift-audit subsystem (a second detector for a solved detection problem); a `koan-wrap` step (permanent tokens for a rare event).
+- **Status:** implemented · _2026-08-01_
+- **Load-bearing:** third arrival of the deferred SessionStart hook ([[D-020]], [[D-025]]), closed by [[D-035]].
+- **Revisit if:** `--check` goes unrun for months, or a non-Claude target grows a hook mechanism.
