@@ -23,7 +23,7 @@ of this README covers installation and development.
 runtime needed:
 
 ```
-/plugin marketplace add un5table/koan
+/plugin marketplace add liminvl/koan
 /plugin install koan@koan
 ```
 

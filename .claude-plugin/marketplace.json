@@ -1,6 +1,6 @@
 {
   "name": "koan",
-  "owner": { "name": "Saul McClintock", "url": "https://github.com/un5table" },
+  "owner": { "name": "Saul McClintock", "url": "https://github.com/liminvl" },
   "description": "Zen discipline for coding agents: build less, lose less.",
   "plugins": [
     {
