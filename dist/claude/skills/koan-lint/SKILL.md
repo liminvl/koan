@@ -40,4 +40,4 @@ with no upgrade path: a `koan:` comment without a ceiling is a TODO in disguise.
 ERRORS first, then WARNINGS, then the budget line. End with a verdict: **clean**,
 **N warnings**, or **N errors to fix**. Read-only — fixing what it finds is a
 normal session's job (or `/koan-wrap`), not this one's.
-<!-- koan v0.1.0 · build d6003fbf -->
+<!-- koan v0.1.0 · build 397d6918 -->

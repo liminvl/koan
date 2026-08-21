@@ -26,14 +26,17 @@ The log holds two domain sets ([[D-033]]): `benchmarks` and `method` — the
 splitting line is **a consumer never experiences anything decided in a set**;
 topic-first routing is settled rejected, and a split now ships a constitution
 read-trigger line ([[D-042]]).
-14 field repos consume the user-level plugin; all lint-clean except 5 advisory
-archive candidates left deliberately (both logs have headroom, and archiving to
-silence a nudge is the wrong reason — `koan-wrap` §4 says unsure ⇒ keep).
+14 field repos consume the user-level plugin. The 2026-08-20 external refactor
+review's findings are landed ([[D-043]]): the budget system now prices the
+entry, not just the file. Of the three over-budget repos measured, the new
+diagnostics fire correctly on iams-wordpress (W-series + fat entries) and
+hostinger (fat entries); vibe-shield compressed itself under budget and lints
+clean.
 
 ## What's built
-- Core lens (`src/koan.skill.md`) + five lifecycle skills. `lint.mjs` carries 11
-  live checks (8 and 13 retired — 13 never shipped) plus `--debt`; readback
-  cross-checks git.
+- Core lens (`src/koan.skill.md`) + five lifecycle skills. `lint.mjs` carries 12
+  live checks (8 and 13 retired — 13 never shipped; 14 names parallel ID series)
+  plus `--debt`; readback cross-checks git.
 - **Project-phase axis** ([[D-028]]) — `**Phase:**` explore/build/harden in
   CLAUDE.md sets ONE thing: where a choice lands. Absent ⇒ `build`.
 - **`koan-jazz`** ([[D-029]]) — bounded improvisation on a `jazz/<topic>` branch;
@@ -45,27 +48,31 @@ silence a nudge is the wrong reason — `koan-wrap` §4 says unsure ⇒ keep).
   carry a version+hash stamp; `restampDir()` hashes each finished skill dir, so
   adding a bundled file needs no build change. `push.mjs --check` dry-runs the
   stamp compare ([[D-031]]). `hooks/pre-commit` runs `npm test`.
-- Stage 0 selfcheck — budgets, canary, dogfood lint **+ 33 pinned doc shapes**
+- Stage 0 selfcheck — budgets, canary, dogfood lint **+ 42 pinned doc shapes**
   (`benchmarks/lint-fixtures.mjs`, [[D-037]]), trigger routing ([[D-025]]),
-  bundle self-containment ([[D-034]]), hook decision table. Fails on warnings;
-  `--record` re-baselines.
+  bundle self-containment ([[D-034]]), hook decision table, and a budget-number
+  drift check (prose claims vs `lint.mjs` constants, [[D-043]]). Fails on
+  warnings; `--record` re-baselines.
 - Stage 1 (behavior) and Stage 2 (continuity) harnesses — construction details in
   `docs/DECISIONS-benchmarks.md`; how the kit is priced and checked in
   `docs/DECISIONS-method.md` ([[D-033]]).
 
-## Changes this session (2026-08-08, twenty-sixth sitting — decision-routing question)
-- **[[D-042]]** minted: topic-first decision routing (design/infra/security logs
-  loaded on inference) rejected — the auto-loaded main log stays the home for
-  cross-cutting decisions. The shipped gap the question exposed is closed:
-  `koan-wrap` §4 now tells a splitter to add a constitution read-trigger line
-  (`Touching <area>? Read docs/DECISIONS-<domain>.md first.`) and §5's parity
-  item checks it. koan-wrap 6791 → 7008 chars, under its 7200 ceiling; the
-  growth was signed off 2026-08-08.
-- **D-020 and D-031 archived** — both implemented, their hook-deferral chain
-  closed by D-035, remaining citations historical or fixture-class. Freed
-  ~2.2k, which D-042 then spent: DECISIONS 29,565 → 29,315.
-- `npm test` green post-change (build + selfcheck + bench selftests);
-  selfcheck's grow-warning on koan-wrap is the priced [[D-042]] spend.
+## Changes this session (2026-08-20, twenty-seventh sitting — external refactor review landed)
+- **[[D-043]]** minted: budgets price the entry too. Over-budget DECISIONS
+  warning names the fattest entries (silent under budget); new check 14 names
+  parallel ID series (`## W-001…`); check 9 now counts constitution + domain-set
+  citations; "five short fields" ships in the template header and wrap §3–§4;
+  selfcheck asserts prose budget claims agree with `lint.mjs` constants
+  (exported for it). 9 new fixture pins (33 → 42).
+- **D-038 archived** (implemented, 14 days, behavior fixture-pinned) — freed
+  ~1.75k, which D-043 spent: DECISIONS 29,315 → 29,175.
+- koan-wrap ceiling 7200 → 7550 (was 99.5% flush after the §3/§4 teaching;
+  budgets.json's wall rule). koan-wrap 7008 → 7166 chars.
+- The review's per-project budget override is **deferred, not rejected** — see
+  D-043's revisit-if. The review transcript:
+  `C:\Users\saulm\repos\meta-master\docs\koan-refactor-review.txt` (right-edge
+  clipped; re-export if it's to be kept as provenance).
+- `npm test` green post-change.
 
 ## In progress
 - Nothing half-coded.
@@ -73,12 +80,16 @@ silence a nudge is the wrong reason — `koan-wrap` §4 says unsure ⇒ keep).
 ## Next steps
 What survives is small on purpose; do not repopulate it to feel busy.
 
-1. **Commit this session's work** (D-042 + archive pass + wrap §4/§5) — the
-   pre-commit hook re-runs `npm test`. Then refresh the installed plugin:
-   `node push.mjs --target plugin --force` + `/reload-plugins` (`--check`
-   reports koan-wrap stale, 2026-08-08).
-2. **Before the next D-entry, archive a candidate first** ([[D-039]] likeliest) —
-   this session's pass only broke even; the log sits ~685 chars from its ceiling.
+1. **Commit this session's work** (D-043 + D-038 archive + lint checks +
+   fixtures + wrap/template teaching + ceiling raise) — the pre-commit hook
+   re-runs `npm test`. Then refresh the installed plugin:
+   `node push.mjs --target plugin --force` + `/reload-plugins`.
+2. **Compress the two over-budget field repos** with the new guidance:
+   iams-wordpress (convert the W-series to `### D-` entries in a
+   `docs/DECISIONS-wordpress.md` domain set, or archive its settled ones) and
+   hostinger (compress D-016/D-020/D-018 to five fields). Then re-measure — if
+   either still legitimately exceeds 30k, D-043's revisit-if fires (the
+   explicit per-project override).
 3. **Five real [[D-027]] violations in the field**, found by the hash check that
    was then rejected (the check was noisy; these findings are not). Each names a
    commit as the repo's current position in `## Current state`; the repo+hash
@@ -93,6 +104,9 @@ What survives is small on purpose; do not repopulate it to feel busy.
    third means the main log is the wrong shape, not that another file is needed.
 
 ## Not yet verified
+- **The D-043 diagnostics ran once, from this repo, against three field repos.**
+  No consumer session has yet seen the compress-first warning or the W-series
+  warning and acted on it; whether the wording lands is untested.
 - **The §4 read-trigger guidance has no field exposure** ([[D-042]]) — no
   consumer has split a domain set since it shipped; the first real split is its
   test. Both of this repo's sets already had hand-written triggers, so dogfood

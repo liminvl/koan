@@ -64,6 +64,21 @@ const PINS = [
   { name: 'oversize log warns',
     files: with_({ 'docs/DECISIONS.md': BASE['docs/DECISIONS.md'] + '\n<!--' + 'x'.repeat(31_000) + '-->\n' }),
     fires: 'Archive settled entries' },
+  // The over-budget warning names the fattest entries (compression is the fix
+  // when nothing is archivable) — but a fat entry in a log UNDER budget is that
+  // project's judgement, and the diagnostic must stay silent on it.
+  { name: 'oversize log names its fattest entries',
+    files: with_({ 'docs/DECISIONS.md': `# Decisions\n\n### D-001: a\n- **Status:** accepted\n\n### D-002: fat\n- **Status:** accepted\n- **Why:** ${'x'.repeat(31_000)}\n\n## Archived decisions index\n` }),
+    fires: 'compress the largest — D-002' },
+  // Field defect: a parallel series after the last D-entry was counted into
+  // that entry's size, and the diagnostic named the wrong culprit. An entry
+  // ends at the next heading of ANY kind.
+  { name: 'a parallel series does not inflate the D-entry above it',
+    files: with_({ 'docs/DECISIONS.md': `# Decisions\n\n### D-001: a\n- **Status:** accepted\n\n## W-001: w\n- **Status:** accepted\n<!--${'x'.repeat(31_000)}-->\n\n## Archived decisions index\n` }),
+    fires: 'compress the largest — D-001 0.0k' },
+  { name: 'a fat entry in a log under budget stays silent',
+    files: with_({ 'docs/DECISIONS.md': `# Decisions\n\n### D-001: a\n- **Status:** accepted\n\n### D-002: fat\n- **Status:** accepted\n- **Why:** ${'x'.repeat(5_000)}\n\n## Archived decisions index\n` }),
+    silent: 'compress the largest' },
 
   // ---- check 4: decision-ID integrity ------------------------------------
   // The escape check 10 advertises. A qualified ID belongs to another repo's log
@@ -129,6 +144,18 @@ const PINS = [
   { name: '…nor when another entry cites it',
     files: with_({ 'docs/DECISIONS.md': `# Decisions\n\n${settled('D-002')}\n\n### D-003: c\n- **Status:** accepted\n- **Why:** extends D-002.\n\n## Archived decisions index\n` }),
     silent: 'archive candidate' },
+  { name: '…nor when the constitution cites it',
+    files: with_({
+      'CLAUDE.md': BASE['CLAUDE.md'] + '\nPer D-002, tests run offline.\n',
+      'docs/DECISIONS.md': `# Decisions\n\n${settled('D-002')}\n\n## Archived decisions index\n`,
+    }),
+    silent: 'archive candidate' },
+  { name: '…nor when a domain set cites it',
+    files: { ...SETS,
+      'docs/DECISIONS.md': `# Decisions\n\n${settled('D-003')}\n\n## Domain decision sets\n- **bench** — D-002\n\n## Archived decisions index\n`,
+      'docs/DECISIONS-bench.md': '# bench\n\n### D-002: b\n- **Status:** accepted\n- **Why:** extends D-003.\n',
+    },
+    silent: 'archive candidate' },
   { name: '…nor when HANDOFF cites it',
     files: with_({
       'docs/DECISIONS.md': `# Decisions\n\n${settled('D-002')}\n\n## Archived decisions index\n`,
@@ -155,6 +182,16 @@ const PINS = [
   { name: 'planning doc declaring a decision heading',
     files: with_({ 'docs/PLAN.md': '# Plan\n\n### D-001: a\n' }),
     fires: 'declares a decision heading' },
+
+  // ---- check 14: parallel decision series ---------------------------------
+  // Field shape: one repo kept ~25k of its 30k budget in a hand-rolled
+  // ## W-001…W-018 series every integrity check was blind to.
+  { name: 'a hand-rolled W-series is named as an escape',
+    files: with_({ 'docs/DECISIONS.md': '# Decisions\n\n### D-001: a\n- **Status:** accepted\n\n## W-001: wp thing\n- **Decision:** x\n- **Status:** accepted\n\n## W-002: other\n- **Status:** accepted\n\n## Archived decisions index\n' }),
+    fires: 'parallel W-series (W-001…W-002, 2 entries)' },
+  { name: 'a versioned prose heading is not a decision series',
+    files: with_({ 'docs/DECISIONS.md': '# Decisions\n\n### D-001: a\n- **Status:** accepted\n\n## HTTP-2 support\nNotes about the upgrade.\n\n## Archived decisions index\n' }),
+    silent: 'parallel' },
 ];
 
 // Pins that need the fixture to BE a repo: checks 6, 11 and 12 read git, and

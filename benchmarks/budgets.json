@@ -3,7 +3,7 @@
   "artifacts": {
     "dist/agents/AGENTS.md": 5400,
     "dist/claude/skills/koan/SKILL.md": 6700,
-    "dist/claude/skills/koan-wrap/SKILL.md": 7200,
+    "dist/claude/skills/koan-wrap/SKILL.md": 7550,
     "dist/claude/skills/koan-init/SKILL.md": 5100,
     "dist/claude/skills/koan-readback/SKILL.md": 2050,
     "dist/claude/skills/koan-lint/SKILL.md": 2000,

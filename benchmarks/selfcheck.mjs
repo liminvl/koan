@@ -10,7 +10,7 @@ import { readFileSync, existsSync, writeFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { runCanary } from '../build/canary.mjs';
-import { lint } from '../src/lifecycle/lint.mjs';
+import { lint, HANDOFF_BUDGET, DECISIONS_BUDGET, DECISIONS_HARD, SET_BUDGET } from '../src/lifecycle/lint.mjs';
 import { runTriggers } from './triggers.mjs';
 import { runLintFixtures } from './lint-fixtures.mjs';
 import { fixtureDir } from './claude-cli.mjs';
@@ -128,6 +128,30 @@ if (!distMissing && sessionStart) {
   ];
   if (pins.every(Boolean)) console.log('  hook: SessionStart speaks on a fault, silent otherwise (4 pinned shapes).');
   else errors.push('hook: SessionStart does not discriminate — it spoke when clean, stayed silent on a fault, or overran its cap.');
+}
+
+// 7. The budget numbers live in lint.mjs but are restated across ~10 prose
+// surfaces, and have already drifted twice (12k→15k; 30k→25k→30k). A budget
+// CLAIM carries a marker (~, ≤, /, "hard stop"); bare "31k"/"60k" mentions are
+// illustrative examples and stay exempt. dist mirrors src, so src + GUIDE/README
+// is the full surface set.
+{
+  const allowed = new Set([HANDOFF_BUDGET, DECISIONS_BUDGET, DECISIONS_HARD, SET_BUDGET].map((n) => String(n / 1000)));
+  const surfaces = [
+    'src/koan.skill.md', 'src/lifecycle/koan-wrap.skill.md', 'src/lifecycle/koan-init.skill.md',
+    'src/lifecycle/koan-lint.skill.md', 'src/lifecycle/koan-readback.skill.md', 'src/lifecycle/koan-jazz.skill.md',
+    'src/templates/CLAUDE.md', 'src/templates/DECISIONS.md', 'src/templates/HANDOFF.md',
+    'GUIDE.md', 'README.md',
+  ];
+  let claims = 0, stale = 0;
+  for (const rel of surfaces) {
+    const text = readFileSync(join(ROOT, rel), 'utf8');
+    for (const m of text.matchAll(/(?:[~≤/]\s?~?|hard stop )(\d+)k\b/g)) {
+      claims++;
+      if (!allowed.has(m[1])) { stale++; errors.push(`budget drift: ${rel} claims ${m[1]}k, but lint.mjs says ${[...allowed].join('k/')}k.`); }
+    }
+  }
+  if (!stale) console.log(`  budgets: ${claims} prose claims agree with lint.mjs constants.`);
 }
 
 // Report.

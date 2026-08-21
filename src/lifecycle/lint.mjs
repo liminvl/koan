@@ -26,14 +26,16 @@ import { harvest } from './debt.mjs';
 // two healthy field repos that had never been over — the "noise on healthy repos"
 // trigger D-019's revisit-if names. A consumer log that should compress is a
 // judgement for that project, not a number shipped from here.
-const HANDOFF_BUDGET = 15_000;
-const DECISIONS_BUDGET = 30_000;
-const DECISIONS_HARD = 45_000;
+// Exported for benchmarks/selfcheck.mjs, which asserts the prose surfaces that
+// restate these numbers still agree — they have drifted twice (12k→15k; 30k→25k→30k).
+export const HANDOFF_BUDGET = 15_000;
+export const DECISIONS_BUDGET = 30_000;
+export const DECISIONS_HARD = 45_000;
 // A domain decision set (docs/DECISIONS-<domain>.md) is read on demand, so it
 // rations the attention of ONE task rather than every session — half the
 // auto-loaded ceiling. It is not a loophole: a set that outgrows this is a
 // domain that wants splitting, not a bigger allowance.
-const SET_BUDGET = 15_000;
+export const SET_BUDGET = 15_000;
 
 const read = (p) => (existsSync(p) ? readFileSync(p, 'utf8') : null);
 
@@ -90,7 +92,25 @@ export function lint(root = '.') {
     const n = decisions.length;
     budget.push(`DECISIONS ${n}/${DECISIONS_BUDGET}`);
     if (n > DECISIONS_HARD) errors.push(`docs/DECISIONS.md is ${n} chars (> hard ${DECISIONS_HARD}). Archive now.`);
-    else if (n > DECISIONS_BUDGET) warnings.push(`docs/DECISIONS.md is ${n} chars (> ${DECISIONS_BUDGET}). Archive settled entries.`);
+    else if (n > DECISIONS_BUDGET) {
+      // Name the fattest entries: budgets price the file, but when nothing is
+      // archivable the fix is compressing entries, and without names "archive
+      // settled entries" dead-ends (field: one 9.2k entry was 31% of a log).
+      // Diagnostic only fires when already over — a fat entry in a log under
+      // budget is that project's judgement, and this stays silent on it.
+      // An entry ends at the NEXT heading of any kind, not the next D-heading —
+      // otherwise a parallel series (check 14's shape) inflates the D-entry
+      // above it and the diagnostic names the wrong culprit.
+      const fat = [...decisions.matchAll(/^###\s+(D-\d+)\b/gm)]
+        .map((h) => {
+          const rest = decisions.slice(h.index + h[0].length);
+          const nx = rest.search(/^#{2,3}\s/m);
+          return [h[1], h[0].length + (nx >= 0 ? nx : rest.length)];
+        })
+        .sort((a, b) => b[1] - a[1]).slice(0, 3)
+        .map(([id, s]) => `${id} ${(s / 1000).toFixed(1)}k`).join(', ');
+      warnings.push(`docs/DECISIONS.md is ${n} chars (> ${DECISIONS_BUDGET}). Archive settled entries, or compress the largest — ${fat} — to five short fields; overflow reasoning belongs in the commit.`);
+    }
   }
   for (const s of setFiles) {
     budget.push(`${s.name.replace('docs/DECISIONS-', '').replace('.md', '')} ${s.text.length}/${SET_BUDGET}`);
@@ -199,7 +219,12 @@ export function lint(root = '.') {
       const date = body.match(/\*\*Status:\*\*[^\n]*?(\d{4}-\d{2}-\d{2})/)?.[1];
       if (!date || Date.now() - Date.parse(date) < 14 * 86_400_000) continue;
       const id = heads[i][1];
-      if (new RegExp(`\\b${id}\\b`).test(decisions.slice(0, start) + decisions.slice(end) + (handoff ?? ''))) continue;
+      // "Uncited" must mean uncited ANYWHERE live: the constitution and domain
+      // sets carry citations too (field: koan's own CLAUDE.md cites D-033), and
+      // missing them flagged entries whose reasoning was still load-bearing.
+      const elsewhere = decisions.slice(0, start) + decisions.slice(end) + (handoff ?? '')
+        + constText + setFiles.map((s) => s.text).join('\n');
+      if (new RegExp(`\\b${id}\\b`).test(elsewhere)) continue;
       warnings.push(`${id} is ${status} (${date}), uncited by any active entry or HANDOFF, and claims no Load-bearing seat — archive candidate.`);
     }
   }
@@ -261,6 +286,27 @@ export function lint(root = '.') {
   // check 8 was retired. D-027's condition was "if it can be done without false
   // positives"; the measured answer is no. Recorded on D-027's revisit-if — do not
   // rebuild it without a discriminator that isn't wording.
+
+  // 14. parallel decision series — a hand-rolled ID scheme inside the main log
+  // (field: ~25k of one repo's 30k budget sat in a ## W-001…W-018 series) gets
+  // none of the integrity checks: no ID parity, no archive candidates, no
+  // phantom detection. Only heading blocks that LOOK like entries (a
+  // **Decision:**/**Status:** field) count — "## HTTP-2 support" is prose, not
+  // an escape. One warning per series, not per entry: 18 lines is noise.
+  if (decisions != null) {
+    const series = new Map();
+    for (const h of decisions.matchAll(/^#{2,3}\s+(([A-Z]{1,5})-\d+)\b/gm)) {
+      if (h[2] === 'D') continue;
+      const rest = decisions.slice(h.index + h[0].length);
+      const nx = rest.search(/^#{1,3}\s/m);
+      const block = nx >= 0 ? rest.slice(0, nx) : rest;
+      if (!/\*\*(Decision|Status):\*\*/.test(block)) continue;
+      if (!series.has(h[2])) series.set(h[2], []);
+      series.get(h[2]).push(h[1]);
+    }
+    for (const [prefix, ids] of series)
+      warnings.push(`docs/DECISIONS.md carries a parallel ${prefix}-series (${ids[0]}…${ids[ids.length - 1]}, ${ids.length} entr${ids.length > 1 ? 'ies' : 'y'}) the integrity checks cannot see — full entries use ### D-nnn, or the series is a domain split by another name: move it to docs/DECISIONS-<domain>.md.`);
+  }
 
   return { errors, warnings, budget, phase };
 }

@@ -88,3 +88,10 @@
 - **Status:** implemented · _2026-08-01_
 - **Load-bearing:** third arrival of the deferred SessionStart hook ([[D-020]], [[D-025]]), closed by [[D-035]].
 - **Revisit if:** `--check` goes unrun for months, or a non-Claude target grows a hook mechanism.
+
+### D-038: A shortcut is accepted by citing the decision that took it
+- **Decision:** A `koan:` note naming a `D-nnn` is **dispositioned**: `--debt` still lists it (it is real debt) but the harden gate stops counting it. koan itself moves to **Phase: harden**.
+- **Why:** Check 12 said "fix or accept each one" and supported no way to accept, so the only route past the gate was deleting the marker — which throws away the note and its reasoning. A citation is not a new mechanism; it is the trail rule already in core, and it puts the *why* and the revisit trigger in the log where they belong rather than in a comment. The two shortcuts that blocked koan's own transition resolved cleanly under it: the continuity fixture's DB stub cites D-001 and is accepted; `build.mjs`'s "add an adapter" note was never debt at all — two targets is the intended set, since Cursor, Copilot and Codex read AGENTS.md natively, so an adapter would generate a file nothing reads.
+- **Alternatives rejected:** excluding fixture/test directories from the harvester (unknowable in general, and over-fitting the engine to this repo — check 8's mistake); a separate accept-list file (config as machinery, and a second home for a fact the log already holds).
+- **Status:** implemented · _2026-08-06_ — pinned both ways in `lint-fixtures.mjs` under [[D-037]], which immediately caught the message string harvesting *itself* (the quoted-span stripper can't see through escaped backticks in a template literal).
+- **Revisit if:** citations get added to silence the gate rather than to record a decision — the tell is a `D-nnn` in a note whose entry says nothing about that shortcut.

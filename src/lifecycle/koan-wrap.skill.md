@@ -81,8 +81,9 @@ Route each line before writing it:
 | a rule the project's spec/contract docs own | **the spec doc**; DECISIONS gets only the why + a pointer |
 
 Entry = **Decision / Why / Alternatives rejected / Status (one line) / Revisit-if**
-(+ optional **Load-bearing:** naming what cites it). Do NOT append a verification
-tail or `Note:`/`Limitation:` blocks — those belong to HANDOFF or CLAUDE.md.
+(+ optional **Load-bearing:** naming what cites it) — five short fields, not an
+essay; reasoning that needs paragraphs belongs in the commit. Do NOT append a
+verification tail or `Note:`/`Limitation:` blocks — those belong to HANDOFF or CLAUDE.md.
 **Status uses one leading token** (greppable): `proposed`·`accepted`·
 `implemented`·`superseded`. Format: `- **Status:** implemented · _2026-06-30_`.
 Grep the archive and any domain set before calling something new — supersede,
@@ -98,14 +99,15 @@ built. **Keep in main if ANY hold:** cited by ≥2 others *where the citation
 carries reasoning* — a mention of an ID inside an example or a fixture is not a
 citation; defines a cross-cutting invariant; is the active frontier. Unsure ⇒ keep.
 
-**Nothing archivable and still over?** The log may have grown on merit. Split a
-**domain decision set**: `docs/DECISIONS-<domain>.md` for live entries that only
-bind one area (e.g. `benchmarks/`). Move what governs *how a thing is built*;
-keep what governs *what ships*. Never `@`-import a set — on-demand is the point —
-and list its IDs under `## Domain decision sets` so citations resolve. Add a
-read-trigger to the constitution: `Touching <area>? Read docs/DECISIONS-<domain>.md
-first.` — the index records that the set exists; the trigger says when to open it.
-Split at ≥5 such entries; below that, archive or compress.
+**Nothing archivable and still over?** Compress before splitting: `koan-lint`
+names the largest entries — cut each to its five fields, moving overflow
+reasoning to the commit. Still over on merit? Split a **domain decision set**:
+`docs/DECISIONS-<domain>.md` for ≥5 live entries that only bind one area (e.g.
+`benchmarks/`). Move what governs *how a thing is built*; keep what governs
+*what ships*. Never `@`-import a set — on-demand is the point — and list its IDs
+under `## Domain decision sets` so citations resolve. Add a read-trigger to the
+constitution: `Touching <area>? Read docs/DECISIONS-<domain>.md first.` — the
+index records that the set exists; the trigger says when to open it.
 
 **Mechanics:** move the **full entry verbatim** (never trim reasoning, never
 delete). Leave a one-line stub in **Archived decisions index**: `- **D-0NN** —

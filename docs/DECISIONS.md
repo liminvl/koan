@@ -119,13 +119,6 @@
 - **Load-bearing:** closes the [[D-020]]/[[D-025]]/[[D-031]] chain; any argument that koan should touch a consumer's config routes through the never-write contract set here.
 - **Revisit if:** the hook speaks on a healthy repo, a non-Claude target grows a hook mechanism, or plugin loading from `~/.claude/skills` stops working.
 
-### D-038: A shortcut is accepted by citing the decision that took it
-- **Decision:** A `koan:` note naming a `D-nnn` is **dispositioned**: `--debt` still lists it (it is real debt) but the harden gate stops counting it. koan itself moves to **Phase: harden**.
-- **Why:** Check 12 said "fix or accept each one" and supported no way to accept, so the only route past the gate was deleting the marker — which throws away the note and its reasoning. A citation is not a new mechanism; it is the trail rule already in core, and it puts the *why* and the revisit trigger in the log where they belong rather than in a comment. The two shortcuts that blocked koan's own transition resolved cleanly under it: the continuity fixture's DB stub cites D-001 and is accepted; `build.mjs`'s "add an adapter" note was never debt at all — two targets is the intended set, since Cursor, Copilot and Codex read AGENTS.md natively, so an adapter would generate a file nothing reads.
-- **Alternatives rejected:** excluding fixture/test directories from the harvester (unknowable in general, and over-fitting the engine to this repo — check 8's mistake); a separate accept-list file (config as machinery, and a second home for a fact the log already holds).
-- **Status:** implemented · _2026-08-06_ — pinned both ways in `lint-fixtures.mjs` under [[D-037]], which immediately caught the message string harvesting *itself* (the quoted-span stripper can't see through escaped backticks in a template literal).
-- **Revisit if:** citations get added to silence the gate rather than to record a decision — the tell is a `D-nnn` in a note whose entry says nothing about that shortcut.
-
 ### D-039: koan is insurance for weak models and large projects; stop measuring the quality axis
 - **Decision:** Close the open Stage 2 question. koan's claim is **continuity and restraint under pressure** — weaker models, cold resumes, large projects. No scale fixture is built, and the frontier-model/small-fixture A/B stops being run for quality delta.
 - **Why:** Stage 2's A/B has converged on "no measurable difference" every time, and the honest reading is that the instrument is at its limit, not that the kit is worthless: a 2k-char fixture cannot manifest a problem that only appears at 200 files. Building a scale fixture to chase it would be the largest instrument in the repo, measuring the axis koan claims *least* — three sittings after [[D-036]] cut the last instrument that decided nothing. [[D-023]] already says koan is a frontier-tier kit; this says what it is *for* on that tier, which is not raw answer quality.
@@ -153,6 +146,13 @@
 - **Alternatives rejected:** topic-first sets (above); a lint check that a set's filename appears in the constitution (fires on healthy repos that route via the index — [[D-037]]'s noise class; an observed drifted-out-of-mind set buys it); teaching sets in the `koan-init` templates (a greenfield repo is months from its first split; wrap §4 is the point of temptation).
 - **Status:** implemented · _2026-08-08_
 - **Revisit if:** a field repo shows a set no session opened despite the trigger line, or [[D-033]]'s "a set drifts out of mind" clause fires anyway.
+
+### D-043: Budgets price the entry too, not just the file
+- **Decision:** The over-budget DECISIONS warning names the fattest entries (compress-first remediation; silent under budget). Check 14 names parallel ID series (`## W-001…`) the integrity checks can't see. Check 9 counts constitution and domain-set citations. "Five short fields" ships in the template header and wrap §3–§4. Selfcheck asserts the budget numbers restated across prose surfaces agree with `lint.mjs`.
+- **Why:** An external refactor review (2026-08-20) measured four field repos at the 30k ceiling with archiving intact: the mass was fat live entries (one 9.2k = 31% of a log) and a hand-rolled W-series — the kit taught compression nowhere and the linter couldn't name either shape.
+- **Alternatives rejected:** a per-project budget override in the constitution (deferred — compression alone rescued the measured repos, and an unused valve invites raising instead of distilling); an unconditional per-entry size warning (fires on healthy under-budget logs — [[D-037]]'s noise class).
+- **Status:** implemented · _2026-08-20_ — pinned in `lint-fixtures.mjs`; wrap ceiling 7200 → 7550 in the same change (was flush at 99.5%, budgets.json's wall rule).
+- **Revisit if:** a repo still legitimately exceeds 30k after compressing and splitting — then add the explicit override (parsed beside `Phase`, hard stop stays 1.5×) as its own logged decision.
 
 ## Domain decision sets
 Live decisions scoped to one domain — full entries out of context, IDs permanent.
@@ -185,3 +185,4 @@ moving them would buy budget by hiding the rules that stop bad additions.
 - **D-024** — No koan-compact skill — checkpoint before /compact, on free channels — implemented · archived
 - **D-026** — superpowers ingest — form-follows-failure; descriptions carry triggers — implemented · archived
 - **D-031** — Drift of installed copies is caught on the push channel — implemented · archived
+- **D-038** — A shortcut is accepted by citing the decision that took it — implemented · archived
