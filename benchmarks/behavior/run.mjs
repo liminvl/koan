@@ -8,7 +8,7 @@
 //   node run.mjs               # real run: each arm × probe via `claude`, graded
 //
 // Grader idea + the explanation/onecheck probes are from ponytail's behavior.yaml.
-import { writeFileSync, readFileSync, existsSync, copyFileSync, appendFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, readFileSync, existsSync, copyFileSync, appendFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { arms as allArms } from '../arms/arms.mjs';
@@ -22,8 +22,29 @@ const skill = (name) => {
 };
 const koanInit = skill('koan-init');
 const koanJazz = skill('koan-jazz');
+// A skill is what its installed dir holds, not SKILL.md alone: koan-init reads
+// its templates/ and references/ at run time, and under D-012's --safe-mode +
+// neutral cwd the arm cannot reach the plugin dir (first real `shape` run,
+// 2026-09-23: the arm inferred the ops shape correctly, then wrote a HANDOFF
+// without the template's sections because it "could not read templates/").
+// So the arm's system prompt carries the bundle inline, labelled by path —
+// the same files a real session opens from the skill dir. Baseline gets none.
+function skillBundle(name) {
+  const dir = join(ROOT, 'dist', 'claude', 'skills', name);
+  const body = skill(name);
+  if (body == null) return null;
+  const extra = [];
+  for (const sub of ['templates', 'references']) {
+    const d = join(dir, sub);
+    if (!existsSync(d)) continue;
+    for (const f of readdirSync(d).sort())
+      extra.push(`\n\n<!-- bundled file: ${sub}/${f} — the skill's ${sub}/ dir as installed -->\n${readFileSync(join(d, f), 'utf8')}`);
+  }
+  return body + extra.join('');
+}
+const koanInitBundle = skillBundle('koan-init');
 // The rule in koan-init's SKILL.md, not core AGENTS.md — its own arm pair (D-021).
-const initArms = koanInit ? [{ name: 'baseline', system: '' }, { name: 'koan-init', system: koanInit, requiresBuild: true }] : null;
+const initArms = koanInitBundle ? [{ name: 'baseline', system: '' }, { name: 'koan-init', system: koanInitBundle, requiresBuild: true }] : null;
 
 // A near-empty app repo with no stated goal — nothing to seed an Objective from.
 // Shared by `greenfield` (the interview rule) and `shape`'s mvp variant (no

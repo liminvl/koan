@@ -21,9 +21,12 @@ description now routes any repo-backed work (the "not for prose" exclusion is
 gone); the ladder is unchanged. `npm test` is green (five `grew` warnings, all
 justified in D-044; sizes re-recorded).
 **Six skills** — `koan-debt` folded into `koan-lint --debt` ([[D-036]]).
-Benchmarks: Stage 1 is **behavior only**; a seventh probe, `shape` (koan-init
-arm pair, `ops` + `mvp` variants), is selftest-pinned and **has not had a real
-run**. Deltas remain model-*split* within the frontier tier ([[D-030]]).
+Benchmarks: Stage 1 is **behavior only**; the seventh probe, `shape` (koan-init
+arm pair, `ops` + `mvp` variants), **flipped on fable-5-1, n=1** (baseline
+seeds `--check --diff` too but files the untested restore nowhere; koan-init
+puts it under *Not yet verified* and writes a pointer file). Lifecycle arms now
+carry their bundle ([[D-045]]). Deltas remain model-*split* within the frontier
+tier ([[D-030]]).
 Results: `benchmarks/results/` (outcome runs preserved as a record).
 The log holds two domain sets ([[D-033]]): `benchmarks` and `method` — a split
 ships a constitution read-trigger line ([[D-042]]). Budgets price the entry
@@ -78,6 +81,14 @@ live only in that session's transcript — the durable facts are in the entry.
 - Field re-lint of all 22 repos: verdicts identical to before except the five
   expected check-15 warnings (comfyUI 96k, vibe-shield, iams-wordpress,
   hostinger, divi-5-agent). `--debt` on sandwich now lists its 5 `.gd` shortcuts.
+- **Second sitting, same day:** D-044 committed (`31a5b70`); plugin pushed to
+  `~/.claude/skills/koan`. `shape` run for real: first run scored koan-init "no"
+  on `ops` because the arm could not read `templates/` — **[[D-045]]** (benchmarks
+  set): a lifecycle arm carries its bundle. Re-run **flipped** — see
+  `benchmarks/results/2026-09-23-stage1-shape-fable5-1.md`. hostinger's
+  pointer-file move applied (constitution 22,963 → 14,734; new
+  `docs/PLATFORM-RUNBOOK.md`; Shape + real Checks; lint clean) — **left
+  uncommitted there for review.**
 
 ## In progress
 - Nothing half-coded.
@@ -85,16 +96,13 @@ live only in that session's transcript — the durable facts are in the entry.
 ## Next steps
 What survives is small on purpose; do not repopulate it to feel busy.
 
-1. **Commit this session's work** — the pre-commit hook re-runs `npm test`. Then
-   refresh the installed plugin: `node push.mjs --target plugin --force` +
-   `/reload-plugins`.
-2. **Run the `shape` probe for real** (one fable-5 run, then per [[D-022]] if it
-   flips): `node benchmarks/behavior/run.mjs --probes shape`. D-044's seat rests
-   on selftest pins until then.
-3. **Apply the pointer-file move to one over-20k field repo** — hostinger is the
-   natural first (its D-023 already built the inventory; the constitution's
-   16.3k "Invariants & gotchas" section is the runbook). One repo proves the
-   wording lands before the other four are touched.
+1. **Commit D-045 + this HANDOFF**; `/reload-plugins` (or restart) so the hook
+   reloads — the skills are already current.
+2. **Review and commit hostinger's move** (`git diff` there: `CLAUDE.md`,
+   `docs/HANDOFF.md`, new `docs/PLATFORM-RUNBOOK.md`). Then the other four
+   over-20k repos, one at a time — comfyUI (96k, a lab notebook) is the big one.
+3. **Replicate `shape`**: two more fable-5-1 runs (`--probes shape --model
+   claude-fable-5-1`) for [[D-022]]'s 2-of-3, then one sonnet-5 row for the tier.
 4. **Re-measure trail before the next core addition** ([[D-030]]) — unchanged
    from last sitting; the core grew 58 chars of description only.
 5. **Watch whether `method` is ever opened** ([[D-033]]'s standing risk).
@@ -109,28 +117,25 @@ What survives is small on purpose; do not repopulate it to feel busy.
    pointer-file case again, not a new rule.
 
 ## Not yet verified
-- **D-044 has no real behavior run.** The `shape` grader discriminates on
-  pinned shapes; whether koan-init actually seeds `ansible-playbook --check` and
-  flags the untested restore where baseline writes `npm test` is unmeasured.
+- **`shape` is n=1 on one model.** One fable-5-1 flip after [[D-045]]; the
+  first run (arm without its bundle) is recorded in the same results file as
+  the null it was. [[D-022]]'s 2-of-3 is not met and sonnet-5 is unmeasured.
+  Baseline's `ops` "no" is narrow: it seeded the real commands too and missed
+  only the restore gap's home — the delta is the *Not yet verified* routing plus
+  the pointer file, not shape inference.
 - **The 20k constitution warning has fired only from this repo** against the
   five field repos; no consumer session has seen it or acted on it.
-- **The pointer-file rule has no field exposure.** No repo has been moved onto
-  it; hostinger's inventory predates the rule and is the closest existing shape.
+- **The pointer-file rule has one application, by koan's own author-session,
+  uncommitted** (hostinger). Whether a cold session there opens the runbook
+  on its read-trigger is the test; nothing has run against the moved docs yet.
 - **Two `claude -p --safe-mode` dry runs of the built `koan-init` (2026-09-23)
-  landed the shape behavior without the reference.** hostinger (koan docs
-  stripped): Shape "a config workspace for a live estate"; Checks = a table of
-  live probes keyed by change type, "there is no suite"; Objective = a steady
-  state; read-triggers for `PLATFORM-INVENTORY.md`/`-CONTRACT.md`; env
-  identities, never values. runway (own CLAUDE.md kept, backfilled additively):
-  Shape "a creative-production workspace, not an app"; Checks = procedures;
-  `docs/environment.md` created as a pointer file marked "query, don't mirror";
-  per-project STATUS.md kept as the shot-level home. **Caveat:** `--safe-mode`
-  denied both runs the `templates/` and `references/` reads, so the behavior
-  came from SKILL.md alone — and without the template each invented its own
-  entry format (`## D-003 —` / `**D-001 · date · settled** —`) that lint reads
-  as 31/8 phantom citations, and hostinger put `**Phase:**` in HANDOFF, not
-  CLAUDE.md.
-  A real install reads the templates from the plugin dir; that path is untested.
+  on scratch clones** — hostinger (koan docs stripped) and runway (own CLAUDE.md
+  kept) — both inferred the shape and wrote procedures as Checks, a steady-state
+  Objective and a pointer file, **from SKILL.md alone**: `--safe-mode` denied
+  the `templates/` reads, so each invented its own decision-entry format that
+  lint reads as phantom citations, and hostinger put `**Phase:**` in HANDOFF.
+  That is the failure [[D-045]] fixed for the harness; a real install reads the
+  templates from the plugin dir, and that path is still unobserved in the field.
 - **The widened harvester is field-checked on 22 repos** (no spurious `.md`
   hits; sandwich +5, vibe-agent +2 legitimate), but a repo with many YAML
   `# koan:` mentions that are not shortcuts has not been seen.

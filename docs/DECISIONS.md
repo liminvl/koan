@@ -163,9 +163,9 @@ governing what earns a place in the shipped kit — the probe types, the 2-of-3
 promotion bar, the tier stance, the demotion rule — deliberately stay in this
 log: a session arguing whether a rule earns its seat needs them in context, and
 moving them would buy budget by hiding the rules that stop bad additions.
-- **benchmarks** (`docs/DECISIONS-benchmarks.md`) — D-006, D-012, D-014, D-015, D-017, D-018, D-021, D-032 —
+- **benchmarks** (`docs/DECISIONS-benchmarks.md`) — D-006, D-012, D-014, D-015, D-017, D-018, D-021, D-032, D-045 —
   how an instrument is built: the staged architecture, arm isolation, act-grading,
-  write/git channels, the model axis, per-probe arm pairs, and what a null buys.
+  write/git channels, the model axis, per-probe arm pairs and their bundles, and what a null buys.
 - **method** (`docs/DECISIONS-method.md`) — D-036, D-037 — how the kit itself is
   priced and checked: the ablation precedent (koan's own tooling is judged by the
   build-less ladder) and the rule that a check arrives pinned against shapes this

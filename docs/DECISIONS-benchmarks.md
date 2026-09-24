@@ -64,3 +64,10 @@
 - **Status:** implemented · _2026-08-02_ — paid for by compressing D-017/D-018/D-021, whose narrative D-023/D-030 had overtaken.
 - **Load-bearing:** second case of [[D-017]] — the measurement refused as a gate is the one that discriminates.
 - **Revisit if:** the return goes null tier-wide with sonnet-5 readable (then §3's prose is the cut, not §2), or a field jam ends with only a branch.
+
+### D-045: A lifecycle-skill arm carries its installed bundle, not SKILL.md alone
+- **Decision:** A [[D-021]] arm pair's system prompt is the skill's SKILL.md **plus every file under its `templates/` and `references/`**, inlined and labelled by path (`skillBundle()` in `behavior/run.mjs`). Baseline still gets nothing.
+- **Why:** The first real `shape` run (fable-5-1, 2026-09-23) scored the koan-init arm "no" on `ops` while its transcript had inferred the estate, seeded `--check --diff` and written "a backup is not proven until a restore has been exercised" — filed under Next steps, because under [[D-012]]'s `--safe-mode` + neutral cwd the arm could not open `templates/` and invented its own section set. The grader keys on the template's *Not yet verified* heading, so the run measured the sandbox, not the rule ([[D-015]]'s class one layer out). A real session opens those files from the skill dir; the arm should see what a session sees.
+- **Alternatives rejected:** copying the bundle into the fixture (baseline could read it — contamination); relaxing the grader to any section (the section set IS part of what koan-init ships); a cwd inside the plugin dir (breaks [[D-012]]).
+- **Status:** implemented · _2026-09-23_ — greenfield's arm changes too; its grade never depended on the bundle, so its history stands.
+- **Revisit if:** a bundle grows past what a system prompt should carry (then ship a path the arm may read instead), or a probe's flip reverses between the two arm shapes.
