@@ -1,7 +1,7 @@
 ---
 name: koan-wrap
 description: >-
-  Close out a coding session cleanly so a fresh session can resume. Use at the
+  Close out a work session cleanly so a fresh session can resume. Use at the
   end of a work session, on "wrap up", "/koan-wrap", "update the handoff", "I'm
   stopping here", or before switching tasks. Produces one artifact: a
   docs/HANDOFF.md a cold session can start from. ALSO handles mid-session
@@ -32,14 +32,15 @@ in place of the end-of-session wrap.
 ## 1. Gather evidence — don't trust your memory of the session
 - `git log --oneline <last-handoff-commit>..HEAD` — what actually shipped.
 - `git status --short` — uncommitted work.
-- For anything you'll mark **done**: the evidence is the project's **Checks**
-  (types/lint/tests) green *this session*. Didn't run or didn't pass ⇒ it's "Not
-  yet verified", not done.
+- For anything you'll mark **done**: the evidence is the project's **Checks** —
+  tests, plan/diff, health, eval or human sign-off, whichever it declares —
+  passed *this session*. Didn't run or didn't pass ⇒ "Not yet verified".
+  External state counts only as a dated verification with a pointer.
 
 ## 2. Update docs/HANDOFF.md — prune FIRST, then write
 Read at the start of EVERY session, so its size is a permanent tax.
-**Budget: ≤ ~15k chars** — count with `koan-lint`, never `wc -c`: the gate counts
-characters, `wc` counts bytes, and `—`/`·` fake an overrun. Over or close ⇒ prune under.
+**Budget: ≤ ~15k chars** — count with `koan-lint`, not `wc -c` (bytes; `—`/`·`
+fake an overrun). Over or close ⇒ prune under.
 
 **Prune first.** Delete: the previous session's "Changes this session" (git is the
 record); verified lines in "Not yet verified"; resolved "Open questions";
@@ -78,6 +79,7 @@ Route each line before writing it:
 | the choice + why + alternatives + what would reopen it | **DECISIONS.md** |
 | built / tested / verified / pending — a *now*-state | **HANDOFF.md** |
 | a permanent mechanical constraint | **CLAUDE.md** gotchas |
+| a fact about a system outside git (an estate, a live site, a DB, a measurement) | **its pointed-to file** (named in the constitution): identities recorded, values queried, dated |
 | a rule the project's spec/contract docs own | **the spec doc**; DECISIONS gets only the why + a pointer |
 
 Entry = **Decision / Why / Alternatives rejected / Status (one line) / Revisit-if**
@@ -96,8 +98,8 @@ Auto-loaded every session via `@docs/DECISIONS.md`, so size is a permanent tax.
 **Move main → archive when ALL hold:** Status is `implemented`/`superseded`;
 nothing open in HANDOFF depends on it; it records how a *finished* feature was
 built. **Keep in main if ANY hold:** cited by ≥2 others *where the citation
-carries reasoning* — a mention of an ID inside an example or a fixture is not a
-citation; defines a cross-cutting invariant; is the active frontier. Unsure ⇒ keep.
+carries reasoning* (an ID inside an example or fixture is not a citation);
+defines a cross-cutting invariant; is the active frontier. Unsure ⇒ keep.
 
 **Nothing archivable and still over?** Compress before splitting: `koan-lint`
 names the largest entries — cut each to its five fields, moving overflow
@@ -109,10 +111,10 @@ under `## Domain decision sets` so citations resolve. Add a read-trigger to the
 constitution: `Touching <area>? Read docs/DECISIONS-<domain>.md first.` — the
 index records that the set exists; the trigger says when to open it.
 
-**Mechanics:** move the **full entry verbatim** (never trim reasoning, never
-delete). Leave a one-line stub in **Archived decisions index**: `- **D-0NN** —
-<title> — <status> · archived`. **IDs are permanent — never renumber**; a gap is
-correct. Same mechanics for a domain set, listed under its own heading.
+**Mechanics:** move the **full entry verbatim** (never trim, never delete). Leave
+a one-line stub in **Archived decisions index**: `- **D-0NN** — <title> —
+<status> · archived`. **IDs are permanent — never renumber**; a gap is correct.
+Same mechanics for a domain set, listed under its own heading.
 
 ## 5. Sanity check before finishing
 > If `koan-lint` is available, run it and confirm what it flags.
@@ -120,7 +122,7 @@ correct. Same mechanics for a domain set, listed under its own heading.
 - HANDOFF free of git-owned facts? (check 11 sees "uncommitted", not a stale hash.)
 - Anything this session contradict a DECISIONS entry (main or archive)? Supersede it.
 - HANDOFF still a snapshot, not a diary? No `<details>` archives.
-- Both budgets met (HANDOFF ≤15k, DECISIONS ≤30k)?
+- Budgets met (HANDOFF ≤15k, DECISIONS ≤30k, constitution ≤20k)?
 - Skim CLAUDE.md/AGENTS.md for any line this session falsified — fix or flag.
 - Any fact now in two of CLAUDE.md / HANDOFF.md / DECISIONS.md? Delete the twin.
 - Index ↔ archive parity: every stub has one full entry and vice versa; every
@@ -134,4 +136,4 @@ Wrapped: HANDOFF <chars>/15k · DECISIONS <chars>/30k · archived <IDs or none> 
 Next session starts at: <one line>
 ```
 Do not commit unless asked — and if asked, nothing you just wrote should need correcting.
-<!-- koan v0.1.0 · build 5d5c5e9a -->
+<!-- koan v0.1.0 · build f851a641 -->

@@ -52,7 +52,7 @@ remove. Changes under `hooks/` don't hot-reload the way a `SKILL.md` does —
 restart Claude Code or run `/reload-plugins` after pushing.
 
 ## The session loop
-1. `/koan-init` once — seeds CLAUDE.md, `docs/HANDOFF.md`, `docs/DECISIONS.md` from what the repo already contains (or interviews you, if nothing exists yet).
+1. `/koan-init` once — reads what kind of repo this is and what proves a change, then seeds CLAUDE.md, `docs/HANDOFF.md`, `docs/DECISIONS.md` from what the repo already contains (or interviews you, if nothing exists yet). Any repo-backed work fits: an app, an ops estate, a data pipeline, an AI system, a manuscript.
 2. Work — the lens keeps output minimal and routes every durable fact to its one home.
 3. `/koan-wrap` when stopping — HANDOFF becomes a pruned snapshot a cold session can resume from; settled decisions get archived.
 4. `/koan-readback` when resuming — the agent plays its understanding back for correction *before* touching code.

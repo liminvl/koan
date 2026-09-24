@@ -22,6 +22,16 @@ const skill = (name) => {
 };
 const koanInit = skill('koan-init');
 const koanJazz = skill('koan-jazz');
+// The rule in koan-init's SKILL.md, not core AGENTS.md — its own arm pair (D-021).
+const initArms = koanInit ? [{ name: 'baseline', system: '' }, { name: 'koan-init', system: koanInit, requiresBuild: true }] : null;
+
+// A near-empty app repo with no stated goal — nothing to seed an Objective from.
+// Shared by `greenfield` (the interview rule) and `shape`'s mvp variant (no
+// ops ceremony on a small app).
+const greenfieldFiles = {
+  'package.json': '{ "name": "app", "private": true, "scripts": { "start": "node index.js" } }\n',
+  'index.js': 'console.log("hello");\n',
+};
 
 // Each probe: the load-bearing rule it tests, a task, a deterministic grader, and
 // a good/bad reference answer the grader must split (good passes, bad fails).
@@ -89,15 +99,9 @@ const probes = [
     kind: 'delta',
     rule: 'koan-init: unclear intent triggers an interview instead of inventing the Objective (D-020)',
     task: 'Set up the koan continuity docs (CLAUDE.md, docs/HANDOFF.md, docs/DECISIONS.md) for this project.',
-    // A near-empty repo with no stated goal — nothing to seed an Objective from.
-    files: {
-      'package.json': '{ "name": "app", "private": true, "scripts": { "start": "node index.js" } }\n',
-      'index.js': 'console.log("hello");\n',
-    },
+    files: greenfieldFiles,
     write: true,
-    // This rule lives in koan-init's SKILL.md, not core AGENTS.md, so the shared
-    // arms don't carry it — this probe swaps in its own arm pair.
-    arms: koanInit ? [{ name: 'baseline', system: '' }, { name: 'koan-init', system: koanInit, requiresBuild: true }] : null,
+    arms: initArms,
     grade: (a, dir) => /\?/.test(a) && !wroteConfidentObjective(dir),
     good: 'Before I scaffold these, I need more context: what problem is this solving and what does "done" look like? '
       + 'Who is it for? Any hard constraints or decisions already made (stack, auth, data model)? '
@@ -158,6 +162,23 @@ const probes = [
     // skill fixes where a finding lands, not which branch it lands on).
     fsOnly: true,
     grade: (a, dir) => wroteBet(dir, jazzFixture()['docs/HANDOFF.md']),
+  },
+  {
+    name: 'shape',
+    kind: 'delta',
+    rule: 'koan-init: Checks are seeded from the repo\'s real proof, not an app template — and a small app inherits no ops ceremony (D-044)',
+    task: 'Set up the koan continuity docs (CLAUDE.md, docs/HANDOFF.md, docs/DECISIONS.md) for this project.',
+    write: true,
+    arms: initArms,
+    // Two fixture variants under one arm pair, graded on the filesystem (D-014/
+    // D-015). A flip needs BOTH, the D-028 shape: `ops` must name the estate's
+    // real proof, carry no app-template row, and flag the untested restore as
+    // unproven; `mvp` must not gain SLOs, DR plans or runbooks. Either half
+    // alone is not evidence — "never writes a tests row" would pass ops too.
+    variants: [
+      { name: 'ops', files: opsFixture(), grade: (a, dir) => seededOpsProof(dir) },
+      { name: 'mvp', files: greenfieldFiles, grade: (a, dir) => !wroteCeremony(dir) },
+    ],
   },
 ];
 
@@ -246,6 +267,35 @@ function selftest() {
   if (jazzPins.every(Boolean)) {
     console.log('  ok  jazz: fs channel discriminates (landed finding vs branch-only vs prose) + isolation column splits');
   } else { console.error('FAIL jazz: fs channel does not discriminate'); failed++; }
+  // shape fs channels: ops must see real proof + no template row + the restore
+  // gap, each pinned against the way a run could fake it; mvp must fail on
+  // ceremony and NOT on a template comment that merely mentions a runbook.
+  const shape = probes.find((p) => p.name === 'shape');
+  const [opsV, mvpV] = shape.variants;
+  const ofx = () => fixtureDir(opsV.files, 'probe-shape-ops');
+  const mfx = () => fixtureDir(mvpV.files, 'probe-shape-mvp');
+  const seed = (d, constitution, handoff) => {
+    mkdirSync(join(d, 'docs'), { recursive: true });
+    writeFileSync(join(d, 'CLAUDE.md'), constitution);
+    writeFileSync(join(d, 'docs', 'HANDOFF.md'), handoff);
+    return d;
+  };
+  const realChecks = '# estate\n\n## Checks\n- plan: `ansible-playbook -i inventory.ini site.yml --check --diff`\n- backup: `scripts/backup.sh` exits 0\n\n## Gotchas\n- x\n';
+  const templateChecks = '# estate\n\n## Checks\n- plan: `ansible-playbook site.yml --check`\n- tests: `npm test`\n';
+  const gap = '# Handoff\n\n## Objective\nx\n\n## Not yet verified\n- restore from restic never exercised — a drill would prove it\n';
+  const noGap = '# Handoff\n\n## Objective\nx\n\n## Not yet verified\n- nginx config untested on web02\n';
+  const shapePins = [
+    opsV.grade('', seed(ofx(), realChecks, gap)),
+    !opsV.grade('', ofx()),
+    !opsV.grade('', seed(ofx(), templateChecks, gap)),
+    !opsV.grade('', seed(ofx(), realChecks, noGap)),
+    mvpV.grade('', mfx()),
+    !mvpV.grade('', seed(mfx(), '# app\n\n## Checks\n- tests: `npm test`\n', '# Handoff\n\n## Next steps\n1. Define SLOs and a disaster recovery runbook.\n')),
+    mvpV.grade('', seed(mfx(), '# app\n<!-- paths only: code, IaC, a runbook, a chapter -->\n## Checks\n- tests: `npm test`\n', '# Handoff\n\n## Objective\nx\n')),
+  ];
+  if (shapePins.every(Boolean)) {
+    console.log('  ok  shape: both variant channels discriminate (real proof + restore gap vs template row vs no gap; ceremony vs a template comment)');
+  } else { console.error('FAIL shape: variant channels do not discriminate'); failed++; }
   console.log(failed ? `\nselftest: ${failed} failure(s)` : '\nselftest: behavior graders discriminate');
   process.exit(failed ? 1 : 0);
 }
@@ -421,6 +471,49 @@ function codeLandedOnMain(dir) {
   // dependency, which is scaffolding rather than anything the arm wrote.
   const isCode = (p) => !/^docs\//.test(p) && !/\.md$/i.test(p) && !/^node_modules\//.test(p);
   return [...tracked.filter((p) => !seeded.includes(p)), ...dirty].some(isCode);
+}
+
+// An ops estate with no application source: a playbook, an inventory, a backup
+// script, and a README that names the real commands. Nothing here runs `npm`.
+function opsFixture() {
+  return {
+    'README.md': '# office-estate\n\nAnsible for the three office VMs (web, db, backup). Apply with\n'
+      + '`ansible-playbook -i inventory.ini site.yml`; dry-run with `--check --diff`.\n'
+      + 'Nightly backups run from scripts/backup.sh (cron on the backup host).\n',
+    'inventory.ini': '[web]\nweb01 ansible_host=10.0.0.11\n\n[db]\ndb01 ansible_host=10.0.0.12\n\n[backup]\nbk01 ansible_host=10.0.0.13\n',
+    'site.yml': '- hosts: web\n  roles: [nginx]\n- hosts: db\n  roles: [postgres]\n- hosts: backup\n  roles: [restic]\n',
+    'roles/nginx/tasks/main.yml': '- name: install nginx\n  apt: { name: nginx, state: present }\n',
+    'scripts/backup.sh': '#!/bin/sh\n# nightly: dump postgres and push to restic\npg_dumpall | restic backup --stdin\n',
+    '.gitignore': '*.retry\n',
+  };
+}
+
+// The ops act, all from the filesystem: the written constitution's Checks block
+// names a real command from the fixture, carries no app-template row, and the
+// written HANDOFF names the untested restore as unproven.
+function seededOpsProof(dir) {
+  if (!dir) return false;
+  const c = join(dir, 'CLAUDE.md');
+  const h = join(dir, 'docs', 'HANDOFF.md');
+  if (!existsSync(c) || !existsSync(h)) return false;
+  const checks = readFileSync(c, 'utf8').match(/##\s*Checks[^\n]*\n([\s\S]*?)(?=\n##\s|$)/i)?.[1] ?? '';
+  const real = /ansible-playbook|--check|backup\.sh/i.test(checks);
+  const template = /\bnpm\b|pytest|\bjest\b|\btsc\b|^\s*-\s*types:/im.test(checks);
+  const gapNamed = /restore|backup/i.test(notYetVerified(readFileSync(h, 'utf8')));
+  return real && !template && gapNamed;
+}
+
+// Ceremony == the written docs prescribe operations a local hello-world has no
+// use for. HTML comments are stripped first: the shipped template's own comment
+// lists "a runbook" as a canonical-artifact example, and copying the template
+// is not the failure this measures.
+function wroteCeremony(dir) {
+  if (!dir) return false;
+  const re = /\bSLOs?\b|disaster recovery|runbook|rollback plan|control plane/i;
+  return ['CLAUDE.md', 'docs/HANDOFF.md', 'docs/DECISIONS.md'].some((f) => {
+    const p = join(dir, f);
+    return existsSync(p) && re.test(readFileSync(p, 'utf8').replace(/<!--[\s\S]*?-->/g, ''));
+  });
 }
 
 // Confident == wrote docs/HANDOFF.md with an Objective section and no hedge —

@@ -80,6 +80,19 @@ const PINS = [
     files: with_({ 'docs/DECISIONS.md': `# Decisions\n\n### D-001: a\n- **Status:** accepted\n\n### D-002: fat\n- **Status:** accepted\n- **Why:** ${'x'.repeat(5_000)}\n\n## Archived decisions index\n` }),
     silent: 'compress the largest' },
 
+  // The constitution is auto-loaded but was never budgeted; five field repos
+  // grew past 20k by turning Gotchas into a runbook or a lab notebook. The
+  // warning names the largest section so the remedy is a move, not a trim.
+  { name: 'oversize constitution warns and names its largest section',
+    files: with_({ 'CLAUDE.md': BASE['CLAUDE.md'] + `\n## Gotchas\n${'- the port drifts; re-derive it\n'.repeat(700)}\n## Canonical examples\n- x\n` }),
+    fires: 'Largest section: "Gotchas"' },
+  { name: 'a constitution under 20k stays silent',
+    files: with_({ 'CLAUDE.md': BASE['CLAUDE.md'] + `\n## Gotchas\n${'- the port drifts; re-derive it\n'.repeat(600)}\n` }),
+    silent: 'auto-loaded every session' },
+  { name: 'the largest section is named even when it is not Gotchas',
+    files: with_({ 'CLAUDE.md': BASE['CLAUDE.md'] + `\n## Gotchas\n- one\n\n## Findings\n${'- measured 2026-09-19: the pose clause costs the world\n'.repeat(500)}` }),
+    fires: 'Largest section: "Findings"' },
+
   // ---- check 4: decision-ID integrity ------------------------------------
   // The escape check 10 advertises. A qualified ID belongs to another repo's log
   // and cannot resolve here; the linter used to recommend a fix that did nothing.
@@ -227,6 +240,35 @@ const GIT_PINS = [
     files: with_({
       'CLAUDE.md': '# p\n**Phase:** harden\n@docs/DECISIONS.md\n\n## Checks\n- test: `npm test`\n',
       'src/a.mjs': '// koan: in-memory until a deploy target exists (D-001).\nexport const a = 1;\n',
+    }),
+    silent: 'without a disposition' },
+  // The harvester reads config, IaC and docs, not just code: the field had five
+  // `.gd` shortcuts the ledger never listed, and an ops repo's debt lives in
+  // playbooks and Terraform. Markdown counts only in the `<!-- koan: -->` form,
+  // so a guide's fenced `// koan:` EXAMPLE is not harvested as debt the project
+  // owes (koan's own GUIDE.md carries one, and koan is `harden`).
+  { name: 'a shortcut in a Terraform file counts',
+    files: with_({
+      'CLAUDE.md': '# p\n**Phase:** harden\n@docs/DECISIONS.md\n\n## Checks\n- plan: `terraform plan`\n',
+      'infra/main.tf': '# koan: single AZ until the second region is funded\nresource "x" "y" {}\n',
+    }),
+    fires: 'shortcut remains without a disposition' },
+  { name: 'a shortcut in a Godot script counts',
+    files: with_({
+      'CLAUDE.md': '# p\n**Phase:** harden\n@docs/DECISIONS.md\n\n## Checks\n- test: `godot --headless`\n',
+      'game.gd': '# koan: flat seconds; scale per group size once playtests say so\nvar t = 3\n',
+    }),
+    fires: 'shortcut remains without a disposition' },
+  { name: 'an HTML-comment shortcut in a runbook counts',
+    files: with_({
+      'CLAUDE.md': '# p\n**Phase:** harden\n@docs/DECISIONS.md\n\n## Checks\n- health: `curl -f https://x/health`\n',
+      'docs/RUNBOOK.md': '# Failover\n<!-- koan: manual failover until the script is trusted -->\n1. Switch DNS.\n',
+    }),
+    fires: 'shortcut remains without a disposition' },
+  { name: '…but a fenced or inline `koan:` example in a doc is a mention',
+    files: with_({
+      'CLAUDE.md': '# p\n**Phase:** harden\n@docs/DECISIONS.md\n\n## Checks\n- test: `npm test`\n',
+      'GUIDE.md': '# Guide\nMark a shortcut with a `koan:` comment:\n```js\n// koan: global lock, per-account locks if throughput matters\n```\n',
     }),
     silent: 'without a disposition' },
   // A commit hash in `## Current state` is deliberately NOT checked — see the

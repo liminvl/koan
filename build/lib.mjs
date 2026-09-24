@@ -82,6 +82,9 @@ export const listSources = () => ({
     .sort()
     .map((f) => join(SRC, 'lifecycle', f)),
   templates: join(SRC, 'templates'),
+  // Init-only progressive-disclosure content (the project-shapes reference):
+  // ships beside koan-init's templates, never in core or AGENTS.md.
+  references: join(SRC, 'lifecycle', 'references'),
   lintEngine: join(SRC, 'lifecycle', 'lint.mjs'),
   debtEngine: join(SRC, 'lifecycle', 'debt.mjs'),
   // The SessionStart hook lives beside lint.mjs so `./lint.mjs` resolves the

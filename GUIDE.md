@@ -76,17 +76,40 @@ optional **docs/DECISIONS-\<domain\>.md** sets for live decisions that only bind
 one area. Decision IDs (`D-001`, `D-002`, …) are permanent and never renumbered,
 so citations stay valid forever.
 
+When the repo *describes* a system rather than *being* it — an estate of VMs, a
+live site, a database, a model's measured behavior — that state gets a
+**pointed-to file** (`docs/<name>.md`) named in CLAUDE.md with a read-trigger
+("Operating the estate? Read docs/estate.md first"). Identities are recorded,
+values are queried, measurements are dated. It is never mirrored into HANDOFF
+(it would drift on every change that isn't a commit) or piled into Gotchas.
+
 Everything is human-readable and hand-editable — these are your project docs,
 not a database. Git is the history; the files only ever say what *is*.
 
+### Shape
+
+koan's continuity works for any repo-backed work — an app, an ops estate, a
+data pipeline, an AI system, a manuscript — because the three files hold facts
+about *work*, not about code. One free-text line in CLAUDE.md tells a cold
+session what it's looking at and what proves a change:
+
+> `**Shape:** ops estate: 3 Proxmox VMs + Ansible — proof = --check --diff + health script`
+
+Nothing parses it. `/koan-init` writes it after reading the repo, and the real
+proof lives in **Checks** — a test suite, a plan/diff, a health check, an eval,
+or a human pass, whichever the project actually has.
+
 ### Budgets
 
-HANDOFF is capped at ~15k characters and DECISIONS at ~30k, checked by
-`koan-lint`. The caps ration the model's *attention*, not cost — a 60k decision
-log gets loaded and then skimmed, which is how standing rules stop landing.
-When DECISIONS approaches its cap, settled entries move to the archive (a
-one-line stub stays behind); when HANDOFF does, stale lines get deleted, not
-collapsed into an "archive" section (hidden text still costs full tokens).
+HANDOFF is capped at ~15k characters, DECISIONS at ~30k, and CLAUDE.md itself
+at ~20k, checked by `koan-lint`. The caps ration the model's *attention*, not
+cost — a 60k decision log gets loaded and then skimmed, which is how standing
+rules stop landing. When DECISIONS approaches its cap, settled entries move to
+the archive (a one-line stub stays behind); when HANDOFF does, stale lines get
+deleted, not collapsed into an "archive" section (hidden text still costs full
+tokens); when CLAUDE.md does, the warning names its largest section — almost
+always Gotchas that became a runbook or a lab notebook — and the fix is a move
+to a pointed-to file, not a trim.
 
 ### Phases
 
@@ -129,11 +152,14 @@ agent) invoke at session boundaries.
   a rule you have to remember to apply is a rule that doesn't fire.
 
 ### `/koan-init` — set up a project
-- **What:** creates the three files (plus archive) from templates, then **seeds
-  them from the actual repo** — package scripts become the Checks section, git
-  log drafts the current state, env usage drafts the inventory. In an empty
-  repo it interviews you instead: what problem, what does "done" look like, who
-  is it for, what's already decided.
+- **What:** reads the repo's **shape** first — what it is, and what proves a
+  change is done here — and plays that back in three lines before writing
+  anything. Then it creates the three files (plus archive) from templates and
+  **seeds them from the actual repo**: the real proof becomes the Checks section
+  (a test script, a plan/diff, a health check, a viewing), git log drafts the
+  current state, state that lives outside git gets its pointed-to file. In an
+  empty repo it interviews you instead: what problem, what does "done" look
+  like, what proves it, who is it for, what's already decided.
 - **When:** once per project — a fresh repo, or an existing one adopting koan.
   Re-running is safe: it never overwrites, only adds missing sections.
 - **Why:** blank templates rot; docs seeded from reality get maintained.
@@ -221,6 +247,22 @@ concurrency; fixing that grows it to ~45 subtle lines vs ~12 lines of
 `lru-cache` config — take the dependency." That finding lands as one line in
 HANDOFF. The branch is deleted. Nobody jams on the same question next month,
 because the answer is written down.
+
+**An ops estate, not an app.**
+Three VMs, Ansible, a backup cron, no application source. `/koan-init` reads it
+as an estate: Checks become `ansible-playbook … --check --diff` plus the health
+script, "restore never exercised" lands in Not yet verified instead of being
+assumed, and the hosts, IDs and credential *locations* go in `docs/estate.md`
+with a read-trigger in CLAUDE.md — HANDOFF never mirrors what the box is doing
+right now. Wrap asks for a dated verification ("restore drill passed 2026-09-10
+on `a1b2c3d`"), never "backups are working".
+
+**A video-production repo.**
+Briefs, shot lists, an asset register, a credit cap, and an approval gate. The
+shape line reads "video campaign — proof = user approves each package ID";
+Checks are procedures, not commands; the spend cap and "never publish" rules are
+Gotchas; the account and its expiring output URLs are a pointed-to file. The
+same three files, the same wrap and readback — nothing about them assumed code.
 
 **A teammate joins mid-project.**
 They clone the repo and the docs *are* the onboarding: CLAUDE.md says how to

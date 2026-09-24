@@ -254,5 +254,18 @@
       "dist/claude/skills/koan-lint/SKILL.md": 1794,
       "dist/claude/skills/koan-jazz/SKILL.md": 4405
     }
+  },
+  {
+    "date": "2026-09-24",
+    "sizes": {
+      "dist/agents/AGENTS.md": 5166,
+      "dist/claude/skills/koan/SKILL.md": 6458,
+      "dist/claude/skills/koan-wrap/SKILL.md": 7402,
+      "dist/claude/skills/koan-init/SKILL.md": 5480,
+      "dist/claude/skills/koan-init/references/project-shapes.md": 6485,
+      "dist/claude/skills/koan-readback/SKILL.md": 1948,
+      "dist/claude/skills/koan-lint/SKILL.md": 1794,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4405
+    }
   }
 ]

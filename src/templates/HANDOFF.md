@@ -5,7 +5,9 @@
 > Stable facts belong in the constitution; decision rationale in docs/DECISIONS.md.
 
 ## Objective
-<!-- the target this work drives toward + its done-condition -->
+<!-- the target this work drives toward + its done-condition. No finish line
+     (operating a platform, an ongoing series)? State the steady state to hold
+     and what would change the objective. -->
 
 ## Current state
 <!-- one or two lines: what's live/working, what's half-done. NO facts git already
@@ -41,7 +43,8 @@
      tag steps only the human can do with (human) -->
 
 ## Not yet verified
-<!-- claims not yet proven + what would prove them. In the explore phase this is
+<!-- claims not yet proven + what would prove them — a test, a curl, a restore
+     drill, a human viewing it. In the explore phase this is
      also where a provisional choice lives — "bet: X — unproven at Y, Z settles
      it" — instead of minting a permanent D-id for something a week may reverse.
      At the phase change, promote the survivors into docs/DECISIONS.md as real

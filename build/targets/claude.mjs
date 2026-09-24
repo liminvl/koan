@@ -40,7 +40,10 @@ export function buildClaude() {
     const dir = join(out, 'skills', name);
     write(join(dir, 'SKILL.md'), stampMd(raw));
     skills.push(name);
-    if (name === 'koan-init') cpSync(src.templates, join(dir, 'templates'), { recursive: true });
+    if (name === 'koan-init') {
+      cpSync(src.templates, join(dir, 'templates'), { recursive: true });
+      cpSync(src.references, join(dir, 'references'), { recursive: true });
+    }
     // koan-lint ships debt.mjs too — lint.mjs imports it (one harvester, one
     // home), so a skill dir with only lint.mjs is broken as installed (D-034).
     if (name === 'koan-lint') {

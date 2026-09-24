@@ -8,6 +8,8 @@
 ## Start here
 Read docs/HANDOFF.md, then continue from Next steps.
 
+**Shape:** tiny todo HTTP API — proof = `node --test`
+
 ## Stack
 Node.js HTTP server, no framework, in-memory store.
 

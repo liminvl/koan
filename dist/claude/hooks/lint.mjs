@@ -36,6 +36,14 @@ export const DECISIONS_HARD = 45_000;
 // auto-loaded ceiling. It is not a loophole: a set that outgrows this is a
 // domain that wants splitting, not a bigger allowance.
 export const SET_BUDGET = 15_000;
+// The constitution is auto-loaded too — and imports DECISIONS on top — but was
+// never budgeted. Measured 2026-09-23 across 22 field repos: five sat over 20k
+// (one at 96k) and every one of them had turned Gotchas into a runbook, an
+// inventory or a lab notebook; every code-shaped repo was under 15.2k. So 20k
+// separates the two populations with no false positives on that day's field.
+// A warning, not an error: it names the largest section so the fix is a move,
+// not a cut.
+export const CONSTITUTION_BUDGET = 20_000;
 
 const read = (p) => (existsSync(p) ? readFileSync(p, 'utf8') : null);
 
@@ -83,6 +91,21 @@ export function lint(root = '.') {
 
   // 3. budgets
   const budget = [];
+  if (constitution) {
+    const n = constText.length;
+    budget.push(`${constitution} ${n}/${CONSTITUTION_BUDGET}`);
+    if (n > CONSTITUTION_BUDGET) {
+      // Name the largest ## section: field constitutions blew up one section at
+      // a time (a 1,000-line Gotchas), and the remedy is moving that material
+      // to a pointed-to file, not trimming lines evenly.
+      const fattest = constText.split(/^(?=##\s)/m)
+        .map((s) => [s.match(/^##\s+([^\n]*)/)?.[1]?.trim(), s.length])
+        .filter(([h]) => h)
+        .sort((a, b) => b[1] - a[1])[0];
+      const where = fattest ? ` Largest section: "${fattest[0]}" (${(fattest[1] / 1000).toFixed(1)}k).` : '';
+      warnings.push(`${constitution} is ${n} chars (> ${CONSTITUTION_BUDGET}) and is auto-loaded every session.${where} Runbook, findings or inventory material belongs in a pointed-to file the Start-here line names, not the constitution.`);
+    }
+  }
   if (handoff != null) {
     const n = handoff.length;
     budget.push(`HANDOFF ${n}/${HANDOFF_BUDGET}`);

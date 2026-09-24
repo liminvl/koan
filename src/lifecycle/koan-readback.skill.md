@@ -5,14 +5,14 @@ description: >-
   human to correct, BEFORE doing any work. Use on
   "/koan-readback", when resuming after a long gap, or on the first session after
   working in another tool (Windsurf, Cursor, Copilot). Catches misread context
-  before it becomes wrong code. Read-only.
+  before it becomes wrong work. Read-only.
 ---
 
 # Koan readback
 
-Before touching code on a cold start or a tool switch, confirm you actually
+Before doing work on a cold start or a tool switch, confirm you actually
 understand the project — don't just trust that the injected context landed right.
-A misread that becomes code is the expensive kind.
+A misread that becomes work is the expensive kind.
 
 ## Do this
 1. Read `CLAUDE.md` (or `AGENTS.md`), `docs/DECISIONS.md`, and `docs/HANDOFF.md`.
@@ -22,7 +22,7 @@ A misread that becomes code is the expensive kind.
 3. Play it back, in **≤10 bullets** with a blank line between each (readability
    beats density here):
    - the **Objective** and current state (from HANDOFF),
-   - the architecture + hard constraints (from CLAUDE.md),
+   - the Shape line, what proves a change (Checks) + hard constraints (from CLAUDE.md),
    - the live decisions you must not silently reverse (top DECISIONS entries).
 4. Close with two headed sections:
    - **`### Recommended Next Steps`** — a short numbered list: what you'd do

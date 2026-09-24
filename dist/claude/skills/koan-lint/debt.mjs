@@ -6,7 +6,14 @@ import { execSync } from 'node:child_process';
 import { join, resolve, relative } from 'node:path';
 
 const SKIP = new Set(['node_modules', '.git', 'dist', '.cache']);
-const CODE = /\.(m?js|cjs|ts|tsx|jsx|py|go|rs|java|rb|php|c|h|cpp|cs|sh|ps1|sql)$/i;
+// Code, config, IaC and docs alike: a shortcut in a playbook, a Terraform module
+// or a Godot script is the same debt as one in a .ts file — the field had five
+// `.gd` markers the ledger never listed. Markdown is harvested for the
+// `<!-- koan: … -->` form only (see LEADER_MD): a guide's fenced `// koan:`
+// example is a mention, not a shortcut the project owes.
+const CODE = /\.(m?js|cjs|ts|tsx|jsx|py|go|rs|java|rb|php|c|h|cpp|cs|sh|ps1|sql|tf|tfvars|hcl|ya?ml|toml|ini|conf|nix|gd|lua|kt|swift|md)$|(?:^|[\\/])(?:Dockerfile|Makefile)$/i;
+const LEADER = /(?:\/\/|#|\/\*|--).*?koan:\s+(.+?)\s*(?:\*\/\s*)?$/;
+const LEADER_MD = /<!--.*?koan:\s+(.+?)\s*-->/;
 
 export function harvest(root = '.') {
   root = resolve(root);
@@ -21,7 +28,7 @@ export function harvest(root = '.') {
       const code = line.replace(/'[^']*'|"[^"]*"|`[^`]*`/g, '');
       // What's left must be a comment (has a leader) carrying `koan:` + a space
       // + the note. The space excludes the `koan:core` build markers.
-      const m = code.match(/(?:\/\/|#|\/\*|--).*?koan:\s+(.+?)\s*(?:\*\/\s*)?$/);
+      const m = code.match(/\.md$/i.test(file) ? LEADER_MD : LEADER);
       // A note that cites a decision is DISPOSITIONED: the shortcut was taken on
       // purpose, the reasoning is logged, and the revisit trigger lives in the
       // entry. That is the whole disposition check 12 asks for — so the ledger

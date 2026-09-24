@@ -5,6 +5,7 @@
     { "q": "Why is the store in-memory instead of a database?", "expect": ["YAGNI", "DATABASE_URL"], "unwrapped": ["no deploy target", "DATABASE_URL"] },
     { "q": "Which file shows how data access is written?", "expect": ["src/store.js"], "unwrapped": ["src/store.js"] },
     { "q": "What open question needs a human decision?", "expect": ["Should list() return completed"], "unwrapped": ["should list() hand back completed"] },
-    { "q": "What must never move into middleware?", "expect": ["Auth in handlers"], "unwrapped": ["auth belongs in handlers"] }
+    { "q": "What must never move into middleware?", "expect": ["Auth in handlers"], "unwrapped": ["auth belongs in handlers"] },
+    { "q": "What evidence proves a change is done here?", "expect": ["node --test"], "unwrapped": ["node --test"] }
   ]
 }
