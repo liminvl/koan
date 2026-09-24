@@ -305,6 +305,22 @@ Silence *is* the working state. Force a check any time with `/koan-lint`.
 No. Only `init` is a prerequisite (once). Wrap and readback earn their keep the
 moment sessions span days or tools; lint and jazz are on-demand.
 
+**How do I bring an old repo up to the current template?**
+Re-run `/koan-init`. It never overwrites, only adds what's missing (a Checks
+section, the ritual line, a Shape line). It won't rewrite a section you already
+filled in, so to adopt a specific change name the decision and say what it
+means for this repo, e.g.:
+
+```
+/koan-init — adopt koan:D-044: add a Shape line, rewrite Checks as the real
+proof for this repo, and move any runbook or measured material out of Gotchas
+into a pointed-to file with a read-trigger.
+```
+
+`/koan-lint` afterwards confirms the constitution is under budget. There is no
+separate refresh skill on purpose: the migration is a one-time prompt, and a
+permanent skill for it would be exactly the bloat koan exists to catch.
+
 **Can I edit HANDOFF/DECISIONS by hand?**
 Yes — they're your files. Keep the routing rule in mind (one fact, one home)
 and let `/koan-lint` catch anything mechanical you break.

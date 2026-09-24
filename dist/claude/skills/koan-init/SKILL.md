@@ -36,8 +36,10 @@ that already exists — ask first.
 ### 1a. Backfill into an existing setup
 If the constitution exists, don't overwrite — but ADD any template section it's
 missing (additive, never touch existing content): a **Checks** section if absent;
-an **Objective** section in HANDOFF; the proactive-ritual note in "Start here".
-List each backfill in the report.
+an **Objective** section in HANDOFF; the current ritual line and a **Shape**
+line in "Start here". Re-running is how an old setup catches up; to adopt one
+change, name it ("adopt koan:D-044") and apply it the same way. List each
+backfill in the report.
 
 ## 2. Wire the import
 CLAUDE.md/AGENTS.md imports **only the lean active log** so it rides along:
@@ -94,4 +96,4 @@ Skip this when the repo already answers it — seed from reality per step 3.
 List files created and one line each on what you seeded, plus the Shape line as
 written. Note current char counts of HANDOFF (vs ~15k) and DECISIONS (vs ~30k)
 so the user knows the headroom. Suggest they review CLAUDE.md before relying on it.
-<!-- koan v0.1.0 · build 6208289c -->
+<!-- koan v0.1.0 · build 39121b22 -->

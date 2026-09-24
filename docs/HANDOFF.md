@@ -81,6 +81,11 @@ live only in that session's transcript — the durable facts are in the entry.
 - Field re-lint of all 22 repos: verdicts identical to before except the five
   expected check-15 warnings (comfyUI 96k, vibe-shield, iams-wordpress,
   hostinger, divi-5-agent). `--debt` on sandwich now lists its 5 `.gd` shortcuts.
+- **Third sitting (2026-09-24):** all 21 other field repos refreshed to D-044 by
+  Sonnet subagents from one prompt (uncommitted in each repo; every constitution
+  now under 20k; ten new pointer files). `koan-init` §1a now names re-running
+  as the catch-up path and "adopt koan:D-nnn" as the form; GUIDE FAQ carries the
+  prompt. No `koan-refresh` skill — a one-time migration doesn't earn a seat.
 - **Second sitting, same day:** D-044 committed (`31a5b70`); plugin pushed to
   `~/.claude/skills/koan`. `shape` run for real: first run scored koan-init "no"
   on `ops` because the arm could not read `templates/` — **[[D-045]]** (benchmarks
