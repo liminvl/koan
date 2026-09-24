@@ -13,9 +13,9 @@ of this README covers installation and development.
 
 ## What's in the box
 - **`koan`** — the always-on lens: two practices (build-less ladder + lose-less trail).
-- **`koan-init / -wrap / -readback / -lint`** — the session-boundary rituals. `koan-lint --debt` also harvests every `koan:` shortcut into a ledger.
+- **`koan-init / -wrap / -readback / -lint`** — the session-boundary rituals. `koan-lint --debt` also harvests every `koan:` shortcut into a ledger — from code, IaC, config and Markdown alike.
 - **`koan-jazz`** — a quarantined branch where the ladder is suspended.
-- A **SessionStart hook** (plugin installs only) — a deterministic continuity check that speaks *only* if something is wrong: a stale HANDOFF, a blown budget, a citation that resolves to nothing. Never writes, never blocks, completely silent in a healthy project and in any project that doesn't use koan.
+- A **SessionStart hook** (plugin installs only) — a deterministic continuity check that speaks *only* if something is wrong: a stale HANDOFF, a blown budget (HANDOFF, DECISIONS, or a CLAUDE.md past 20k), a citation that resolves to nothing. Never writes, never blocks, completely silent in a healthy project and in any project that doesn't use koan.
 
 ## Install
 

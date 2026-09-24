@@ -81,6 +81,9 @@ live only in that session's transcript — the durable facts are in the entry.
 - Field re-lint of all 22 repos: verdicts identical to before except the five
   expected check-15 warnings (comfyUI 96k, vibe-shield, iams-wordpress,
   hostinger, divi-5-agent). `--debt` on sandwich now lists its 5 `.gd` shortcuts.
+- **Third sitting, later:** GUIDE §2/§3 and README brought in line with D-044
+  (three-files table, wrap/readback/lint/hook descriptions) — the skill wording
+  had moved but the manual still said "green check" and "example files".
 - **Third sitting (2026-09-24):** all 21 other field repos refreshed to D-044 by
   Sonnet subagents from one prompt (uncommitted in each repo; every constitution
   now under 20k; ten new pointer files). `koan-init` §1a now names re-running

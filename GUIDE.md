@@ -66,7 +66,7 @@ enough to load every session:
 
 | File | Holds | Test for "does this line belong here?" |
 |---|---|---|
-| **CLAUDE.md** (or AGENTS.md) | The constitution: stack, how to run, the check commands that define "done", gotchas, pointers to canonical example files | Is it permanent and mechanical? ("needs `X` env var or it no-ops") |
+| **CLAUDE.md** (or AGENTS.md) | The constitution: what the repo is (one Shape line), stack, how to run, the proof that defines "done" (a test, a plan/diff, a health check, a human pass), gotchas, pointers to canonical artifacts | Is it permanent and mechanical? ("needs `X` env var or it no-ops") |
 | **docs/HANDOFF.md** | The rolling snapshot: objective, current state, next steps, what's unproven | Is it true *now* and will it be overwritten later? |
 | **docs/DECISIONS.md** | Choices with rationale: what was chosen, why, what was rejected, what would reopen it | Would a future session silently re-litigate this without the entry? |
 
@@ -168,8 +168,11 @@ agent) invoke at session boundaries.
 - **What:** the end-of-session ritual. Gathers evidence from git (never from
   memory of the chat), prunes HANDOFF *before* writing the new snapshot,
   appends real decisions to the log, archives settled ones, and runs the lint
-  checks. Anything not verified by a green check this session is recorded as
-  "Not yet verified", not "done".
+  checks. "Done" means the project's declared Checks passed this session —
+  whatever form they take: a test suite, a plan/diff, a health check, an eval,
+  a human pass. Anything else is recorded as "Not yet verified", and state
+  outside git only ever lands as a dated verification with a pointer, never a
+  present-tense claim.
 - **When:** ending a work session, switching tasks, or anything that ends with
   "I'm stopping here". Mid-session, say **"checkpoint"** instead — a light
   refresh of current-state/next-steps without the pruning pass. Checkpoint
@@ -182,7 +185,8 @@ agent) invoke at session boundaries.
 - **What:** the agent reads the three files, cross-checks them against `git log`
   and `git status` (git wins on disagreement), then plays its understanding
   back in ≤10 bullets — objective, constraints, live decisions, and the next
-  step it *would* take — and stops for your correction before touching code.
+  step it *would* take — including the Shape line and what proves a change
+  here — and stops for your correction before doing work.
 - **When:** first session after a gap, after working in a different tool, or
   any time you suspect the agent's picture is stale.
 - **Why:** a misread that becomes code is the expensive kind of misread. Thirty
@@ -191,9 +195,12 @@ agent) invoke at session boundaries.
 ### `/koan-lint` — check the docs
 - **What:** deterministic checks a model is bad at eyeballing: decision-ID
   integrity (every archive stub has a full entry and vice versa, no duplicate
-  or dangling IDs), character budgets, dead file paths in canonical examples,
-  HANDOFF staleness vs git, claims that outlived their commit. Read-only — it
-  reports, it never edits. `--debt` prints the `koan:` shortcut ledger instead.
+  or dangling IDs), character budgets (HANDOFF, DECISIONS, and the constitution
+  itself — an oversized CLAUDE.md is named with its largest section), dead
+  paths in canonical examples, HANDOFF staleness vs git, claims that outlived
+  their commit. Read-only — it reports, it never edits. `--debt` prints the
+  `koan:` shortcut ledger instead, reading code, IaC, config, Godot scripts and
+  `<!-- koan: -->` comments in Markdown alike.
 - **When:** whenever the docs feel off, before trusting a handoff you didn't
   write, or automatically (see the hook below). Wrap runs it as its final pass.
 - **Why:** cross-reference bookkeeping is exactly what an LLM will confidently
@@ -219,8 +226,9 @@ agent) invoke at session boundaries.
 
 ### The SessionStart hook (plugin installs only)
 - **What:** when a Claude Code session opens, it runs the lint checks and
-  speaks **only if something is wrong** — a stale HANDOFF, a blown budget, a
-  citation that resolves to nothing. Never writes, never blocks, exits cleanly
+  speaks **only if something is wrong** — a stale HANDOFF, a blown budget
+  (including a CLAUDE.md past 20k chars), a citation that resolves to nothing.
+  Never writes, never blocks, exits cleanly
   on every path, and is completely silent in healthy projects and in projects
   that don't use koan at all.
 - **Why silence:** anything a hook injects costs tokens in *every* session on
