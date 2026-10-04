@@ -92,6 +92,19 @@ const PINS = [
   { name: 'the largest section is named even when it is not Gotchas',
     files: with_({ 'CLAUDE.md': BASE['CLAUDE.md'] + `\n## Gotchas\n- one\n\n## Findings\n${'- measured 2026-09-19: the pose clause costs the world\n'.repeat(500)}` }),
     fires: 'Largest section: "Findings"' },
+  // The loaded chain (D-046): a constitution and a log each under budget can
+  // still load more than both budgets together once a second @-import rides
+  // along. The warning names the import by size; a chain under the sum stays
+  // silent, and an @ that points at nothing is not counted — it loads nothing.
+  { name: 'an @-import that pushes the loaded chain over budget is named',
+    files: with_({ 'CLAUDE.md': BASE['CLAUDE.md'] + '\n@docs/ARCHITECTURE.md\n', 'docs/ARCHITECTURE.md': `# Arch\n${'x'.repeat(51_000)}\n` }),
+    fires: 'docs/ARCHITECTURE.md 51.0k' },
+  { name: 'a second import inside the chain budget stays silent',
+    files: with_({ 'CLAUDE.md': BASE['CLAUDE.md'] + '\n@docs/ARCHITECTURE.md\n', 'docs/ARCHITECTURE.md': `# Arch\n${'x'.repeat(20_000)}\n` }),
+    silent: '@-import' },
+  { name: 'an @-import of a missing file is not counted',
+    files: with_({ 'CLAUDE.md': BASE['CLAUDE.md'] + '\n@docs/NOPE.md\n' }),
+    silent: '@-import' },
 
   // ---- check 4: decision-ID integrity ------------------------------------
   // The escape check 10 advertises. A qualified ID belongs to another repo's log

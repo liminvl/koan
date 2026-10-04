@@ -109,7 +109,10 @@ the archive (a one-line stub stays behind); when HANDOFF does, stale lines get
 deleted, not collapsed into an "archive" section (hidden text still costs full
 tokens); when CLAUDE.md does, the warning names its largest section — almost
 always Gotchas that became a runbook or a lab notebook — and the fix is a move
-to a pointed-to file, not a trim.
+to a pointed-to file, not a trim. Lint also sums what a session actually
+*loads* — the constitution plus every `@` import it pulls in — and warns when
+that chain exceeds the two budgets combined, naming the import: a second import
+is almost always a pointed-to file wearing an `@`.
 
 ### Phases
 
@@ -172,7 +175,8 @@ agent) invoke at session boundaries.
   whatever form they take: a test suite, a plan/diff, a health check, an eval,
   a human pass. Anything else is recorded as "Not yet verified", and state
   outside git only ever lands as a dated verification with a pointer, never a
-  present-tense claim.
+  present-tense claim. "In progress" names the dead ends too — what was tried
+  and why it failed — so nobody retries them.
 - **When:** ending a work session, switching tasks, or anything that ends with
   "I'm stopping here". Mid-session, say **"checkpoint"** instead — a light
   refresh of current-state/next-steps without the pruning pass. Checkpoint
@@ -184,9 +188,9 @@ agent) invoke at session boundaries.
 ### `/koan-readback` — resume cold
 - **What:** the agent reads the three files, cross-checks them against `git log`
   and `git status` (git wins on disagreement), then plays its understanding
-  back in ≤10 bullets — objective, constraints, live decisions, and the next
-  step it *would* take — including the Shape line and what proves a change
-  here — and stops for your correction before doing work.
+  back in ≤10 bullets — objective, constraints, live decisions, dead ends not
+  to retry, and the next step it *would* take — including the Shape line and
+  what proves a change here — and stops for your correction before doing work.
 - **When:** first session after a gap, after working in a different tool, or
   any time you suspect the agent's picture is stale.
 - **Why:** a misread that becomes code is the expensive kind of misread. Thirty
@@ -227,8 +231,10 @@ agent) invoke at session boundaries.
 ### The SessionStart hook (plugin installs only)
 - **What:** when a Claude Code session opens, it runs the lint checks and
   speaks **only if something is wrong** — a stale HANDOFF, a blown budget
-  (including a CLAUDE.md past 20k chars), a citation that resolves to nothing.
-  Never writes, never blocks, exits cleanly
+  (including a CLAUDE.md past 20k chars), a citation that resolves to nothing,
+  or, right after a compaction, uncommitted work newer than the HANDOFF: the
+  conversation that knew why is gone, and auto-compaction gave the
+  checkpoint-first rule no turn to fire. Never writes, never blocks, exits cleanly
   on every path, and is completely silent in healthy projects and in projects
   that don't use koan at all.
 - **Why silence:** anything a hook injects costs tokens in *every* session on

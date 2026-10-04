@@ -44,6 +44,14 @@ export const SET_BUDGET = 15_000;
 // A warning, not an error: it names the largest section so the fix is a move,
 // not a cut.
 export const CONSTITUTION_BUDGET = 20_000;
+// The constitution is one file, but what a session LOADS is the constitution
+// plus every `@path` it imports. Each budget above prices one file and nothing
+// priced the sum, so a 15k CLAUDE.md importing a 25k ARCHITECTURE.md read as
+// healthy to every check. The chain ceiling is the two auto-loaded budgets koan
+// already grants — not a new number to drift: an import beyond the decision
+// log spends the same attention, and is almost always a pointed-to file
+// wearing an @ (D-046).
+export const CHAIN_BUDGET = CONSTITUTION_BUDGET + DECISIONS_BUDGET;
 
 const read = (p) => (existsSync(p) ? readFileSync(p, 'utf8') : null);
 
@@ -104,6 +112,19 @@ export function lint(root = '.') {
         .sort((a, b) => b[1] - a[1])[0];
       const where = fattest ? ` Largest section: "${fattest[0]}" (${(fattest[1] / 1000).toFixed(1)}k).` : '';
       warnings.push(`${constitution} is ${n} chars (> ${CONSTITUTION_BUDGET}) and is auto-loaded every session.${where} Runbook, findings or inventory material belongs in a pointed-to file the Start-here line names, not the constitution.`);
+    }
+    // 3b. The loaded chain: this file plus every @-import that resolves (one
+    // that points at nothing loads nothing). Reported as `loaded` on the budget
+    // line so the number a session actually pays stays visible even when every
+    // single file is under its own ceiling; warns only past the sum.
+    const imports = [...new Set([...constText.matchAll(/(?:^|\s)@((?:[\w.-]+\/)*[\w.-]+\.md)\b/gm)].map((m) => m[1]))]
+      .filter((f) => existsSync(p(f)))
+      .map((f) => [f, read(p(f)).length]);
+    const loaded = n + imports.reduce((sum, [, size]) => sum + size, 0);
+    if (imports.length) budget.push(`loaded ${loaded}/${CHAIN_BUDGET}`);
+    if (loaded > CHAIN_BUDGET) {
+      const list = imports.sort((a, b) => b[1] - a[1]).map(([f, size]) => `${f} ${(size / 1000).toFixed(1)}k`).join(', ');
+      warnings.push(`${constitution} plus its ${imports.length} @-import${imports.length > 1 ? 's' : ''} load ${loaded} chars every session (> ${CHAIN_BUDGET}): ${list}. An import that is not the decision log is a pointed-to file wearing an @ — name it in Start here with a read-trigger instead.`);
     }
   }
   if (handoff != null) {

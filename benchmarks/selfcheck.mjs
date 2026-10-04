@@ -10,10 +10,10 @@ import { readFileSync, existsSync, writeFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { runCanary } from '../build/canary.mjs';
-import { lint, HANDOFF_BUDGET, DECISIONS_BUDGET, DECISIONS_HARD, SET_BUDGET, CONSTITUTION_BUDGET } from '../src/lifecycle/lint.mjs';
+import { lint, HANDOFF_BUDGET, DECISIONS_BUDGET, DECISIONS_HARD, SET_BUDGET, CONSTITUTION_BUDGET, CHAIN_BUDGET } from '../src/lifecycle/lint.mjs';
 import { runTriggers } from './triggers.mjs';
 import { runLintFixtures } from './lint-fixtures.mjs';
-import { fixtureDir } from './claude-cli.mjs';
+import { fixtureDir, gitInit } from './claude-cli.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const record = process.argv.includes('--record');
@@ -117,6 +117,16 @@ if (!distMissing && sessionStart) {
   };
   const faulty = { ...clean, 'CLAUDE.md': '# p\n@docs/DECISIONS.md\n@docs/DECISIONS-archive.md\n## Checks\nx\n' };
   const spoke = sessionStart(mk(faulty));
+  // The compaction nudge (D-046): the same clean repo, as a git repo, with one
+  // uncommitted file the HANDOFF has not caught up with. Only `compact` speaks —
+  // the identical dirty tree at startup is just a session in progress.
+  const dirty = gitInit(mk(clean));
+  writeFileSync(join(dirty, 'src.js'), 'x');
+  const compacted = sessionStart(dirty, 'compact');
+  // …and a HANDOFF written AFTER the code edit is the checkpoint: silence.
+  const checkpointed = gitInit(mk(clean));
+  writeFileSync(join(checkpointed, 'src.js'), 'x');
+  writeFileSync(join(checkpointed, 'docs', 'HANDOFF.md'), clean['docs/HANDOFF.md'] + '## In progress\nsrc.js\n');
   const pins = [
     // A project that doesn't use koan must never hear from the hook.
     sessionStart(mk(null)) === null,
@@ -125,9 +135,15 @@ if (!distMissing && sessionStart) {
     // But a real fault has to reach the session, and stay inside the cap.
     typeof spoke === 'string' && spoke.includes('must stay out of context'),
     typeof spoke === 'string' && spoke.length <= 800,
+    // A compaction over a clean tree has nothing to say.
+    sessionStart(gitInit(mk(clean)), 'compact') === null,
+    // A compaction over unrecorded work does; the same tree at startup does not.
+    typeof compacted === 'string' && compacted.includes('compacted'),
+    sessionStart(dirty, 'startup') === null,
+    sessionStart(checkpointed, 'compact') === null,
   ];
-  if (pins.every(Boolean)) console.log('  hook: SessionStart speaks on a fault, silent otherwise (4 pinned shapes).');
-  else errors.push('hook: SessionStart does not discriminate — it spoke when clean, stayed silent on a fault, or overran its cap.');
+  if (pins.every(Boolean)) console.log('  hook: SessionStart speaks on a fault or an unrecorded compaction, silent otherwise (8 pinned shapes).');
+  else errors.push(`hook: SessionStart does not discriminate — pins ${pins.map((ok, i) => (ok ? null : i + 1)).filter(Boolean).join(', ')} failed (spoke when clean, stayed silent on a fault or an unrecorded compaction, or overran its cap).`);
 }
 
 // 7. The budget numbers live in lint.mjs but are restated across ~10 prose
@@ -136,7 +152,7 @@ if (!distMissing && sessionStart) {
 // illustrative examples and stay exempt. dist mirrors src, so src + GUIDE/README
 // is the full surface set.
 {
-  const allowed = new Set([HANDOFF_BUDGET, DECISIONS_BUDGET, DECISIONS_HARD, SET_BUDGET, CONSTITUTION_BUDGET].map((n) => String(n / 1000)));
+  const allowed = new Set([HANDOFF_BUDGET, DECISIONS_BUDGET, DECISIONS_HARD, SET_BUDGET, CONSTITUTION_BUDGET, CHAIN_BUDGET].map((n) => String(n / 1000)));
   const surfaces = [
     'src/koan.skill.md', 'src/lifecycle/koan-wrap.skill.md', 'src/lifecycle/koan-init.skill.md',
     'src/lifecycle/koan-lint.skill.md', 'src/lifecycle/koan-readback.skill.md', 'src/lifecycle/koan-jazz.skill.md',

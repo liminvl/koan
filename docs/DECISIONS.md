@@ -80,13 +80,6 @@
 - **Load-bearing:** types a third probe kind — a fixture-borne rule graded on the variant axis, where [[D-013]]'s cut rule does not apply. [[D-029]] reuses its routing.
 - **Revisit if:** a model ignores the phase line, the variant delta stops flipping, or `harden` goes unused.
 
-### D-029: koan-jazz — a quarantined branch buys the right to suspend the ladder
-- **Decision:** A lifecycle skill, `koan-jazz`: a bounded improvisation session on a `jazz/<topic>` branch where the ladder, the trail, and `D-nnn` minting are **off**, closing with a mandatory disposition. Safety carve-outs and the Nevers stay on. The artifact is a **finding**, not code; code worth keeping re-enters through the ladder and never merges from the jam. Finding routing reuses [[D-028]]'s phase.
-- **Why:** [[D-028]] fixed permanence but holds that explore "defers permanence, never discipline" — so nothing licensed building the speculative thing. Isolation makes suspension safe rather than reckless; the mandatory return is the load-bearing half.
-- **Alternatives rejected:** a fourth `Phase` value (phase is project-level and persistent); a prose-only skill that tells you to branch (drops the precondition); a `koan:core` seat (core is what jazz suspends).
-- **Status:** implemented · _2026-08-01_ — free channel, zero core tokens.
-- **Revisit if:** jams routinely close with "code worth keeping" (the specs were vague, not the ladder); jam branches accumulate unclosed; or the suspension leaks into normal sessions.
-
 ### D-030: A core seat is lost when the delta goes null across the TIER
 - **Decision:** Amends [[D-013]]. A `koan:core` rule is demoted only when its delta gate goes null across the **supported tier** ([[D-023]]), replicated 2-of-3 per [[D-022]] on each model cited — not when it goes null on the newest model alone. Applied: **trail keeps its core seat** despite baseline writing the D-entry 3/3 on opus-5, because it still flips on fable-5 and sonnet-5.
 - **Why:** Capability rises monotonically, so delta gates go null **from the top down**. A mechanical [[D-013]] reading strips rules in the order the best models outgrow them, converging on a kit that only helps the models whose users need koan least. Costs are asymmetric: a redundant rule wastes a few hundred chars; a missing one loses a session's thread. Same run showed onecheck flipping clean where demotion was predicted, and greenfield flipping after a month of nulls — **a null dates**.
@@ -154,6 +147,13 @@
 - **Status:** implemented · _2026-09-23_ — gated by the `shape` probe (koan-init arm pair, `ops` + `mvp` variants), a Stage 2 proof question, and lint pins. Ceilings raised deliberately: koan-init 5100 → 5750 (§0 is a new step), koan-wrap 7550 → 7800 (the routing row; 87 chars of prose cut first). AGENTS.md unchanged.
 - **Revisit if:** the `shape` delta goes null tier-wide; a field repo mirrors live state despite the pointer rule; or the 20k warning fires on a healthy code-shaped repo.
 
+### D-046: Ingest (ECC, context-mode) — compaction nudge, dead ends in HANDOFF, the loaded chain is budgeted
+- **Decision:** Three free-channel adoptions from reading `affaan-m/ECC` and `mksglu/context-mode`: (1) the SessionStart hook reads the event `source` and on `compact` names uncommitted files newer than the HANDOFF — the one session fact lint cannot see; (2) *In progress* carries dead ends with their reason (template comment, wrap §2, readback bullet, a seventh Stage 2 question); (3) lint prices the **loaded chain** — constitution plus every `@`-import — against the two auto-loaded budgets combined, naming the import. Nothing else in either repo survived triage.
+- **Why:** [[D-024]] deferred the compaction hook until a plugin target existed; [[D-035]] built one and discarded `source`. Both repos lead their resume format with "what failed and why"; koan had no home for a failure that produced no decision yet. A 15k constitution importing a 25k file read as healthy to every check.
+- **Alternatives rejected:** a PreCompact snapshot store (the HANDOFF is the snapshot); a PreToolUse context-pressure nudge (a process per edit, no observed failure); a new HANDOFF section (the set is fixed); a separate chain ceiling (a new number to drift).
+- **Status:** implemented · _2026-10-04_ — pinned ([[D-037]]): 3 lint shapes, 4 hook shapes; koan-readback ceiling 2050 → 2150 for one bullet (was at 95%).
+- **Revisit if:** the compaction line fires on a tree dirty by design; a dead end still lands in DECISIONS as a non-decision; or the chain warning names `docs/DECISIONS.md` itself (then the log is the problem, not the import).
+
 ## Domain decision sets
 Live decisions scoped to one domain — full entries out of context, IDs permanent.
 <!-- Every D-nnn below is read as a set index entry (check 4) — keep prose here
@@ -184,6 +184,7 @@ moving them would buy budget by hiding the rules that stop bad additions.
 - **D-020** — handoff-kit ingest — sign-off line, greenfield interview, fit-test — implemented · archived
 - **D-024** — No koan-compact skill — checkpoint before /compact, on free channels — implemented · archived
 - **D-026** — superpowers ingest — form-follows-failure; descriptions carry triggers — implemented · archived
+- **D-029** — koan-jazz — a quarantined branch buys the right to suspend the ladder — implemented · archived
 - **D-031** — Drift of installed copies is caught on the push channel — implemented · archived
 - **D-038** — A shortcut is accepted by citing the decision that took it — implemented · archived
 - **D-041** — koan is public on GitHub; Claude Code distribution is the marketplace — implemented · archived

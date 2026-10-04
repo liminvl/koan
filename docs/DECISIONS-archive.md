@@ -102,3 +102,10 @@
 - **Alternatives rejected:** npm publish ([[D-007]] deferred it; still nothing load-bearing); publishing full history (old blobs carry what the tree scrubbed); `git filter-repo` (rewrites 68 commits to buy what a fresh root gets for free, and a missed pattern still leaks).
 - **Status:** implemented · _2026-08-07_ — supersedes [[D-035]]'s "a marketplace plugin (infrastructure for one consumer)" rejection on that one point: there are consumers now. The hook ships unchanged inside the plugin. Later same day: `ingest/` deleted from the tree — dev archaeology with zero functional references (digests of repos a public reader can't see); the record survives in the archive and in the archived entries here.
 - **Revisit if:** the marketplace path fails a real coworker install, or npm distribution becomes load-bearing.
+
+### D-029: koan-jazz — a quarantined branch buys the right to suspend the ladder
+- **Decision:** A lifecycle skill, `koan-jazz`: a bounded improvisation session on a `jazz/<topic>` branch where the ladder, the trail, and `D-nnn` minting are **off**, closing with a mandatory disposition. Safety carve-outs and the Nevers stay on. The artifact is a **finding**, not code; code worth keeping re-enters through the ladder and never merges from the jam. Finding routing reuses [[D-028]]'s phase.
+- **Why:** [[D-028]] fixed permanence but holds that explore "defers permanence, never discipline" — so nothing licensed building the speculative thing. Isolation makes suspension safe rather than reckless; the mandatory return is the load-bearing half.
+- **Alternatives rejected:** a fourth `Phase` value (phase is project-level and persistent); a prose-only skill that tells you to branch (drops the precondition); a `koan:core` seat (core is what jazz suspends).
+- **Status:** implemented · _2026-08-01_ — free channel, zero core tokens.
+- **Revisit if:** jams routinely close with "code worth keeping" (the specs were vague, not the ladder); jam branches accumulate unclosed; or the suspension leaks into normal sessions.

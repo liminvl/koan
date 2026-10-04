@@ -23,7 +23,8 @@ A misread that becomes work is the expensive kind.
    beats density here):
    - the **Objective** and current state (from HANDOFF),
    - the Shape line, what proves a change (Checks) + hard constraints (from CLAUDE.md),
-   - the live decisions you must not silently reverse (top DECISIONS entries).
+   - the live decisions you must not silently reverse (top DECISIONS entries),
+   - the dead ends In progress records — what not to retry.
 4. Close with two headed sections:
    - **`### Recommended Next Steps`** — a short numbered list: what you'd do
      next, and which canonical example you'd follow.

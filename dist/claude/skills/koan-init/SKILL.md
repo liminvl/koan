@@ -96,4 +96,4 @@ Skip this when the repo already answers it — seed from reality per step 3.
 List files created and one line each on what you seeded, plus the Shape line as
 written. Note current char counts of HANDOFF (vs ~15k) and DECISIONS (vs ~30k)
 so the user knows the headroom. Suggest they review CLAUDE.md before relying on it.
-<!-- koan v0.1.0 · build 39121b22 -->
+<!-- koan v0.1.0 · build a252d189 -->

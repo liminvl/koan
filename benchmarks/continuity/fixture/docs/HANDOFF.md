@@ -12,6 +12,9 @@ add, list, and complete are implemented in src/store.js on commit `f1c2b3a`. Tes
 1. Implement the DELETE endpoint and a `remove(id)` in the store.
 2. Add `node --test` coverage for the store.
 
+## In progress
+- remove(id): a first cut rebuilt the Map from a filtered list() — dead end, it reset nextId and re-issued a live id. Don't retry; delete the key in place.
+
 ## Not yet verified
 - complete() behavior on a missing id (claims to return null; no test yet).
 

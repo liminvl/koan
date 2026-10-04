@@ -18,8 +18,11 @@ an init-only `references/project-shapes.md`; Checks means the real proof;
 state outside git routes to a pointed-to file with a read-trigger; the
 harvester reads IaC, config, `.gd` and `<!-- koan: -->` markers. The core
 description now routes any repo-backed work (the "not for prose" exclusion is
-gone); the ladder is unchanged. `npm test` is green (five `grew` warnings, all
-justified in D-044; sizes re-recorded).
+gone); the ladder is unchanged.
+**Ingest 2026-10-04** ([[D-046]], ECC + context-mode): the hook speaks after a
+compaction over unrecorded work; In progress carries dead ends; lint prices the
+loaded chain. `npm test` green (two `grew` warnings, justified in D-046; sizes
+re-recorded).
 **Six skills** — `koan-debt` folded into `koan-lint --debt` ([[D-036]]).
 Benchmarks: Stage 1 is **behavior only**; the seventh probe, `shape` (koan-init
 arm pair, `ops` + `mvp` variants), **flipped on fable-5-1, n=1** (baseline
@@ -37,8 +40,9 @@ live only in that session's transcript — the durable facts are in the entry.
 
 ## What's built
 - Core lens (`src/koan.skill.md`) + five lifecycle skills. `lint.mjs` carries 13
-  live checks (8 and 13 retired; 15 = constitution budget, [[D-044]]) plus
-  `--debt`; readback cross-checks git and plays back the Shape line.
+  live checks (8 and 13 retired; 15 = constitution budget, [[D-044]]; 3b = the
+  loaded chain, [[D-046]]) plus `--debt`; readback cross-checks git and plays
+  back the Shape line and the dead ends.
 - **Project-phase axis** ([[D-028]]) — `**Phase:**` explore/build/harden sets
   ONE thing: where a choice lands. Absent ⇒ `build`.
 - **Shape + proof + pointer file** ([[D-044]]) — `**Shape:**` is orientation,
@@ -46,57 +50,40 @@ live only in that session's transcript — the durable facts are in the entry.
   state the repo describes but doesn't hold. Taxonomy ships init-only.
 - **`koan-jazz`** ([[D-029]]) — bounded improvisation on a `jazz/<topic>` branch.
 - **SessionStart hook + `plugin` target** ([[D-035]]) — runs `lint()` at session
-  open; never writes, never blocks, silent unless a koan repo is faulty.
+  open; never writes, never blocks, silent unless a koan repo is faulty — or a
+  `compact` start finds uncommitted work newer than HANDOFF ([[D-046]]).
 - Build system (`build/`) — single source → dist targets ([[D-002]]); `restampDir()`
   hashes each finished skill dir, so the new `references/` dir needed no stamp
   change. `push.mjs --check` dry-runs the stamp compare. `hooks/pre-commit` runs
   `npm test`.
-- Stage 0 selfcheck — budgets (now 8 artifacts), canary, dogfood lint + **49
+- Stage 0 selfcheck — budgets (now 8 artifacts), canary, dogfood lint + **52
   pinned doc shapes** ([[D-037]]), 17 trigger prompts ([[D-025]]), bundle
-  self-containment ([[D-034]]), hook decision table, budget-number drift check.
-- Stage 1 (behavior, 7 probes) and Stage 2 (continuity, 6 questions) harnesses —
+  self-containment ([[D-034]]), hook decision table (8 shapes), budget-number
+  drift check.
+- Stage 1 (behavior, 7 probes) and Stage 2 (continuity, 7 questions) harnesses —
   construction in `docs/DECISIONS-benchmarks.md`; pricing in `docs/DECISIONS-method.md`.
 
-## Changes this session (2026-09-23, twenty-eighth sitting — non-app shapes)
-- **[[D-044]]** minted; **D-041 archived** (implemented, uncited) to make room:
-  DECISIONS 29,175 → 29,264. At the line — the next entry must archive first.
-- Templates: `Shape:` line + comment, Checks/Gotchas/Canonical comments made
-  shape-neutral, pointer-file read-trigger comment, Objective "no finish line"
-  note; the DECISIONS reference entry moved into the DECISIONS template.
-- `koan-init`: §0 "read the shape first", §3 generalized, §3a asks for proof;
-  `references/project-shapes.md` (9 shapes + the outside-git rule) ships beside
-  `templates/`. Ceiling 5100 → 5750.
-- `koan-wrap`: evidence = the declared Checks; routing row for outside-git facts;
-  §5 asks for the constitution budget. Ceiling 7550 → 7800 after 87 chars cut.
-- `koan-readback`: "before doing work"; plays back Shape + proof.
-- Core description: "ANY task inside a repo — code, infra, config, docs,
-  content"; persona "tending a repo". AGENTS.md unchanged (5166).
-- `lint.mjs` check 15 (constitution > 20k, names the largest section); `debt.mjs`
-  harvests tf/hcl/yaml/toml/ini/conf/nix/gd/lua/kt/swift/Dockerfile/Makefile and
-  `<!-- koan: -->` in Markdown. 7 new pins (42 → 49). 3 new trigger prompts.
-- `shape` probe + selftest pins; Stage 2 question "what evidence proves a change
-  is done here?" with a Shape line in the fixture.
-- GUIDE: Shape section, pointer-file paragraph, two scenarios (ops estate,
-  video-production repo); README one sentence.
-- Field re-lint of all 22 repos: verdicts identical to before except the five
-  expected check-15 warnings (comfyUI 96k, vibe-shield, iams-wordpress,
-  hostinger, divi-5-agent). `--debt` on sandwich now lists its 5 `.gd` shortcuts.
-- **Third sitting, later:** GUIDE §2/§3 and README brought in line with D-044
-  (three-files table, wrap/readback/lint/hook descriptions) — the skill wording
-  had moved but the manual still said "green check" and "example files".
-- **Third sitting (2026-09-24):** all 21 other field repos refreshed to D-044 by
-  Sonnet subagents from one prompt (uncommitted in each repo; every constitution
-  now under 20k; ten new pointer files). `koan-init` §1a now names re-running
-  as the catch-up path and "adopt koan:D-nnn" as the form; GUIDE FAQ carries the
-  prompt. No `koan-refresh` skill — a one-time migration doesn't earn a seat.
-- **Second sitting, same day:** D-044 committed (`31a5b70`); plugin pushed to
-  `~/.claude/skills/koan`. `shape` run for real: first run scored koan-init "no"
-  on `ops` because the arm could not read `templates/` — **[[D-045]]** (benchmarks
-  set): a lifecycle arm carries its bundle. Re-run **flipped** — see
-  `benchmarks/results/2026-09-23-stage1-shape-fable5-1.md`. hostinger's
-  pointer-file move applied (constitution 22,963 → 14,734; new
-  `docs/PLATFORM-RUNBOOK.md`; Shape + real Checks; lint clean) — **left
-  uncommitted there for review.**
+## Changes this session (2026-10-04, twenty-ninth sitting — ECC / context-mode ingest)
+- **[[D-046]]** minted; **D-029 archived** (implemented, cited only by D-028's
+  Load-bearing line and a What's-built pointer) to make room: DECISIONS 29,264 →
+  ~29.8k. At the line again — the next entry must archive first.
+- Hook: `session-start.mjs` reads the event `source`; on `compact` it names
+  uncommitted files newer than `docs/HANDOFF.md` (mtime — a HANDOFF written after
+  the last edit is the checkpoint and stays silent). 4 new hook pins (4 → 8);
+  the built CLI driven by hand on a scratch repo for all four shapes.
+- `lint.mjs` 3b: the loaded chain (constitution + every resolving `@`-import)
+  against `CHAIN_BUDGET` = the two auto-loaded budgets summed; the warning names
+  imports by size; the budget line gains `loaded`. 3 new pins (49 → 52). Swept
+  all 22 field repos: zero warnings, and no field repo imports anything beyond
+  `@docs/DECISIONS.md` today.
+- HANDOFF template: In progress asks for dead ends with their reason; wrap §2 and
+  readback carry the same line. Stage 2 gains a seventh question (what not to
+  retry) in both corpora — selftest fair and discriminating, 1.07× size ratio.
+- Ceilings: koan-readback 2050 → 2150 (one bullet; was at 95%). koan-wrap grew
+  7402 → 7583 under 7800. Sizes re-recorded.
+- GUIDE (budgets, wrap, readback, hook) and README (hook): one sentence each.
+- Review record: both repos read in full against the log; everything not adopted
+  either duplicates a koan rule or was rejected by a logged decision ([[D-046]]).
 
 ## In progress
 - Nothing half-coded.
@@ -104,8 +91,9 @@ live only in that session's transcript — the durable facts are in the entry.
 ## Next steps
 What survives is small on purpose; do not repopulate it to feel busy.
 
-1. **Commit D-045 + this HANDOFF**; `/reload-plugins` (or restart) so the hook
-   reloads — the skills are already current.
+1. **Commit D-046 + this HANDOFF**, push the plugin (`node push.mjs --target
+   plugin`) and `/reload-plugins` so the compaction nudge and chain check are
+   live; then watch the first real auto-compaction in a field repo.
 2. **Review and commit hostinger's move** (`git diff` there: `CLAUDE.md`,
    `docs/HANDOFF.md`, new `docs/PLATFORM-RUNBOOK.md`). Then the other four
    over-20k repos, one at a time — comfyUI (96k, a lab notebook) is the big one.
@@ -125,6 +113,22 @@ What survives is small on purpose; do not repopulate it to feel busy.
    pointer-file case again, not a new rule.
 
 ## Not yet verified
+- **The compaction nudge has fired only in fixtures** — selfcheck's 8 pins and
+  one scratch repo driven through the built CLI with hand-made events. No real
+  auto-compaction has exercised it, and `source`'s values come from Claude
+  Code's hook docs, not from an event observed here. mtime is the discriminator,
+  so a checkout that rewrites file times could fire it once.
+- **The chain warning has zero positives**: all 22 field repos are under the sum
+  and none imports anything beyond `@docs/DECISIONS.md` — the shape it exists
+  for is unseen in the field. iams-wordpress sits at 49.6k from the two budgeted
+  files alone, so the next line in either file trips it there.
+- **Dead ends have one Stage 2 question and no run**; no field HANDOFF has been
+  read for where its dead ends currently land.
+- **koan's Output rule is unmeasured on code quality** ([[D-039]] retired the
+  axis). context-mode cites Moonshot's report that far harsher brevity prompts
+  ("one word answers are best") cost kimi-k2.5 4–7 points on two coding
+  benchmarks; koan's wording is milder and carries the explanation guard, but
+  nothing here would see the effect if it existed.
 - **`shape` is n=1 on one model.** One fable-5-1 flip after [[D-045]]; the
   first run (arm without its bundle) is recorded in the same results file as
   the null it was. [[D-022]]'s 2-of-3 is not met and sonnet-5 is unmeasured.

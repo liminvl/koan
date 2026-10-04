@@ -29,6 +29,10 @@ remove(id) on the store yet, so that's top of the pile. after that, finally writ
 `node --test` coverage for the store, especially that complete()-on-missing-id
 claim that's still unverified.
 
+one false start on delete already: tried rebuilding the whole map from a filtered
+list — bad idea, it reset nextId so the next add() handed out an id that was
+already live. ripped it out. next attempt: just delete the key in place.
+
 tangential but don't lose it: whenever auth shows up, it must NOT live in
 middleware. the check goes in the route handler itself. middleware-level auth
 reads clean but it's too easy to bypass, and the handler is where you've got the

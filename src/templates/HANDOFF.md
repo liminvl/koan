@@ -36,7 +36,10 @@
      instant you commit, and koan-lint check 11 flags it. -->
 
 ## In progress
-<!-- anything half-done, with enough detail to resume -->
+<!-- anything half-done, with enough detail to resume — including the dead
+     ends: what was tried and failed, with the exact reason, so the next
+     session doesn't retry it. Once a choice settles, a dead end that explains
+     it moves to that decision's "Alternatives rejected". -->
 
 ## Next steps
 <!-- priority-ordered, concrete enough to act on without the last session;

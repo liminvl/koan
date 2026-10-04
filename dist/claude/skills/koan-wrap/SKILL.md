@@ -51,6 +51,9 @@ FIXED (no inventing sections; run commands live in CLAUDE.md):
 Objective · Current state · What's built (optional, one line/subsystem + decision
 ID) · Changes this session (commit hash = evidence) · In progress · Next steps ·
 Not yet verified · Open questions for the human.
+**In progress** carries the dead ends too — what was tried, why it failed — so
+the next session doesn't retry them; once a choice settles, they move to its
+*Alternatives rejected*.
 
 A good snapshot is tight:
 ```
@@ -136,4 +139,4 @@ Wrapped: HANDOFF <chars>/15k · DECISIONS <chars>/30k · archived <IDs or none> 
 Next session starts at: <one line>
 ```
 Do not commit unless asked — and if asked, nothing you just wrote should need correcting.
-<!-- koan v0.1.0 · build f851a641 -->
+<!-- koan v0.1.0 · build a183e037 -->
