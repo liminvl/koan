@@ -60,30 +60,22 @@ live only in that session's transcript — the durable facts are in the entry.
   pinned doc shapes** ([[D-037]]), 17 trigger prompts ([[D-025]]), bundle
   self-containment ([[D-034]]), hook decision table (8 shapes), budget-number
   drift check.
+- **Atlas** (2026-10-07) — a visual guide to the whole kit, published as a
+  private artifact: https://claude.ai/artifact/Kj5HERZqApQvbg3B8ottg9. Hand-
+  authored from `src/` + docs, so it drifts as koan changes; refresh it after a
+  decision that moves a part. Not shipped, not public.
 - Stage 1 (behavior, 7 probes) and Stage 2 (continuity, 7 questions) harnesses —
   construction in `docs/DECISIONS-benchmarks.md`; pricing in `docs/DECISIONS-method.md`.
 
-## Changes this session (2026-10-04, twenty-ninth sitting — ECC / context-mode ingest)
-- **[[D-046]]** minted; **D-029 archived** (implemented, cited only by D-028's
-  Load-bearing line and a What's-built pointer) to make room: DECISIONS 29,264 →
-  ~29.8k. At the line again — the next entry must archive first.
-- Hook: `session-start.mjs` reads the event `source`; on `compact` it names
-  uncommitted files newer than `docs/HANDOFF.md` (mtime — a HANDOFF written after
-  the last edit is the checkpoint and stays silent). 4 new hook pins (4 → 8);
-  the built CLI driven by hand on a scratch repo for all four shapes.
-- `lint.mjs` 3b: the loaded chain (constitution + every resolving `@`-import)
-  against `CHAIN_BUDGET` = the two auto-loaded budgets summed; the warning names
-  imports by size; the budget line gains `loaded`. 3 new pins (49 → 52). Swept
-  all 22 field repos: zero warnings, and no field repo imports anything beyond
-  `@docs/DECISIONS.md` today.
-- HANDOFF template: In progress asks for dead ends with their reason; wrap §2 and
-  readback carry the same line. Stage 2 gains a seventh question (what not to
-  retry) in both corpora — selftest fair and discriminating, 1.07× size ratio.
-- Ceilings: koan-readback 2050 → 2150 (one bullet; was at 95%). koan-wrap grew
-  7402 → 7583 under 7800. Sizes re-recorded.
-- GUIDE (budgets, wrap, readback, hook) and README (hook): one sentence each.
-- Review record: both repos read in full against the log; everything not adopted
-  either duplicates a koan rule or was rejected by a logged decision ([[D-046]]).
+## Changes this session (2026-10-07, thirtieth sitting — readback + atlas)
+- No repo commits. Readback against git found Next steps 1–2 of the previous
+  sitting already done: D-046 landed as `9315e38`, the plugin install reads
+  current under `push.mjs --check`, and hostinger's runbook move is committed
+  there.
+- Built the **koan atlas** — an interactive isometric map of the kit (five
+  regions, 30 parts, two guided traces, six cross-cutting threads), authored
+  from the current `src/` and docs. Lives outside the repo as a private
+  artifact; see What's built.
 
 ## In progress
 - Nothing half-coded.
@@ -91,12 +83,10 @@ live only in that session's transcript — the durable facts are in the entry.
 ## Next steps
 What survives is small on purpose; do not repopulate it to feel busy.
 
-1. **Commit D-046 + this HANDOFF**, push the plugin (`node push.mjs --target
-   plugin`) and `/reload-plugins` so the compaction nudge and chain check are
-   live; then watch the first real auto-compaction in a field repo.
-2. **Review and commit hostinger's move** (`git diff` there: `CLAUDE.md`,
-   `docs/HANDOFF.md`, new `docs/PLATFORM-RUNBOOK.md`). Then the other four
-   over-20k repos, one at a time — comfyUI (96k, a lab notebook) is the big one.
+1. **`git push`** — one commit ahead of origin; then watch the first real
+   auto-compaction in a field repo (the hook's `compact` branch is unexercised).
+2. **The other four over-20k constitutions**, one at a time — comfyUI (96k, a
+   lab notebook) is the big one. hostinger's move is the canonical example.
 3. **Replicate `shape`**: two more fable-5-1 runs (`--probes shape --model
    claude-fable-5-1`) for [[D-022]]'s 2-of-3, then one sonnet-5 row for the tier.
 4. **Re-measure trail before the next core addition** ([[D-030]]) — unchanged
@@ -137,9 +127,9 @@ What survives is small on purpose; do not repopulate it to feel busy.
   the pointer file, not shape inference.
 - **The 20k constitution warning has fired only from this repo** against the
   five field repos; no consumer session has seen it or acted on it.
-- **The pointer-file rule has one application, by koan's own author-session,
-  uncommitted** (hostinger). Whether a cold session there opens the runbook
-  on its read-trigger is the test; nothing has run against the moved docs yet.
+- **The pointer-file rule has one application** (hostinger, committed there
+  2026-10-04 or earlier). Whether a cold session opens the runbook on its
+  read-trigger is the test; nothing has run against the moved docs yet.
 - **Two `claude -p --safe-mode` dry runs of the built `koan-init` (2026-09-23)
   on scratch clones** — hostinger (koan docs stripped) and runway (own CLAUDE.md
   kept) — both inferred the shape and wrote procedures as Checks, a steady-state
