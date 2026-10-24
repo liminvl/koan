@@ -45,9 +45,54 @@ const SETS = {
 };
 
 const PINS = [
+  { name: 'large stored evidence is not automatically loaded',
+    files: with_({ 'docs/engines.md': 'e'.repeat(87000) }), clean: true },
+  { name: 'creative task reading engine monolith warns',
+    files: with_({ 'docs/engines.md': 'e'.repeat(87000) }),
+    options: { contextFiles: ['docs/engines.md'] }, fires: 'Selected task context' },
+  { name: 'ops bundle warns even though each procedure is small',
+    files: with_({ 'docs/restore.md': 'r'.repeat(26000), 'docs/verify.md': 'v'.repeat(26000) }),
+    options: { contextFiles: ['docs/restore.md', 'docs/verify.md'] }, fires: 'Selected task context' },
+  { name: 'selected imports and repeated paths count only once',
+    files: with_({ 'CLAUDE.md': BASE['CLAUDE.md'] + '@docs/restore.md\n',
+      'docs/restore.md': 'r'.repeat(26000) }),
+    options: { contextFiles: ['docs/restore.md', 'docs/./restore.md', 'docs/HANDOFF.md'] }, clean: true },
+  { name: 'small creative brief and findings stay quiet',
+    files: with_({ 'docs/brief.md': '# Character continuity\nBlue coat.\n',
+      'docs/findings.md': '# Render comparison\n2026-10-23: model A, seed 7; human review pending.\n' }),
+    options: { contextFiles: ['docs/brief.md', 'docs/findings.md'] }, clean: true },
+  { name: 'missing selected task file is an error', files: BASE,
+    options: { contextFiles: ['docs/missing.md'] }, fires: 'Task context file docs/missing.md' },
+  { name: 'directory is not a task document', files: BASE,
+    options: { contextFiles: ['docs'] }, fires: 'not a file' },
+
   // ---- the healthy shape says nothing at all ------------------------------
   { name: 'clean consumer shape', files: BASE, clean: true },
   { name: 'clean domain-set shape', files: SETS, clean: true },
+
+  { name: 'Claude bridge uses the shared AGENTS constitution',
+    files: with_({ 'CLAUDE.md': '# Claude entrypoint\n@AGENTS.md\n',
+      'AGENTS.md': '# p\nRead docs/DECISIONS.md at session start.\n## Checks\nnode --test\n' }),
+    clean: true },
+
+  { name: 'Claude-first Codex bridge must explicitly read the log',
+    files: with_({ 'AGENTS.md': 'Read CLAUDE.md at session start.\n' }),
+    fires: 'Codex does not follow Claude imports' },
+  { name: 'Claude-first explicit bridge is healthy',
+    files: with_({ 'AGENTS.md': 'Read CLAUDE.md and docs/DECISIONS.md at session start.\n' }), clean: true },
+  { name: 'combined handoff and log read is healthy',
+    files: with_({ 'CLAUDE.md': '# p\nRead `docs/HANDOFF.md` and `docs/DECISIONS.md` at session start.\n## Checks\nReview.\n' }), clean: true },
+  { name: 'negated log read is not wiring',
+    files: with_({ 'CLAUDE.md': '# p\nDo not read docs/DECISIONS.md at session start.\n## Checks\nReview.\n' }), fires: 'does not import' },
+  { name: 'absolute selected paths are rejected clearly', files: BASE,
+    options: { contextFiles: ['/tmp/example.md'] }, fires: 'must be project-relative' },
+
+  { name: 'legacy generated core beside Claude is not a second constitution',
+    files: with_({ 'AGENTS.md': "# Koan\nGenerated from koan's source of truth (src/koan.skill.md).\n<!-- koan v0.1.0 · build abc123 -->\n" }), clean: true },
+  { name: 'legacy generated core alone requires separate project instructions',
+    files: { ...Object.fromEntries(Object.entries(BASE).filter(([name]) => name !== 'CLAUDE.md')),
+      'AGENTS.md': "# Koan\nGenerated from koan's source of truth (src/koan.skill.md).\n<!-- koan v0.1.0 · build abc123 -->\n" },
+    fires: 'not a project constitution', silent: 'has no ## Checks' },
 
   // ---- check 2: import wiring --------------------------------------------
   { name: 'archive imported into context',
@@ -59,6 +104,21 @@ const PINS = [
   { name: 'log never imported',
     files: with_({ 'CLAUDE.md': '# p\n\n## Checks\n- test: `npm test`\n' }),
     fires: 'does not import @docs/DECISIONS.md' },
+
+  { name: 'explicit read instruction works without imports',
+    files: { ...Object.fromEntries(Object.entries(BASE).filter(([name]) => name !== 'CLAUDE.md')),
+      'AGENTS.md': '# p\nRead docs/DECISIONS.md at session start.\n\n## Checks\n- test: `npm test`\n' },
+    clean: true },
+  { name: 'bare log pointer is not a read instruction',
+    files: with_({ 'CLAUDE.md': '# p\ndocs/DECISIONS.md\n\n## Checks\n- test: `npm test`\n' }),
+    fires: 'does not import' },
+
+  { name: 'explicit active-log read counts toward loaded budget',
+    files: with_({
+      'CLAUDE.md': 'Read docs/DECISIONS.md at session start.\n\n## Checks\n- test: `npm test`\n' + 'x'.repeat(19500),
+      'docs/DECISIONS.md': BASE['docs/DECISIONS.md'] + 'x'.repeat(31000),
+    }),
+    fires: 'session document' },
 
   // ---- check 3: budgets ---------------------------------------------------
   { name: 'oversize log warns',
@@ -299,7 +359,7 @@ const GIT_PINS = [
 export function runLintFixtures() {
   const failures = [];
   const run = (pin, dir) => {
-    const { errors, warnings } = lint(dir);
+    const { errors, warnings } = lint(dir, pin.options);
     const said = [...errors, ...warnings];
     const has = (needle) => said.some((m) => m.includes(needle));
     if (pin.clean && said.length)

@@ -22,14 +22,14 @@
 - **Revisit if:** a benchmark call ever needs real project context `--safe-mode` strips.
 
 ### D-014: Delta probes stay unprompted; graders detect acts, not mentions
-- **Decision:** A delta probe's task must never ask for the behavior it grades (no "note any choice you make"), and its grader must match an *act* of the rule (a `trail:` line, a drafted `### D-nnn`, log/record/append near decision-words) — never a bare mention of a file or an existing D-id. Each grader's known false-positive class is pinned as the selftest's bad reference.
+- **Decision:** A delta probe's task must never ask for the behavior it grades (no "note any choice you make"). For write-enabled tasks, grade the artifact, never a prose claim. Prose-only probes must distinguish substantive behavior from bare mentions of files or existing IDs. Each grader's known false-positive class is pinned as the selftest's bad reference.
 - **Why:** With a visible decision log and a task that asked for the choice to be noted, all three arms drafted a D-002 — the probe measured instruction-following, not the rule. Mention-based regexes then let rival pass by merely *describing* the repo. Unprompted + act-matching restored discrimination.
 - **Alternatives rejected:** leading tasks (measure compliance, not the rule); mention-based regexes (false-positive on citations and file listings).
 - **Status:** implemented · _2026-07-03_
 - **Revisit if:** a core rule's behavior structurally can't surface unprompted in write-denied `-p` runs — then the probe needs a different channel, not a leading task. (Fired same day for trail → [[D-015]].)
 
 ### D-015: Write-graded probes run write-enabled; the trail grader reads the filesystem
-- **Decision:** A probe whose rule culminates in a write declares `write: true` and runs with `--permission-mode acceptEdits` (still under [[D-012]]'s isolation). Its grader checks the filesystem act first — for trail: the fixture's `docs/DECISIONS.md` gaining an entry beyond the shipped D-001 — with prose act-matching ([[D-014]]) as fallback; the fs channel is pinned in the selftest.
+- **Decision:** A probe whose rule culminates in a write declares `write: true` and runs with `--permission-mode acceptEdits` (still under [[D-012]]'s isolation). Its grader checks the filesystem act first — for trail: the fixture's `docs/DECISIONS.md` gaining an entry beyond the shipped D-001 — with no prose fallback; a new entry must contain a choice and rationale. The fs channel is pinned against both real writes and unsupported claims.
 - **Why:** Write-denied `-p` masked the act for **every** arm — all three proposed the D-entry and reported the write declined, so the probe was measuring the harness, not the rule. Grading proposed acts was rejected: when declined, baseline proposes as readily as koan — talk is cheap; a written entry is ungameable. First run on the honest channel flipped clean: only koan wrote the D-002.
 - **Alternatives rejected:** grading proposed acts (no delta — every declined arm proposes); dropping the trail probe (the rule is half of practice 2 and earns its tokens on the honest channel).
 - **Status:** implemented · _2026-07-03_
@@ -43,7 +43,7 @@
 - **Revisit if:** a future model or arm shows real loc/files divergence on this channel (loc becomes signal again), or koan's trail column comes up empty on workspace tasks (a core-wording problem, not a demotion case).
 
 ### D-018: The benchmark grid has a model axis; delta evidence is model-qualified
-- **Decision:** Every runner takes `--model` (Stage 2: the **resume agent** only — the judge stays pinned per D-011); the model rides the run-dir name and a table column, and unpinned runs record `default` (resolved: every pre-matrix run was `claude-fable-5`). A delta probe's flip evidence (D-013) is claimed **per model**, not globally.
+- **Decision:** Every runner takes `--model` (Stage 2: the **resume agent** only — the judge stays pinned per D-011); the model rides the run-dir name and a table column, and unpinned runs record `default` (resolved: every pre-matrix run was `claude-fable-5`). A delta probe's flip evidence (D-013) is claimed **per model**, not globally. New Stage 1 runs record CLI version, revision/dirty state, grader/system hashes and samples per cell; unresolved defaults are not model-qualified evidence.
 - **Why:** The first matrix showed the deltas are model-dependent: trail flips on sonnet-5, onecheck does not (prose check expressions, no runnable assert), and on haiku *neither* manifests even with koan. All 36 outcome rows converge, so scope convergence spans three models.
 - **Alternatives rejected:** pinning one benchmark model forever (hides exactly this finding); per-model runner forks (a flag is smaller).
 - **Status:** implemented · _2026-07-03_

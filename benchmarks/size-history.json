@@ -293,5 +293,125 @@
       "dist/claude/skills/koan-lint/SKILL.md": 1794,
       "dist/claude/skills/koan-jazz/SKILL.md": 4405
     }
+  },
+  {
+    "date": "2026-10-24",
+    "sizes": {
+      "dist/agents/AGENTS.md": 5094,
+      "dist/claude/skills/koan/SKILL.md": 6387,
+      "dist/claude/skills/koan-wrap/SKILL.md": 7558,
+      "dist/claude/skills/koan-init/SKILL.md": 5427,
+      "dist/claude/skills/koan-init/references/project-shapes.md": 5619,
+      "dist/claude/skills/koan-readback/SKILL.md": 1954,
+      "dist/claude/skills/koan-lint/SKILL.md": 2193,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4400,
+      "dist/claude/skills/koan-init/references/document-routing.md": 3900,
+      "dist/claude/skills/koan-wrap/references/document-routing.md": 3900,
+      "dist/codex/skills/koan/SKILL.md": 6377,
+      "dist/codex/skills/koan-wrap/SKILL.md": 7532,
+      "dist/codex/skills/koan-init/SKILL.md": 5181,
+      "dist/codex/skills/koan-init/references/project-shapes.md": 5619,
+      "dist/codex/skills/koan-readback/SKILL.md": 1937,
+      "dist/codex/skills/koan-lint/SKILL.md": 2193,
+      "dist/codex/skills/koan-jazz/SKILL.md": 4375,
+      "dist/codex/skills/koan-init/references/document-routing.md": 3900,
+      "dist/codex/skills/koan-wrap/references/document-routing.md": 3900
+    }
+  },
+  {
+    "date": "2026-10-24",
+    "sizes": {
+      "dist/agents/AGENTS.md": 5094,
+      "dist/claude/skills/koan/SKILL.md": 6387,
+      "dist/claude/skills/koan-wrap/SKILL.md": 7558,
+      "dist/claude/skills/koan-init/SKILL.md": 5427,
+      "dist/claude/skills/koan-init/references/project-shapes.md": 5619,
+      "dist/claude/skills/koan-readback/SKILL.md": 2017,
+      "dist/claude/skills/koan-lint/SKILL.md": 2193,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4400,
+      "dist/claude/skills/koan-init/references/document-routing.md": 3900,
+      "dist/claude/skills/koan-wrap/references/document-routing.md": 3900,
+      "dist/codex/skills/koan/SKILL.md": 6377,
+      "dist/codex/skills/koan-wrap/SKILL.md": 7532,
+      "dist/codex/skills/koan-init/SKILL.md": 5181,
+      "dist/codex/skills/koan-init/references/project-shapes.md": 5619,
+      "dist/codex/skills/koan-readback/SKILL.md": 2000,
+      "dist/codex/skills/koan-lint/SKILL.md": 2193,
+      "dist/codex/skills/koan-jazz/SKILL.md": 4375,
+      "dist/codex/skills/koan-init/references/document-routing.md": 3900,
+      "dist/codex/skills/koan-wrap/references/document-routing.md": 3900
+    }
+  },
+  {
+    "date": "2026-10-24",
+    "sizes": {
+      "dist/agents/AGENTS.md": 5094,
+      "dist/claude/skills/koan/SKILL.md": 6387,
+      "dist/claude/skills/koan-wrap/SKILL.md": 7583,
+      "dist/claude/skills/koan-init/SKILL.md": 5604,
+      "dist/claude/skills/koan-init/references/project-shapes.md": 5619,
+      "dist/claude/skills/koan-readback/SKILL.md": 2017,
+      "dist/claude/skills/koan-lint/SKILL.md": 2193,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4400,
+      "dist/claude/skills/koan-init/references/document-routing.md": 3900,
+      "dist/claude/skills/koan-wrap/references/document-routing.md": 3900,
+      "dist/codex/skills/koan/SKILL.md": 6377,
+      "dist/codex/skills/koan-wrap/SKILL.md": 7543,
+      "dist/codex/skills/koan-init/SKILL.md": 5386,
+      "dist/codex/skills/koan-init/references/project-shapes.md": 5619,
+      "dist/codex/skills/koan-readback/SKILL.md": 2000,
+      "dist/codex/skills/koan-lint/SKILL.md": 2193,
+      "dist/codex/skills/koan-jazz/SKILL.md": 4375,
+      "dist/codex/skills/koan-init/references/document-routing.md": 3900,
+      "dist/codex/skills/koan-wrap/references/document-routing.md": 3900
+    }
+  },
+  {
+    "date": "2026-10-24",
+    "sizes": {
+      "dist/agents/AGENTS.md": 5094,
+      "dist/claude/skills/koan/SKILL.md": 6387,
+      "dist/claude/skills/koan-wrap/SKILL.md": 7424,
+      "dist/claude/skills/koan-init/SKILL.md": 5604,
+      "dist/claude/skills/koan-init/references/project-shapes.md": 5619,
+      "dist/claude/skills/koan-readback/SKILL.md": 2017,
+      "dist/claude/skills/koan-lint/SKILL.md": 2193,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4400,
+      "dist/claude/skills/koan-init/references/document-routing.md": 3900,
+      "dist/claude/skills/koan-wrap/references/document-routing.md": 3900,
+      "dist/codex/skills/koan/SKILL.md": 6377,
+      "dist/codex/skills/koan-wrap/SKILL.md": 7384,
+      "dist/codex/skills/koan-init/SKILL.md": 5386,
+      "dist/codex/skills/koan-init/references/project-shapes.md": 5619,
+      "dist/codex/skills/koan-readback/SKILL.md": 2000,
+      "dist/codex/skills/koan-lint/SKILL.md": 2193,
+      "dist/codex/skills/koan-jazz/SKILL.md": 4375,
+      "dist/codex/skills/koan-init/references/document-routing.md": 3900,
+      "dist/codex/skills/koan-wrap/references/document-routing.md": 3900
+    }
+  },
+  {
+    "date": "2026-10-24",
+    "sizes": {
+      "dist/agents/AGENTS.md": 5093,
+      "dist/claude/skills/koan/SKILL.md": 6387,
+      "dist/claude/skills/koan-wrap/SKILL.md": 7424,
+      "dist/claude/skills/koan-init/SKILL.md": 5604,
+      "dist/claude/skills/koan-init/references/project-shapes.md": 5619,
+      "dist/claude/skills/koan-readback/SKILL.md": 2017,
+      "dist/claude/skills/koan-lint/SKILL.md": 2193,
+      "dist/claude/skills/koan-jazz/SKILL.md": 4400,
+      "dist/claude/skills/koan-init/references/document-routing.md": 3900,
+      "dist/claude/skills/koan-wrap/references/document-routing.md": 3900,
+      "dist/codex/skills/koan/SKILL.md": 6377,
+      "dist/codex/skills/koan-wrap/SKILL.md": 7384,
+      "dist/codex/skills/koan-init/SKILL.md": 5386,
+      "dist/codex/skills/koan-init/references/project-shapes.md": 5619,
+      "dist/codex/skills/koan-readback/SKILL.md": 2000,
+      "dist/codex/skills/koan-lint/SKILL.md": 2193,
+      "dist/codex/skills/koan-jazz/SKILL.md": 4375,
+      "dist/codex/skills/koan-init/references/document-routing.md": 3900,
+      "dist/codex/skills/koan-wrap/references/document-routing.md": 3900
+    }
   }
 ]

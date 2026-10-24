@@ -28,6 +28,7 @@ const read = (p) => (existsSync(p) ? readFileSync(p, 'utf8') : null);
 export function runCanary() {
   const source = read(join(ROOT, 'src', 'koan.skill.md')) ?? '';
   const claudeSkill = read(join(DIST, 'claude', 'skills', 'koan', 'SKILL.md'));
+  const codexSkill = read(join(DIST, 'codex', 'skills', 'koan', 'SKILL.md'));
   const agents = read(join(DIST, 'agents', 'AGENTS.md'));
 
   const misses = [];
@@ -39,11 +40,13 @@ export function runCanary() {
   for (const phrase of CORE) {
     need(phrase, 'source', source);
     need(phrase, 'dist/claude SKILL', claudeSkill);
+    need(phrase, 'dist/codex SKILL', codexSkill);
     need(phrase, 'dist/agents AGENTS', agents);
   }
   for (const phrase of FULL) {
     need(phrase, 'source', source);
     need(phrase, 'dist/claude SKILL', claudeSkill);
+    need(phrase, 'dist/codex SKILL', codexSkill);
   }
 
   return { ok: misses.length === 0, misses, checked: CORE.length + FULL.length };

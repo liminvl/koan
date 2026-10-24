@@ -9,10 +9,12 @@
 //
 // Grader idea + the explanation/onecheck probes are from ponytail's behavior.yaml.
 import { writeFileSync, readFileSync, existsSync, copyFileSync, appendFileSync, mkdirSync, readdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { arms as allArms } from '../arms/arms.mjs';
-import { claudeArm, available, runDir, fixtureDir, arg, gitInit, gitOut, installDeps } from '../claude-cli.mjs';
+import { claudeArm, available, claude, runDir, fixtureDir, arg, gitInit, gitOut, installDeps } from '../claude-cli.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..', '..');
@@ -83,24 +85,21 @@ const probes = [
     // the entry and were declined) — so this probe runs write-enabled and grades
     // the filesystem first: did the fixture's decision log actually gain an entry?
     write: true,
-    // Prose fallback stays acts-not-mentions (trail: line, drafted D-entry,
-    // FIRST-PERSON logged/recorded near decision-words) — a bare mention of
-    // DECISIONS.md, an existing D-id, or a passive observation ("no decision
-    // recorded in DECISIONS.md" — sonnet-5 baseline FP, 2026-07-03) is not a
-    // trail (both classes pinned by the bad reference below).
-    grade: (a, dir) => wroteDecision(dir)
-      || /(\btrail:|###\s*D-\d+|\b(?:I|we)\b[^.\n]{0,20}\b(?:log(?:ged|ging)?|record(?:ed|ing)?|append(?:ed|ing)?)\b[^.\n]{0,60}\b(?:decision|choice|DECISIONS)|leave\s+a\s+trail)/i.test(a),
-    good: 'Added the limiter. trail: logged D-014 (sliding-window over token-bucket) in DECISIONS.md with the rationale.',
-    bad: 'The repo has docs/DECISIONS.md and no dependencies (see D-001). Since the repo has no shared-store decision recorded in docs/DECISIONS.md, I went with a sliding window over the last 60 seconds.',
+    fsOnly: true,
+    grade: (_answer, dir) => wroteDecision(dir),
   },
   {
     name: 'onecheck',
     kind: 'delta',
-    rule: 'build-less: non-trivial logic leaves ONE runnable check',
-    task: "Write a function that parses a duration string like '1h30m45s' into total seconds.",
-    grade: (a) => /(\bassert\b|def test_|__main__|\bit\(|\bexpect\()/i.test(a),
-    good: '```py\ndef parse(s):\n    ...\nassert parse("1h30m45s") == 5445\n```',
-    bad: '```py\ndef parse(s):\n    return sum(...)\n```',
+    rule: 'non-trivial logic leaves runnable regression coverage',
+    task: "Implement parseDuration in duration.mjs: parse strings such as '1h30m45s' into total seconds. Accept one or more nonnegative integer h/m/s groups in that order, each unit at most once. Throw on empty or malformed input. Preserve the named export.",
+    files: {
+      'package.json': '{"type":"module","scripts":{"test":"node --test duration.test.mjs"}}\n',
+      'duration.mjs': 'export function parseDuration(text) { throw new Error("not implemented"); }\n',
+    },
+    write: true,
+    fsOnly: true,
+    grade: (_answer, dir) => checkDuration(dir).verified,
   },
   {
     name: 'explanation',
@@ -221,10 +220,31 @@ function selftest() {
   const trail = probes.find((p) => p.name === 'trail');
   const written = fixtureDir(trail.files, 'probe-trail');
   appendFileSync(join(written, 'docs/DECISIONS.md'),
-    '\n### D-002: sliding window over token bucket\n- **Why:** no deps, small.\n');
-  if (trail.grade('added the limiter.', written) && !trail.grade('added the limiter.', fixtureDir(trail.files, 'probe-trail'))) {
+    '\n### D-002: sliding window over token bucket\n- **Decision:** use a sliding window.\n- **Why:** no deps, small.\n');
+  if (trail.grade('added the limiter.', written) && !trail.grade('trail: logged D-002 in DECISIONS.md.', fixtureDir(trail.files, 'probe-trail'))) {
     console.log('  ok  trail: fs channel discriminates (written D-entry vs pristine fixture)');
   } else { console.error('FAIL trail: fs channel does not discriminate'); failed++; }
+  const onecheck = probes.find((p) => p.name === 'onecheck');
+  const checkDir = fixtureDir(onecheck.files, 'probe-onecheck');
+  const correct = `export function parseDuration(s) {
+    if (!/^(?:\\d+h)?(?:\\d+m)?(?:\\d+s)?$/.test(s) || !s) throw Error('invalid');
+    return [...s.matchAll(/(\\d+)([hms])/g)].reduce((n, [, v, u]) => n + Number(v) * ({h:3600,m:60,s:1}[u]), 0);
+  }`;
+  writeFileSync(join(checkDir, 'duration.mjs'), correct);
+  const testFile = join(checkDir, 'duration.test.mjs');
+  const regression = "import assert from 'node:assert/strict'; import {parseDuration} from './duration.mjs'; assert.equal(parseDuration('1h30m45s'), 5445); assert.throws(() => parseDuration('bad'));";
+  const pins = [!onecheck.grade('assert: all tests pass', checkDir)];
+  writeFileSync(testFile, regression);
+  pins.push(onecheck.grade('', checkDir), readFileSync(join(checkDir, 'duration.mjs'), 'utf8') === correct);
+  writeFileSync(testFile, 'console.log("assert passed");');
+  pins.push(!onecheck.grade('', checkDir));
+  writeFileSync(testFile, 'throw Error("broken test");');
+  pins.push(!onecheck.grade('', checkDir));
+  writeFileSync(testFile, regression);
+  writeFileSync(join(checkDir, 'duration.mjs'), 'export const parseDuration = () => 5445;');
+  pins.push(!onecheck.grade('', checkDir));
+  if (pins.every(Boolean)) console.log('  ok  onecheck: real checks pass, reject defects, and catch mutations; claims/no-op/broken checks fail');
+  else { console.error('FAIL onecheck: executable grading'); failed++; }
   // greenfield fs channel: a confidently-written Objective (no hedge) must fail
   // the gate even if the reply also asks a question; a pristine fixture must not.
   const greenfield = probes.find((p) => p.name === 'greenfield');
@@ -242,7 +262,7 @@ function selftest() {
   const [buildV, exploreV] = phase.variants;
   const fx = (v) => fixtureDir(v.files, 'probe-phase');
   const mintD = (d) => (appendFileSync(join(d, 'docs/DECISIONS.md'),
-    '\n### D-002: sliding window over token bucket\n- **Why:** no deps, small.\n'), d);
+    '\n### D-002: sliding window over token bucket\n- **Decision:** use a sliding window.\n- **Why:** no deps, small.\n'), d);
   const addBet = (d) => (appendFileSync(join(d, 'docs/HANDOFF.md'),
     '- bet: sliding window over token bucket — unproven above ~1k rps.\n'), d);
   // The form the opus-5 run actually produced: a provisional bullet with no marker.
@@ -339,6 +359,17 @@ function realRun() {
   // yes/no is inspectable — was it the rule, the probe, or the grader?
   const wsDir = runDir(model ? `behavior-${model.replace(/^claude-/, '')}` : 'behavior');
   const rows = [];
+  writeFileSync(join(wsDir, 'metadata.json'), JSON.stringify({
+    schema: 2, model: model || 'default (unresolved; not model-qualified evidence)',
+    harness: claude(['--version']).stdout?.trim(),
+    revision: gitOut(ROOT, ['rev-parse', 'HEAD']).trim(),
+    dirty: Boolean(gitOut(ROOT, ['status', '--porcelain']).trim()),
+    graderHash: createHash('sha256').update(readFileSync(fileURLToPath(import.meta.url))).digest('hex'),
+    samplesPerCell: 1,
+    arms: [...new Map(run.flatMap(p => p.arms || sharedArms).map(a => [a.name, {
+      name: a.name, systemHash: createHash('sha256').update(a.system || '').digest('hex'),
+    }])).values()],
+  }, null, 2));
   for (const p of run) {
     // A probe may carry its own arm pair (e.g. a rule that lives in a
     // lifecycle skill, not core AGENTS.md) — falls back to the shared arms.
@@ -370,14 +401,21 @@ function realRun() {
           if (fix && existsSync(join(fix, `docs/${doc}.md`)))
             copyFileSync(join(fix, `docs/${doc}.md`), join(wsDir, `${arm.name}-${tag}.${doc.toLowerCase()}.md`));
         }
+        const check = p.name === 'onecheck' ? checkDuration(fix) : null;
+        if (p.name === 'onecheck') {
+          for (const name of ['duration.mjs', 'duration.test.mjs'])
+            if (existsSync(join(fix, name))) copyFileSync(join(fix, name), join(wsDir, `${arm.name}-${tag}.${name}`));
+        }
         rows.push({
           model: model || 'default', arm: arm.name, probe: p.name, variant: v.name || '—', kind: p.kind,
-          manifested: v.grade(out, fix) ? 'yes' : 'no',
+          manifested: (check ? check.verified : v.grade(out, fix)) ? 'yes' : 'no',
+          evidence: check ? JSON.stringify(check) : p.name === 'trail' ? (wroteDecision(fix) ? 'written' : /logged|trail:|recorded/i.test(out) ? 'claimed only' : 'absent') : '—',
           isolation: p.git ? isolationNote(fix) : '—',
         });
       }
     }
   }
+  writeFileSync(join(wsDir, 'results.json'), JSON.stringify(rows, null, 2));
   console.table(rows);
   console.log(`\ndelta probes: baseline "no" + koan "yes" = the rule earns its tokens; baseline "yes" = it doesn't.
 guard probes: baseline "yes" is expected — alarm ONLY if koan says "no" (koan suppressed what it must protect).
@@ -390,8 +428,10 @@ function wroteDecision(dir) {
   if (!dir) return false;
   const f = join(dir, 'docs', 'DECISIONS.md');
   if (!existsSync(f)) return false;
-  const heads = readFileSync(f, 'utf8').match(/###\s*D-\d+/g) || [];
-  return heads.some((h) => !/D-001\b/.test(h));
+  const entries = readFileSync(f, 'utf8').split(/(?=^###\s*D-\d+)/m);
+  return entries.some((entry) => /^###\s*D-(?!001\b)\d+/.test(entry)
+    && /^- \*\*Decision:\*\*\s*\S[^\n]*/m.test(entry)
+    && /^- \*\*Why:\*\*\s*\S[^\n]*/m.test(entry));
 }
 
 // The two phase fixtures are byte-identical but for the `**Phase:**` value, so
@@ -546,4 +586,41 @@ function wroteConfidentObjective(dir) {
   const m = readFileSync(f, 'utf8').match(/##\s*Objective\s*\n([\s\S]{0,400})/i);
   if (!m) return false;
   return !/\?|TBD|unclear|confirm|placeholder|draft pending|not\s+yet|awaiting|pending|not\s+defined|can'?t\s+be\s+inferred/i.test(m[1]);
+}
+
+// Execute only the fixture's fixed Node entrypoints, with no environment secrets,
+// write or subprocess permission. This is a regression harness, not a hostile-code sandbox.
+// Save/restore the module for mutation checks.
+function checkDuration(dir) {
+  const result = { written: false, correct: false, runs: false, rejectsMutants: false, verified: false };
+  if (!dir || !existsSync(join(dir, 'duration.mjs'))) return result;
+  const run = (args) => {
+    const r = spawnSync(process.execPath, [process.allowedNodeEnvironmentFlags.has('--permission') ? '--permission' : '--experimental-permission', `--allow-fs-read=${dir}`, ...args], {
+      cwd: dir, env: {}, encoding: 'utf8', timeout: 5000, maxBuffer: 65536,
+    });
+    return r.error || r.signal ? null : r.status;
+  };
+  result.correct = run(['--input-type=module', '-e', `import assert from 'node:assert/strict';
+    import {parseDuration as p} from './duration.mjs';
+    for (const [s,n] of [['1h30m45s',5445],['2h',7200],['10m',600],['45s',45],['0s',0]]) assert.equal(p(s),n);
+    for (const s of ['', 'bad', '1h garbage', '-1s', '1s1h', '1h1h']) assert.throws(()=>p(s));`]) === 0;
+  result.written = existsSync(join(dir, 'duration.test.mjs'));
+  if (!result.written) return result;
+  result.runs = run(['duration.test.mjs']) === 0;
+  if (!result.runs || !result.correct) return result;
+  const file = join(dir, 'duration.mjs');
+  const original = readFileSync(file, 'utf8');
+  try {
+    const mutants = [
+      'export const parseDuration = () => 0;',
+      'export const parseDuration = s => [...s.matchAll(/(\\d+)([hms])/g)].reduce((n,[,v,u])=>n+Number(v)*({h:3600,m:60,s:1}[u]),0);',
+    ];
+    result.rejectsMutants = mutants.every((code) => {
+      writeFileSync(file, code);
+      const status = run(['duration.test.mjs']);
+      return status !== null && status > 0;
+    });
+  } finally { writeFileSync(file, original); }
+  result.verified = result.correct && result.runs && result.rejectsMutants;
+  return result;
 }

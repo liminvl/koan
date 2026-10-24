@@ -2,7 +2,7 @@
 
 > Auto-loaded every session — keep it lean (≤ ~30k chars). Choice + why only.
 > IDs are permanent — never renumber. An entry is five short fields, not an
-> essay: if the reasoning needs paragraphs, the paragraphs belong in the commit.
+> essay: retain rationale and link supporting research or design detail.
 
 ### D-001: koan unifies build-less and lose-less in one lens
 - **Decision:** One skill governs both minimal-code discipline (ponytail) and session-continuity discipline (handoff), as peer practices.
@@ -12,13 +12,12 @@
 - **Load-bearing:** shapes the whole kit and every other decision.
 - **Revisit if:** the two halves prove to dilute each other in benchmarks.
 
-### D-002: Generate every target from one source
-- **Decision:** `src/` is the only source of truth; `build/` generates each environment's files. No hand-maintained copies.
-- **Why:** Ponytail keeps N hand-copies in sync with a canary and flags "generate them if this misses a drift". koan starts at that upgrade path — drift becomes impossible.
-- **Alternatives rejected:** copies + canary (ponytail's model); hybrid.
-- **Status:** implemented · _2026-06-30_
-- **Load-bearing:** every "should we hand-tune this target" question routes here.
-- **Revisit if:** a target needs hand-tuning the generator can't express.
+### D-002: Generate native bundles from one source
+- **Decision:** `src/` generates Claude and Codex skill bundles plus the compact AGENTS core. Install `claude`, `codex`, or `both`, in project or user scope. Codex adapts invocation, entrypoint and import syntax; resources share one builder.
+- **Why:** AGENTS alone lacks native lifecycle discovery. Shared generation prevents manual copy drift.
+- **Alternatives rejected:** hand-maintained variants; AGENTS-only Codex support.
+- **Status:** implemented · _2026-10-23_
+- **Revisit if:** a host requires another integration; automatic hooks currently ship only in the Claude plugin.
 
 ### D-007: Node tooling; local push now, npm later
 - **Decision:** Node.js (ESM, zero deps) for build/push/bench. `push.mjs` copies builds into a project; npm/marketplace publish deferred.
@@ -51,12 +50,12 @@
 - **Revisit if:** 2-of-3 passes a rule that later demotes repeatedly.
 
 ### D-023: koan is a frontier-model kit; core is not reworded for weaker models
-- **Decision:** koan targets frontier models, claimed **per tier, not per model ID**: verified frontier (fable-5, opus-5 via [[D-028]]), partial one tier down (sonnet-5), not landing on small fast models (haiku-4.5). A new release inherits its tier's evidence. Core wording stays as-is; the README documents the stance.
-- **Why:** Haiku's non-adherence is a capability floor, not a wording problem. Chasing sonnet-5's partial adherence risks exactly the core bloat koan exists to catch.
-- **Alternatives rejected:** rewording core + matrix rerun (bloat risk, unproven gain); leaving the question open.
-- **Status:** accepted · _2026-07-10_
-- **Load-bearing:** defines the "tier" [[D-030]]'s demotion rule quantifies over.
-- **Revisit if:** a real consumer deploys koan on a weaker model and the deltas matter there.
+- **Decision:** Target frontier models, but qualify evidence by actual model, harness and skill revision. Tier membership is a compatibility hypothesis; new releases need evaluation rather than inheriting proof.
+- **Why:** A product tier cannot establish adherence for an untested model.
+- **Alternatives rejected:** inherited tier evidence; expanding core prose to chase weaker models.
+- **Status:** accepted · _2026-10-23_ — revises the evidence-inheritance policy; historical results remain dated observations.
+- **Load-bearing:** tier groups in [[D-030]] are a sampling scope, not a substitute for model-qualified evidence.
+- **Revisit if:** repeated cross-model results establish a stronger generalization.
 
 ### D-025: Descriptions are a checked routing surface
 - **Decision:** A **trigger-surface check** (`benchmarks/triggers.mjs` + `triggers.json`): pinned realistic prompts must rank their skill strictly first under tf-idf over the shipped descriptions, plus a ≥75% collision ceiling. Selfcheck check 4.
@@ -88,13 +87,13 @@
 - **Load-bearing:** every future demotion argument routes through this; it is why converged probes were not cut on their nulls alone (see [[D-036]] for what finally cut one, and why that reasoning differs).
 - **Revisit if:** the supported tier narrows to one model; a rule goes null tier-wide and demoting it measurably costs nothing; or sonnet-5 drops below 2-of-3 on the next refresh — trail is one run from demotion and should be re-measured before the next core addition, not after.
 
-### D-033: The auto-loaded log splits by domain, not by settledness
-- **Decision:** A third home for decisions: a **domain decision set**, `docs/DECISIONS-<domain>.md`, holding *live* entries that only bind work inside one area. Never `@`-imported; IDs listed in the main log's *Domain decision sets*. First set: `benchmarks`. The line is **how a thing is built** (moves) vs **what ships** (stays).
-- **Why:** The ceiling was hit by entries triage found *unarchivable* three sittings running — growth on merit. Archiving keys on settledness, which no longer discriminated; a third of the budget was methodology every non-benchmark session paid for and never used. Also fixed the rule that made archiving impossible: "cited by ≥2" counted *fixture* mentions.
-- **Alternatives rejected:** raise the ceiling (the ratchet the budget exists to stop); archive harder (nothing qualifies — that *is* the finding); per-domain CLAUDE.md imports (re-imposes the tax it removes).
-- **Status:** implemented · _2026-08-02_ — **second set 2026-08-06**: `method`, for how the kit is priced and checked. Compression alone stopped working: it bought 6.4k and four sittings' decisions spent it in one day, because the growth is *methodology*, which was 44% of the log. The splitting line is sharper than "moves vs stays" — **a consumer never experiences anything decided in a set** — which is why the promotion/demotion rules stayed in the main log even though they are also methodology.
-- **Load-bearing:** every "the log is full" answer routes through this before touching the ceiling — though [[D-036]] found a cheaper answer first: compress the entries.
-- **Revisit if:** a set drifts out of mind (nothing proves a session touching the tooling opens `method`); a consumer's split loses a decision a session needed; or a third set is wanted — at which point ask whether the main log is the wrong shape rather than adding another file.
+### D-033: The active log splits by task scope
+- **Decision:** Live choices binding one area may move to `docs/DECISIONS-<domain>.md`, never auto-imported, with permanent IDs indexed in main and a constitution read trigger. Koan's sets are benchmarks and method; project-wide constraints and promotion/demotion rules stay in main. The shipped split applies to any work area, including a film ([[D-048]]).
+- **Why:** Three rounds found nothing archivable; methodology was 44% of the log. Compression saved 6.4k, then four sittings refilled it. Most sessions did not need that methodology. Archiving by settledness could not solve active but task-specific growth. Fixture mentions also ceased counting as load-bearing citations.
+- **Alternatives rejected:** larger ceiling; archiving live choices; per-domain imports that restore the context tax. [[D-036]] later established compression before splitting.
+- **Status:** implemented · _2026-08-02_; method set added _2026-08-06_.
+- **Load-bearing:** separates active task-specific choices from historical archives without hiding project-wide rules.
+- **Revisit if:** sessions miss a needed set despite its trigger, or further sets indicate the main log's shape needs reconsideration.
 
 ### D-034: A build artifact is verified where it lands, not where it is authored
 - **Decision:** Stage 0 gains a **bundle check**: every `.mjs` a skill dir ships must `import()` cleanly from its installed location. Skill dirs ship every engine they import.
@@ -113,11 +112,11 @@
 - **Revisit if:** the hook speaks on a healthy repo, a non-Claude target grows a hook mechanism, or plugin loading from `~/.claude/skills` stops working.
 
 ### D-039: koan is insurance for weak models and large projects; stop measuring the quality axis
-- **Decision:** Close the open Stage 2 question. koan's claim is **continuity and restraint under pressure** — weaker models, cold resumes, large projects. No scale fixture is built, and the frontier-model/small-fixture A/B stops being run for quality delta.
-- **Why:** Stage 2's A/B has converged on "no measurable difference" every time, and the honest reading is that the instrument is at its limit, not that the kit is worthless: a 2k-char fixture cannot manifest a problem that only appears at 200 files. Building a scale fixture to chase it would be the largest instrument in the repo, measuring the axis koan claims *least* — three sittings after [[D-036]] cut the last instrument that decided nothing. [[D-023]] already says koan is a frontier-tier kit; this says what it is *for* on that tier, which is not raw answer quality.
-- **Alternatives rejected:** build the scale fixture (the biggest instrument yet, for the weakest claim); keep the question open (four sittings of carrying it is the decision).
-- **Status:** implemented · _2026-08-06_ — behavior probes ([[D-013]]) and cold-resume continuity are unaffected and still run; only the quality-delta A/B is retired.
-- **Revisit if:** someone reports koan changing (or failing to change) outcomes on a genuinely large codebase — that is field evidence a fixture was never going to produce.
+- **Decision:** Retire the small-fixture quality-delta A/B and the proposed scale fixture. Continue behavior probes and cold-resume continuity; small executable correctness guards remain appropriate.
+- **Why:** The old quality instrument repeatedly converged and decided nothing. That does not establish either benefit or absence of harm in larger tasks.
+- **Alternatives rejected:** a large scale benchmark; continuing an uninformative A/B; treating null results as universal proof.
+- **Status:** implemented · _2026-08-06_ — clarified _2026-10-23_: the duration correctness guard supports revised test guidance without restoring the retired outcome arm.
+- **Revisit if:** field evidence identifies an outcome difference requiring a targeted fixture.
 
 ### D-040: Safety carve-outs move into core; Never, Boundaries and ultra are cut
 - **Decision:** The safety carve-out becomes a core Rules bullet ("Never drop a safety carve-out to shave lines: input validation at trust boundaries, …"), so AGENTS.md carries it. Deleted: the **Never** section (six bullets, each restating a rule already in the file), the **Boundaries** section (its one unique line folded into Persistence), and the `ultra` intensity with the whole Intensity axis + `argument-hint`.
@@ -134,25 +133,39 @@
 - **Revisit if:** a field repo shows a set no session opened despite the trigger line, or [[D-033]]'s "a set drifts out of mind" clause fires anyway.
 
 ### D-043: Budgets price the entry too, not just the file
-- **Decision:** The over-budget DECISIONS warning names the fattest entries (compress-first remediation; silent under budget). Check 14 names parallel ID series (`## W-001…`) the integrity checks can't see. Check 9 counts constitution and domain-set citations. "Five short fields" ships in the template header and wrap §3–§4. Selfcheck asserts the budget numbers restated across prose surfaces agree with `lint.mjs`.
+- **Decision:** The over-budget DECISIONS warning names the fattest entries (compress-first remediation; silent under budget). Check 14 names parallel ID series (`## W-001…`) the integrity checks can't see. Check 9 counts constitution and domain-set citations. Wrap names five fields; the template provides them and asks for standalone rationale. Selfcheck asserts the budget numbers restated across prose surfaces agree with `lint.mjs`.
 - **Why:** An external refactor review (2026-08-20) measured four field repos at the 30k ceiling with archiving intact: the mass was fat live entries (one 9.2k = 31% of a log) and a hand-rolled W-series — the kit taught compression nowhere and the linter couldn't name either shape.
 - **Alternatives rejected:** a per-project budget override in the constitution (deferred — compression alone rescued the measured repos, and an unused valve invites raising instead of distilling); an unconditional per-entry size warning (fires on healthy under-budget logs — [[D-037]]'s noise class).
 - **Status:** implemented · _2026-08-20_ — pinned in `lint-fixtures.mjs`; wrap ceiling 7200 → 7550 in the same change (was flush at 99.5%, budgets.json's wall rule).
 - **Revisit if:** a repo still legitimately exceeds 30k after compressing and splitting — then add the explicit override (parsed beside `Phase`, hard stop stays 1.5×) as its own logged decision.
 
-### D-044: Shape is one line; proof lives in Checks; state outside git gets a pointed-to file
-- **Decision:** The constitution gains a free-text `**Shape:**` line beside Phase (never parsed) and a 20k lint budget whose warning names the largest section. `koan-init` reads the repo's shape and proof *before* seeding, via an init-only `references/project-shapes.md`; **Checks** means the real proof — command, procedure or human pass. A fact about a system outside git routes to a `docs/<name>.md` the constitution names with a read-trigger: identities recorded, values queried, measurements dated. The lose-less half serves any repo-backed work; the ladder stays code-shaped. `koan:` markers are harvested from config, IaC and docs too.
-- **Why:** A 22-repo field survey (2026-09-23): ~14 not app-shaped; six each invented a *different* fourth file for state the repo describes but doesn't hold (hostinger:D-023 — "HANDOFF had become a 14.2 KB mirror"); five constitutions over 20k, every one with Gotchas turned runbook or lab notebook (one at 96k), every code-shaped one under 15.2k; five `.gd` shortcuts invisible to the ledger. [[D-043]]'s failure again: consumers invent worse valves when the split line isn't taught.
-- **Alternatives rejected:** an enum block (primary/overlays/dominant proof) — overlays duplicate Gotchas, an enum forces labels; a shipped `EXTERNAL.md` template — PROJECT.md sprawl by another name; the taxonomy in core — permanent tokens for an init-time need ([[D-013]]); a required Shape lint — fires on every existing repo ([[D-037]]).
-- **Status:** implemented · _2026-09-23_ — gated by the `shape` probe (koan-init arm pair, `ops` + `mvp` variants), a Stage 2 proof question, and lint pins. Ceilings raised deliberately: koan-init 5100 → 5750 (§0 is a new step), koan-wrap 7550 → 7800 (the routing row; 87 chars of prose cut first). AGENTS.md unchanged.
-- **Revisit if:** the `shape` delta goes null tier-wide; a field repo mirrors live state despite the pointer rule; or the 20k warning fires on a healthy code-shaped repo.
+### D-044: Shape is one line; proof lives in Checks
+- **Decision:** Infer a free-text Shape and actual proof before init; Checks may be commands, procedures or human review. Constitution budget is 20k; warn with its largest section. External state uses on-demand pointers; identities recorded, current values queried, evidence dated. Config/IaC/docs shortcuts are harvested too. Supporting-doc routing is extended by [[D-048]].
+- **Why:** The September 2026 survey found six different fourth-file inventions and five constitutions over 20k, all inflated by runbooks or notebooks; code-shaped constitutions were under 15.2k. Git alone did not describe the work.
+- **Alternatives rejected:** mandatory shape enums; a universal EXTERNAL.md; taxonomy in core; required Shape lint that flags existing repos.
+- **Status:** implemented · _2026-09-23_ — shape probe, continuity question and lint fixtures; model evidence remains limited (see HANDOFF).
+- **Revisit if:** shape/proof inference fails, live-state mirrors persist, or the budget flags healthy constitutions.
 
-### D-046: Ingest (ECC, context-mode) — compaction nudge, dead ends in HANDOFF, the loaded chain is budgeted
-- **Decision:** Three free-channel adoptions from reading `affaan-m/ECC` and `mksglu/context-mode`: (1) the SessionStart hook reads the event `source` and on `compact` names uncommitted files newer than the HANDOFF — the one session fact lint cannot see; (2) *In progress* carries dead ends with their reason (template comment, wrap §2, readback bullet, a seventh Stage 2 question); (3) lint prices the **loaded chain** — constitution plus every `@`-import — against the two auto-loaded budgets combined, naming the import. Nothing else in either repo survived triage.
-- **Why:** [[D-024]] deferred the compaction hook until a plugin target existed; [[D-035]] built one and discarded `source`. Both repos lead their resume format with "what failed and why"; koan had no home for a failure that produced no decision yet. A 15k constitution importing a 25k file read as healthy to every check.
-- **Alternatives rejected:** a PreCompact snapshot store (the HANDOFF is the snapshot); a PreToolUse context-pressure nudge (a process per edit, no observed failure); a new HANDOFF section (the set is fixed); a separate chain ceiling (a new number to drift).
-- **Status:** implemented · _2026-10-04_ — pinned ([[D-037]]): 3 lint shapes, 4 hook shapes; koan-readback ceiling 2050 → 2150 for one bullet (was at 95%).
-- **Revisit if:** the compaction line fires on a tree dirty by design; a dead end still lands in DECISIONS as a non-decision; or the chain warning names `docs/DECISIONS.md` itself (then the log is the problem, not the import).
+### D-046: Compaction nudge, dead ends and the loaded chain
+- **Decision:** SessionStart on `compact` names uncommitted files newer than HANDOFF. In progress carries failed approaches and reasons. Lint sums the constitution and direct imports against the combined 50k budgets. These came from ECC/context-mode; nothing else survived triage.
+- **Why:** [[D-024]] deferred a compaction nudge until [[D-035]] supplied a plugin hook; failed approaches lacked a home before a decision; individual budgets missed oversized import chains.
+- **Alternatives rejected:** another snapshot store; per-edit context-pressure hooks; extra HANDOFF sections; another threshold to maintain.
+- **Status:** implemented · _2026-10-04_ — lint and hook fixtures; readback budget rose 2050 → 2150 for dead ends. Real compaction observation remains pending in HANDOFF.
+- **Revisit if:** intentional dirty work causes noise, dead ends become non-decisions in the log, or the chain warning names the active log itself (compress that log first).
+
+### D-047: Refactor toward sufficient checks and portable continuity
+- **Decision:** Prefer maintainable simplicity and sufficient regression coverage over line/test counts. Readback blocks only on material questions or requested confirmation. One session owns shared continuity docs; checkpoints replace superseded state within budget. Non-importing hosts get explicit read instructions.
+- **Why:** Avoid confirmation loops and host assumptions. Verify installed content and actual artifacts, not stamps or prose claims.
+- **Alternatives rejected:** new workflow infrastructure; higher skill budgets; treating an offline pass as model evidence.
+- **Status:** implemented · _2026-10-23_
+- **Revisit if:** field use or replicated probes show lost coverage, missed reads or checkpoint evidence loss.
+
+### D-048: Route supporting knowledge by purpose; measure selected task context
+- **Decision:** Init/wrap share on-demand routing for procedures, reference, evidence and briefs. Keep decisions intelligible alone. Lint's opt-in `--context` estimates core + selected whole files against the existing 50k threshold. Consumer limits stay unchanged; artifact ceilings ratchet to size + ~5%.
+- **Why:** Hostinger's handoff reached 14,997 chars; ComfyUI's 87,351-char engine reference exposed growth hidden behind broad read triggers. Both need selective retrieval.
+- **Alternatives rejected:** guessed prose-trigger parsing; universal reference caps; rationale only in commits; empty document taxonomies.
+- **Status:** implemented · _2026-10-23_ — lint/install checks; routing behavior needs scenario evidence. Lint explains task-context usage; references have separate budgets. Roundtable fixes add explicit dual-host bridges, evidence without commits, and durable-method routing before snapshot (creative exercise exposed a missed move).
+- **Revisit if:** scenario reviews lose evidence, create unnecessary files, or task estimates mislead; threshold is a heuristic, not measured model capacity.
 
 ## Domain decision sets
 Live decisions scoped to one domain — full entries out of context, IDs permanent.

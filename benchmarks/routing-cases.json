@@ -1,0 +1,59 @@
+{
+  "instructions": "For independent forward tests, materialize files in a fresh temporary repo, install the built Claude or Codex bundles, and give the agent only task plus that workspace. Keep review criteria hidden until grading. Inspect actual docs and cold-resume retrieval, not prose claims. No baseline comparison is implied.",
+  "cases": [
+    {
+      "name": "ops_restore",
+      "task": "Wrap up this session using koan-wrap. Read SESSION-NOTES.md. Update the project docs, preserve evidence, and leave the next session ready. Do not operate external systems or commit.",
+      "files": {
+        "CLAUDE.md": "# Service operations\n@docs/DECISIONS.md\n## Start here\nRead docs/HANDOFF.md. Restoring a service? Read docs/restore.md.\n## Checks\nVerify restored data and health on the target; no local application test suite.\n",
+        "docs/HANDOFF.md": "# Handoff\n## Objective\nKeep the service recoverable.\n## Current state\nRestore procedure is being developed.\n",
+        "docs/DECISIONS.md": "# Decisions\n",
+        "docs/DECISIONS-archive.md": "# Archive\n",
+        "docs/restore.md": "# Restore procedure\nRead before restoring a service.\nPrerequisite: obtain an approved backup and isolated target.\n",
+        "SESSION-NOTES.md": "The user chose an isolated restore target instead of overwriting the production database because recovery verification must not destroy production data. Procedure: import the backup into the isolated target, compare row counts and a sample record, then run the health probe. On 2026-10-23, backup fixture-17 restored 418 rows with restore-tool 2.1; the health probe timed out. Evidence artifact: evidence/drill-17.txt. Production recovery remains unverified. Next: diagnose the timeout. Do not claim live row counts; query the target when needed.\n",
+        "evidence/drill-17.txt": "2026-10-23 restore-tool 2.1 fixture-17: 418 rows imported; health probe timeout.\n"
+      },
+      "review": [
+        "Choice plus non-destructive rationale remains understandable in DECISIONS.",
+        "Existing restore procedure is reused; steps and outcome checks are findable from its read trigger.",
+        "Dated failed probe, tool version, backup identity and evidence pointer survive; no claim that production restore works.",
+        "HANDOFF has timeout investigation and unverified production recovery; no full procedure duplicated there."
+      ]
+    },
+    {
+      "name": "creative_render",
+      "task": "Wrap up this session using koan-wrap. Read SESSION-NOTES.md. Update the project docs, preserve evidence, and leave the next session ready. Do not render, publish or commit.",
+      "files": {
+        "CLAUDE.md": "# Short film\n@docs/DECISIONS.md\n## Start here\nRead docs/HANDOFF.md. Character continuity? Read films/river/brief.md. Comparing render engines? Read docs/findings.md.\n## Checks\nContinuity review and director approval of the rendered sequence.\n",
+        "docs/HANDOFF.md": "# Handoff\n## Objective\nFinish the River short film.\n## Current state\nComparing look treatments.\n",
+        "docs/DECISIONS.md": "# Decisions\n",
+        "docs/DECISIONS-archive.md": "# Archive\n",
+        "films/river/brief.md": "# River creative brief\nUse during continuity review.\nMara always wears a blue coat.\n",
+        "docs/findings.md": "# Render findings\nRead when comparing engines; observations are scoped to the recorded conditions.\n## Engine A\nEarlier result remains provisional.\n",
+        "SESSION-NOTES.md": "The director chose one final look pass after identity blocking over repeated restyling because repeated passes changed Mara's face. The blue coat requirement still holds. At 2026-10-23, engine A v3, seed 17, strength 0.35 preserved the face in frame 12; evidence/r17.txt records that one frame only. This does not prove consistency through a sequence. Workflow: approve identity blocking, apply the final look pass, then compare face and coat across the rendered sequence. The full sequence is not rendered and director approval is pending. Next: render the sequence for continuity review.\n",
+        "evidence/r17.txt": "Frame 12, engine A v3, seed 17, strength 0.35: face judged consistent. No sequence review.\n"
+      },
+      "review": [
+        "Creative choice and rationale remain in DECISIONS; the blue-coat requirement stays authoritative in the brief.",
+        "Existing findings are reused; date, engine version, seed, strength, limited scope and evidence artifact survive.",
+        "Repeatable workflow has a discoverable home; no requirement to call it RUNBOOK.md or create an ops taxonomy.",
+        "Pending render and human approval remain in HANDOFF; no invented automated test suite or approval claim."
+      ]
+    },
+    {
+      "name": "small_code_project",
+      "task": "Wrap up this session using koan-wrap. Read SESSION-NOTES.md. Update only the continuity material needed to resume. Do not commit.",
+      "files": {
+        "CLAUDE.md": "# Duration formatter\n@docs/DECISIONS.md\n## Checks\nnode --test\n",
+        "docs/HANDOFF.md": "# Handoff\n## Objective\nFormat durations correctly.\n## Current state\nInvestigating boundary inputs.\n",
+        "docs/DECISIONS.md": "# Decisions\n",
+        "docs/DECISIONS-archive.md": "# Archive\n",
+        "SESSION-NOTES.md": "No implementation change or settled choice today. Boundary-input investigation is still pending. No tests were run. Next: reproduce the negative-duration bug.\n"
+      },
+      "review": [
+        "Handoff preserves the next action and lack of verification.",
+        "No fabricated decision, runbook, inventory, research notebook or empty scaffolding is added."
+      ]
+    }
+  ]
+}

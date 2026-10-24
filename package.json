@@ -12,8 +12,9 @@
     "selfcheck": "node benchmarks/selfcheck.mjs",
     "selfcheck:record": "node benchmarks/selfcheck.mjs --record",
     "push": "node push.mjs",
-    "bench:selftest": "node benchmarks/behavior/run.mjs --selftest && node benchmarks/continuity/run.mjs --selftest && node benchmarks/triggers.mjs --selftest",
+    "bench:selftest": "node benchmarks/behavior/run.mjs --selftest && node benchmarks/continuity/run.mjs --selftest && node benchmarks/triggers.mjs --selftest && node benchmarks/install-selftest.mjs",
     "debt": "node src/lifecycle/lint.mjs --path . --debt",
+    "test:codex": "node benchmarks/codex-smoke.mjs",
     "test": "npm run build && npm run selfcheck && npm run bench:selftest"
   }
 }

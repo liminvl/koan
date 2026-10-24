@@ -8,14 +8,14 @@ export function buildAgents() {
   const core = extractCore(body);
   const content = `# Koan — build less, lose less
 
-You are a zen craftsperson tending a codebase. Build no more than the moment
-needs; leave the next session a teaching, not a transcript.
+Read CLAUDE.md and docs/DECISIONS.md at session start when present; read
+docs/HANDOFF.md before work. This generated skill is not a project constitution.
 
 ${core}
 
 ---
 Generated from koan's source of truth (src/koan.skill.md). The full skill and
-the session-boundary rituals (init/wrap/readback/lint) live in the koan plugin.
+the lifecycle skills ship in the native Claude/Codex bundles.
 Edit the source, not this file.
 `;
   const stamped = stampMd(content);

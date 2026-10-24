@@ -45,7 +45,7 @@ ceremony; it changes two things about how the agent works:
 
 1. **BUILD LESS** — before writing anything, the agent climbs a ladder: does
    this need to exist at all? → is it already in this codebase? → stdlib? →
-   native platform feature? → an already-installed dependency? → one line? →
+   native platform feature? → an already-installed dependency? → simpler without hiding intent? →
    only then, the minimum code that works. It stops at the first rung that
    holds. Safety is carved out explicitly: validation at trust boundaries,
    data-loss handling, security, accessibility, and anything you explicitly
@@ -76,15 +76,27 @@ optional **docs/DECISIONS-\<domain\>.md** sets for live decisions that only bind
 one area. Decision IDs (`D-001`, `D-002`, …) are permanent and never renumbered,
 so citations stay valid forever.
 
-When the repo *describes* a system rather than *being* it — an estate of VMs, a
-live site, a database, a model's measured behavior — that state gets a
-**pointed-to file** (`docs/<name>.md`) named in CLAUDE.md with a read-trigger
-("Operating the estate? Read docs/estate.md first"). Identities are recorded,
-values are queried, measurements are dated. It is never mirrored into HANDOFF
-(it would drift on every change that isn't a commit) or piled into Gotchas.
+Supporting documents serve a distinct reader need: **procedures** explain how to
+repeat and verify a task; **references** hold identities and definitions;
+**evidence** preserves observations and conditions; **specs, briefs and contracts**
+define what the result must satisfy. Reuse existing homes. Create a document for
+concrete durable content with a distinct task and read trigger, before a budget
+forces it; do not seed empty categories or one file per finding.
 
-Everything is human-readable and hand-editable — these are your project docs,
-not a database. Git is the history; the files only ever say what *is*.
+The constitution or relevant task document links to the home and says when to
+read it. Keep project-wide constraints in the constitution and choices with
+sufficient rationale in DECISIONS. Brief summaries with pointers are fine;
+duplicated authoritative facts are not. A service restore procedure, film brief,
+character reference and research notebook all follow this rule.
+
+Query changing live state; record how to query it. Preserve past measurements as
+dated evidence with conditions, versions and source artifacts. Don't confuse a
+past successful restore or approved render with a claim about the current system.
+Detailed explanations needed later belong in linked documents, not only commits.
+
+Everything is human-readable and hand-editable. Large documents need useful
+headings, section/search pointers, or a split by task. Moving a monolith out of
+the constitution saves little if every task must still read all of it.
 
 ### Shape
 
@@ -109,10 +121,32 @@ the archive (a one-line stub stays behind); when HANDOFF does, stale lines get
 deleted, not collapsed into an "archive" section (hidden text still costs full
 tokens); when CLAUDE.md does, the warning names its largest section — almost
 always Gotchas that became a runbook or a lab notebook — and the fix is a move
-to a pointed-to file, not a trim. Lint also sums what a session actually
-*loads* — the constitution plus every `@` import it pulls in — and warns when
-that chain exceeds the two budgets combined, naming the import: a second import
-is almost always a pointed-to file wearing an `@`.
+to a pointed-to file, not a trim. The default loaded-chain diagnostic counts the
+constitution, its direct Markdown imports, and the explicit active-log read.
+It does not trace arbitrary prose, nested imports or a host's actual context.
+
+For a task-specific whole-file estimate, select the supporting files explicitly:
+
+```sh
+node "<skill-dir>/lint.mjs" --path "<project-root>" --context docs/restore.md --context docs/inventory.md
+```
+
+This adds the handoff, active decisions, constitution, direct imports and selected
+files, counting each physical file once, and warns above the existing 50k chain
+threshold. It lists contributions so a broad read trigger or oversized reference
+is visible. Section-only reads may cost less; this is not a token measurement.
+Stored knowledge does not warn merely because it is large.
+
+The **artifact ratchet** is separate: Koan's generated skill ceilings live in
+`benchmarks/budgets.json`. After a tested trim, lower them to the resulting size
+plus roughly 5% headroom; justify increases in the same change. Consumer handoff
+and decision limits remain stable across cleanups. Neither kind is a fill target.
+
+This approach is informed by [Diátaxis's reader needs](https://diataxis.fr/),
+[ADR guidance to link supporting detail](https://learn.microsoft.com/en-us/azure/well-architected/architect-role/architecture-decision-record),
+[just-in-time context retrieval](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents),
+and an independent [skill budget ratchet](https://github.com/OrenAshkenazy/gh-review-loop/blob/main/tests/budgets.json).
+These support the structure, not universal character limits.
 
 ### Phases
 
@@ -144,6 +178,10 @@ in tracked files — deferred work stays visible instead of rotting into "later
 means never".
 
 ## 3. The skills — what, when, why
+
+Use `/koan-…` in Claude Code and `$koan-…` in Codex. Both hosts share
+continuity docs; host-specific installation paths are in [README](README.md#install).
+The automatic SessionStart hook is part of the Claude plugin only.
 
 Six skills. One is the always-on lens; the other five are rituals you (or the
 agent) invoke at session boundaries.
@@ -179,7 +217,9 @@ agent) invoke at session boundaries.
   and why it failed — so nobody retries them.
 - **When:** ending a work session, switching tasks, or anything that ends with
   "I'm stopping here". Mid-session, say **"checkpoint"** instead — a light
-  refresh of current-state/next-steps without the pruning pass. Checkpoint
+  bounded refresh of current-state/next-steps that replaces superseded checkpoint
+  state while retaining unresolved work and evidence. Decision archiving waits
+  for full wrap. Checkpoint
   before `/compact`: compaction is lossy, HANDOFF isn't.
 - **Why:** this is the moment context dies. Ten minutes of wrap is the
   difference between tomorrow's session resuming in two minutes and re-deriving
@@ -190,11 +230,11 @@ agent) invoke at session boundaries.
   and `git status` (git wins on disagreement), then plays its understanding
   back in ≤10 bullets — objective, constraints, live decisions, dead ends not
   to retry, and the next step it *would* take — including the Shape line and
-  what proves a change here — and stops for your correction before doing work.
+  what proves a change here. It continues authorized work unless a discrepancy
+  needs an answer or you explicitly requested confirmation.
 - **When:** first session after a gap, after working in a different tool, or
   any time you suspect the agent's picture is stale.
-- **Why:** a misread that becomes code is the expensive kind of misread. Thirty
-  seconds of confirmation beats an afternoon of un-writing a confident wrong fix.
+- **Why:** a misread that becomes code is the expensive kind of misread. Resolve material discrepancies before they become wrong work.
 
 ### `/koan-lint` — check the docs
 - **What:** deterministic checks a model is bad at eyeballing: decision-ID
@@ -286,7 +326,9 @@ says why it's built the way it is. Their agent gets the same context yours has
 
 **You use Claude Code; a teammate uses Cursor.**
 Both read the same three files — Cursor through `AGENTS.md`, which carries the
-core discipline natively. Tool-local memory is invisible across tools; git plus
+core discipline and explicit shared-doc reads natively. The generated compact
+core is skill guidance, not the project constitution: keep project facts in
+CLAUDE.md and do not append them to the generated file. Tool-local memory is invisible across tools; git plus
 these docs are the only shared channel, which is exactly why koan routes
 everything durable into them.
 
@@ -305,10 +347,9 @@ its normal pass.
   never how code or prose is phrased.
 - **Not a hard gate.** Nothing blocks. The lint reports, the hook reminds, the
   wrap asks — you and git remain in charge.
-- **Not magic on small models.** The behavior deltas are verified on
-  frontier-tier models and degrade below that tier; small fast models don't act
-  on standing rules at all. The *docs* still help any model (and any human) —
-  the rules just stop self-enforcing.
+- **Model adherence is measured, not inherited.** Historical runs differ by
+  model; a new model or harness needs its own evaluation. Continuity documents
+  remain readable by people and agents regardless of those results.
 
 ## 6. FAQ / troubleshooting
 
@@ -353,8 +394,10 @@ Nothing, until `harden` phase — then each one needs a disposition: fix it, or
 accept it by citing the decision that took it (e.g. `// koan: DB stub (D-001)`).
 
 **How do I uninstall?**
-Remove the plugin/skills dir (or `/plugin uninstall koan@koan`) and delete
-`AGENTS.md` if pushed. The three doc files are yours — they keep working as
+Remove only the installed koan directories from `.claude/skills/` and/or
+`.agents/skills/` (or `/plugin uninstall koan@koan` for the marketplace plugin).
+Preserve project instructions; remove a generated AGENTS core only if it has
+no local project rules. The three doc files are yours — they keep working as
 plain project docs with or without koan installed.
 
 ---

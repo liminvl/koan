@@ -1,165 +1,162 @@
 #!/usr/bin/env node
-// Drop a built koan into an existing project.
-//   node push.mjs <project-path> [--target claude|agents|user|plugin] [--force] [--check]
-// agents (default): copies AGENTS.md to the project root.
-// claude:           copies the skills into <project>/.claude/skills/.
-// user:             copies the skills into ~/.claude/skills/ (no project path).
-// plugin:           copies the whole build — skills AND the SessionStart hook —
-//                   into <skills-dir>/koan/ as a skills-directory plugin. A
-//                   project path selects that project's skills dir; omitting it
-//                   selects ~/.claude/skills/, same rule as `user`. Hooks only
-//                   load from a plugin, so this is the only target that ships them.
-// Generated files carry a build stamp; an existing copy that matches the
-// current build is skipped, one from another build is reported as stale.
-// --check reports that comparison and writes nothing (exit 1 if anything drifted).
-import { existsSync, cpSync, mkdirSync, readdirSync, readFileSync } from 'node:fs';
+// Install generated bundles. Plan and preflight every target before writing any.
+import { existsSync, cpSync, mkdirSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { homedir } from 'node:os';
 
-const HERE = dirname(fileURLToPath(import.meta.url));
-const DIST = join(HERE, 'dist');
-const args = process.argv.slice(2);
-const ti = args.indexOf('--target');
-if (ti >= 0 && (!args[ti + 1] || args[ti + 1].startsWith('--'))) {
-  console.error('--target requires a value: claude|agents|user|plugin'); process.exit(2);
-}
-const target = ti >= 0 ? args[ti + 1] : 'agents';
-const force = args.includes('--force');
-const check = args.includes('--check');
-const dest = args.find((a, i) => !a.startsWith('--') && (ti < 0 || i !== ti + 1));
+const DIST = join(dirname(fileURLToPath(import.meta.url)), 'dist');
+const TARGETS = ['agents', 'claude', 'codex', 'both', 'user', 'plugin'];
+const HELP = `Usage: node push.mjs [<project>] [--target claude|codex|both|agents|user|plugin] [--global] [--check] [--force]
 
-if (!dest && target !== 'user' && target !== 'plugin') { console.error('usage: node push.mjs <project-path> [--target claude|agents|user|plugin] [--force] [--check]'); process.exit(2); }
-if (!existsSync(DIST)) { console.error('No dist/ — run `npm run build` first.'); process.exit(2); }
-const project = dest ? resolve(dest) : null;
-if (project && !existsSync(project)) { console.error(`Project path does not exist: ${project}`); process.exit(2); }
+  claude   All six skills in <project>/.claude/skills
+  codex    All six skills in <project>/.agents/skills
+  both     Both native skill bundles (no automatic hook)
+  agents   Compact AGENTS.md only (legacy default)
+  user     Alias for --target claude --global
+  plugin   Claude plugin with SessionStart hook (legacy layout)
 
-const stampOf = (p) =>
-  (existsSync(p) ? readFileSync(p, 'utf8').match(/<!-- koan v\S+ · build [0-9a-f]+ -->/)?.[0] ?? null : null);
+--global installs skills in your home directory instead of a project.
+Without a project, plugin retains its legacy user-wide default.
+--check reports drift without writes; --force overwrites changed files.
+Native skill installs preserve project instructions and continuity docs.
+The legacy agents target writes AGENTS.md; prefer --target codex for Codex skills.
+Examples:
+  node push.mjs /path/to/project --target both
+  node push.mjs --target codex --global
+  node push.mjs /path/to/project --target both --check`;
 
-// --check: classify each destination against this build and write NOTHING. The stamp
-// guard below already detects drift, but only a push can ask it; --check is the same
-// comparison made answerable on demand. Exit 1 on any non-current copy so a hook or
-// script can gate on it. See D-031 for why this lives here and not in selfcheck.
-const statusOf = (to, from) =>
-  !existsSync(to) ? 'missing'
-    : ((h) => (!h ? 'unstamped' : h === stampOf(from) ? 'current' : 'stale'))(stampOf(to));
+const stampOf = (path) => existsSync(path) && statSync(path).isFile()
+  ? readFileSync(path, 'utf8').match(/<!-- koan v\S+ · build [0-9a-f]+ -->/)?.[0] ?? null : null;
 
-// Skill dirs the destination still carries that this build no longer ships. A copy
-// overlays, it never cleans, so a deleted skill survives every re-push and keeps
-// loading and routing. Comparing only the SOURCE list is blind to it — observed:
-// koan-debt outlived its deletion while --check reported "All 6 current".
-// Only koan's OWN dirs count; a shared skills dir holds other people's skills too.
-const extrasIn = (dir, shipped) =>
-  (existsSync(dir) ? readdirSync(dir) : [])
-    .filter((d) => !shipped.includes(d) && /^koan(-|$)/.test(d) && stampOf(join(dir, d, 'SKILL.md')));
-
-// Drift is measured only against surfaces the destination ACTUALLY adopted: nothing
-// installed at all is a choice, not rot, and reporting it teaches you to ignore the
-// check (D-025's false-positive lesson). A *partial* install is real drift.
-const reportDrift = (rows, where, extras = []) => {
-  if (rows.every(([, st]) => st === 'missing') && !extras.length) {
-    console.log(`koan is not installed in ${where} — nothing to check.`);
-    process.exit(0);
+const sameContent = (to, from) => {
+  if (!existsSync(to)) return false;
+  if (statSync(from).isDirectory()) {
+    if (!statSync(to).isDirectory()) return false;
+    const names = readdirSync(from).sort();
+    return JSON.stringify(names) === JSON.stringify(readdirSync(to).sort())
+      && names.every((name) => sameContent(join(to, name), join(from, name)));
   }
-  for (const [name, st] of rows) console.log(`  ${st.padEnd(9)} ${name}`);
-  for (const name of extras) console.log(`  ${'extra'.padEnd(9)} ${name} — not in this build; delete it`);
-  const drifted = rows.filter(([, st]) => st !== 'current');
-  const bad = drifted.length + extras.length;
-  console.log(bad
-    ? `\n${drifted.length}/${rows.length} not current${extras.length ? ` · ${extras.length} extra` : ''} in ${where}${drifted.length ? ' — re-push with --force' : ''}.`
-    : `\nAll ${rows.length} current in ${where}.`);
-  process.exit(bad ? 1 : 0);
+  return statSync(to).isFile()
+    && readFileSync(to, 'utf8').replace(/\r\n/g, '\n') === readFileSync(from, 'utf8').replace(/\r\n/g, '\n');
 };
 
-// After a push: name what the copy could not remove. This is the moment the orphan
-// is created, and the person is already looking here.
-const warnExtras = (extras, where) => {
-  if (!extras.length) return;
-  console.error(`\n${extras.length} skill dir(s) in ${where} are not in this build — delete by hand:`);
-  for (const d of extras) console.error(`  ${join(where, d)}`);
+const extraFiles = (to, from) => {
+  if (!existsSync(to) || !statSync(to).isDirectory() || !statSync(from).isDirectory()) return [];
+  return readdirSync(to).sort().flatMap((name) => {
+    const dest = join(to, name), source = join(from, name);
+    return existsSync(source) ? extraFiles(dest, source) : [dest];
+  });
 };
 
-if (target === 'agents') {
-  const from = join(DIST, 'agents', 'AGENTS.md');
-  const to = join(project, 'AGENTS.md');
-  if (check) reportDrift([['AGENTS.md', statusOf(to, from)]], project);
-  if (existsSync(to) && !force) {
-    const have = stampOf(to);
-    if (have && have === stampOf(from)) { console.log(`${to} already matches this build — nothing to do.`); process.exit(0); }
-    console.error(have
-      ? `${to} is from another koan build (${have}). Re-run with --force to update it.`
-      : `${to} exists and carries no koan build stamp. Re-run with --force to overwrite.`);
-    process.exit(1);
+const statusOf = ({ to, from }) => {
+  if (!existsSync(to)) return 'missing';
+  if (sameContent(to, from)) return 'current';
+  const marker = statSync(from).isDirectory() ? join(to, 'SKILL.md') : to;
+  const sourceMarker = statSync(from).isDirectory() ? join(from, 'SKILL.md') : from;
+  return stampOf(sourceMarker) && !stampOf(marker) ? 'unmanaged' : 'stale';
+};
+
+// home is injectable for offline user-scope tests; normal CLI uses the OS home.
+export function main(args = process.argv.slice(2), { home = homedir() } = {}) {
+  if (args.includes('--help') || args.includes('-h')) { console.log(HELP); return 0; }
+  let target = 'agents', dest, global = false, check = false, force = false, selected = false;
+  for (let i = 0; i < args.length; i++) {
+    const value = args[i];
+    if (value === '--target') {
+      if (selected || !TARGETS.includes(args[i + 1])) { console.error(`--target requires one of: ${TARGETS.join(', ')}`); return 2; }
+      target = args[++i]; selected = true;
+    } else if (value === '--global') global = true;
+    else if (value === '--check') check = true;
+    else if (value === '--force') force = true;
+    else if (value.startsWith('-') || dest) { console.error(`Unexpected argument: ${value}\n${HELP}`); return 2; }
+    else dest = value;
   }
-  cpSync(from, to);
-  console.log(`Pushed AGENTS.md → ${to}`);
-} else if (target === 'claude' || target === 'user') {
-  const skillsFrom = join(DIST, 'claude', 'skills');
-  const skillsTo = target === 'user' ? join(homedir(), '.claude', 'skills') : join(project, '.claude', 'skills');
-  const shipped = readdirSync(skillsFrom);
-  if (check) reportDrift(
-    shipped.map((s) => [s, statusOf(join(skillsTo, s, 'SKILL.md'), join(skillsFrom, s, 'SKILL.md'))]),
-    skillsTo, extrasIn(skillsTo, shipped));
-  mkdirSync(skillsTo, { recursive: true });
-  let pushed = 0, current = 0;
-  for (const s of readdirSync(skillsFrom)) {
-    const to = join(skillsTo, s);
-    if (existsSync(to) && !force) {
-      const have = stampOf(join(to, 'SKILL.md'));
-      if (have && have === stampOf(join(skillsFrom, s, 'SKILL.md'))) { current++; continue; }
-      console.error(have
-        ? `${to} is from another koan build (${have}). Re-run with --force to update.`
-        : `${to} exists and carries no koan build stamp. Re-run with --force to overwrite.`);
-      process.exit(1);
+  if (target === 'user') { target = 'claude'; global = true; }
+  if (target === 'plugin' && !dest) global = true;
+  if ((global && dest) || (global && target === 'agents') || (!global && !dest)) {
+    console.error(`Choose a project OR --global (agents requires a project).\n${HELP}`); return 2;
+  }
+  const base = global ? home : resolve(dest);
+  if (!existsSync(base) || !statSync(base).isDirectory()) { console.error(`Install root is not a directory: ${base}`); return 2; }
+  if (!existsSync(DIST)) { console.error('No dist/ — run npm run build first.'); return 2; }
+
+  const units = [], extras = [], collisions = [];
+  const add = (name, from, to) => units.push({ name, from, to });
+  const skills = (host) => {
+    const from = join(DIST, host, 'skills');
+    const to = join(base, host === 'codex' ? '.agents' : '.claude', 'skills');
+    if (host === 'claude' && existsSync(join(to, 'koan', '.claude-plugin'))) {
+      collisions.push(`Claude plugin already exists at ${join(to, 'koan')}; use --target plugin to update it or remove that install before choosing loose skills.`);
     }
-    cpSync(join(skillsFrom, s), to, { recursive: true });
-    pushed++;
+    const shipped = readdirSync(from);
+    for (const name of shipped) add(`${host}/${name}`, join(from, name), join(to, name));
+    collectExtras(to, shipped);
+  };
+  const collectExtras = (dir, shipped) => {
+    if (!existsSync(dir)) return;
+    for (const name of readdirSync(dir))
+      if (!shipped.includes(name) && /^koan(?:-|$)/.test(name) && stampOf(join(dir, name, 'SKILL.md')))
+        extras.push(join(dir, name));
+  };
+
+  if (target === 'agents') add('AGENTS.md', join(DIST, 'agents', 'AGENTS.md'), join(base, 'AGENTS.md'));
+  else if (target === 'plugin') {
+    const from = join(DIST, 'claude');
+    const skillsDir = join(base, '.claude', 'skills');
+    const to = join(skillsDir, 'koan');
+    for (const name of existsSync(skillsDir) ? readdirSync(skillsDir) : [])
+      if (/^koan(?:-|$)/.test(name) && existsSync(join(skillsDir, name, 'SKILL.md')))
+        collisions.push(`Loose Claude skill exists at ${join(skillsDir, name)}; remove that install before choosing the plugin.`);
+    for (const name of readdirSync(join(from, 'skills')))
+      add(`plugin/${name}`, join(from, 'skills', name), join(to, 'skills', name));
+    for (const name of ['hooks', '.claude-plugin']) add(`plugin/${name}`, join(from, name), join(to, name));
+    collectExtras(join(to, 'skills'), readdirSync(join(from, 'skills')));
+  } else {
+    for (const host of target === 'both' ? ['claude', 'codex'] : [target]) skills(host);
   }
-  console.log(`Pushed ${pushed} skill(s) → ${skillsTo}${current ? ` (${current} already current)` : ''}`);
-  warnExtras(extrasIn(skillsTo, shipped), skillsTo);
-} else if (target === 'plugin') {
-  const from = join(DIST, 'claude');
-  const skillsDir = project ? join(project, '.claude', 'skills') : join(homedir(), '.claude', 'skills');
-  const to = join(skillsDir, 'koan');
-  const shipped = readdirSync(join(from, 'skills'));
-  const rows = shipped
-    .map((s) => [s, statusOf(join(to, 'skills', s, 'SKILL.md'), join(from, 'skills', s, 'SKILL.md'))]);
-  const extras = extrasIn(join(to, 'skills'), shipped);
-  // The flat layout (loose koan-* skill dirs) and the plugin layout both provide
-  // every skill; installing both double-lists all seven. Refuse rather than
-  // delete — removing files a user installed is their call, not koan's — and
-  // name the exact paths so the fix is one command. A plugin dir has no SKILL.md
-  // at its root, so it never matches itself.
-  const loose = (existsSync(skillsDir) ? readdirSync(skillsDir) : [])
-    .filter((d) => /^koan(-|$)/.test(d) && stampOf(join(skillsDir, d, 'SKILL.md')));
+
+  if (collisions.length) { for (const message of collisions) console.error(message); return 1; }
+  const rows = units.map((unit) => ({ ...unit, status: statusOf(unit) }));
+  for (const extra of extras) console.error(`Extra retired skill: ${extra} — remove it manually.`);
   if (check) {
-    if (loose.length) console.log(`  ${'flat'.padEnd(9)} ${loose.length} loose koan skill dir(s) in ${skillsDir} — remove before pushing the plugin.`);
-    reportDrift(rows, to, extras);
-  }
-
-  if (loose.length) {
-    console.error(`The flat koan install is still in ${skillsDir}; both layouts provide the same skills.`);
-    console.error('Remove these first, then re-run:');
-    for (const d of loose) console.error(`  ${join(skillsDir, d)}`);
-    process.exit(1);
-  }
-
-  if (existsSync(to) && !force) {
-    const drifted = rows.filter(([, st]) => st !== 'current');
-    if (!drifted.length) {
-      console.log(`${to} already matches this build — nothing to do.`);
-      warnExtras(extras, join(to, 'skills'));
-      process.exit(extras.length ? 1 : 0);
+    if (rows.every((row) => row.status === 'missing') && !extras.length) {
+      console.log(`koan is not installed in ${base} — nothing to check.`); return 0;
     }
-    console.error(`${to} is from another koan build (${drifted.length}/${rows.length} not current). Re-run with --force to update.`);
-    process.exit(1);
+    for (const row of rows) console.log(`  ${row.status.padEnd(9)} ${row.name}`);
+    return rows.some((row) => row.status !== 'current') || extras.length ? 1 : 0;
   }
-  mkdirSync(skillsDir, { recursive: true });
-  cpSync(from, to, { recursive: true });
-  console.log(`Pushed the koan plugin (${rows.length} skills + SessionStart hook) → ${to}`);
-  console.log('Restart Claude Code (or /reload-plugins) — hook changes do not hot-reload.');
-  warnExtras(extrasIn(join(to, 'skills'), shipped), join(to, 'skills'));
-} else {
-  console.error(`Unknown target: ${target} (use claude, agents, user, or plugin)`); process.exit(2);
+  const unmanaged = rows.filter((row) => row.status === 'unmanaged');
+  if (unmanaged.length && !force) {
+    for (const row of unmanaged) console.error(`${row.to} carries no koan build stamp; preserving project-owned content. Use native --target claude|codex|both to keep project instructions, or inspect and back up this path before explicitly replacing it.`);
+    return 1;
+  }
+  const stale = rows.filter((row) => row.status === 'stale');
+  if (stale.length && !force) {
+    for (const row of stale) console.error(`${row.to} differs from this build. Review and back up local changes before updating; --force replaces shipped files.`);
+    return 1;
+  }
+  let copied = 0;
+  for (const row of rows) {
+    if (row.status === 'current') continue;
+    mkdirSync(dirname(row.to), { recursive: true });
+    cpSync(row.from, row.to, { recursive: true });
+    copied++;
+  }
+  // Copy overlays intentionally preserve unknown files. Report remaining drift;
+  // --force never silently deletes local additions or retired skill directories.
+  const remaining = units.filter((unit) => statusOf(unit) !== 'current');
+  for (const row of remaining) {
+    const extra = extraFiles(row.to, row.from);
+    console.error(`Still differs after copying: ${row.to}${extra.length ? ` — preserved extra paths: ${extra.join(', ')}` : ' — inspect local file types/content.'}`);
+  }
+  console.log(`Installed ${target}: ${copied} unit(s) copied, ${rows.length - copied} already current in ${base}.`);
+  if (target === 'plugin') console.log('Restart Claude Code or run /reload-plugins to load hook changes.');
+  else if (target !== 'agents') console.log('Use /koan-init in Claude or $koan-init in Codex. Restart the host if skills do not appear.');
+  return remaining.length || extras.length ? 1 : 0;
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  try { process.exitCode = main(); }
+  catch (error) { console.error(`Install failed: ${error.message}`); process.exitCode = 2; }
 }

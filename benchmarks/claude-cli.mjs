@@ -75,8 +75,16 @@ export function fixtureDir(files, label = 'fixture') {
 // return). Those fixtures need to BE a repo — otherwise the skill's own
 // precondition fires ("not a git repo ⇒ say so and stop") and the probe
 // measures the fixture instead of the rule.
+// Hooks export repository-local Git variables; -C alone does not isolate a fixture.
+const localGitEnv = spawnSync('git', ['rev-parse', '--local-env-vars'], { encoding: 'utf8' }).stdout?.trim().split(/\r?\n/) ?? [];
+export function fixtureGitEnv(env = process.env) {
+  const clean = { ...env };
+  for (const name of localGitEnv) delete clean[name];
+  return clean;
+}
+
 export function gitOut(dir, args) {
-  return spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8' }).stdout || '';
+  return spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', env: fixtureGitEnv() }).stdout || '';
 }
 export function gitInit(dir) {
   gitOut(dir, ['init', '-b', 'main']);

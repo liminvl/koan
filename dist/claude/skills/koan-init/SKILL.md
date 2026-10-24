@@ -11,8 +11,8 @@ description: >-
 
 # Koan init
 
-Stand up the three-file structure, then seed it from the actual repo so it isn't
-empty. The whole point is that a cold session reads these and resumes.
+Share one handoff and decision log across hosts. Reuse the existing constitution;
+a second host entrypoint points to it rather than copying facts.
 
 ## 0. Read the shape first — before writing anything
 Inspect what's here: manifests, IaC, CI, scripts, docs, prompt/eval files,
@@ -30,24 +30,26 @@ Y; proof looks like Z" — and ask only where you're unsure or safety rides on i
 - **docs/DECISIONS.md** — lean, auto-loaded decision log.
 - **docs/DECISIONS-archive.md** — full text of settled decisions (NOT auto-loaded).
 
-Use this skill's `templates/` as the starting shape. **Do not overwrite** any file
-that already exists — ask first.
+Use `templates/` for missing files. Preserve existing content; if another host
+has a constitution, create only the bridge in §2.
 
 ### 1a. Backfill into an existing setup
 If the constitution exists, don't overwrite — but ADD any template section it's
 missing (additive, never touch existing content): a **Checks** section if absent;
 an **Objective** section in HANDOFF; the current ritual line and a **Shape**
-line in "Start here". Re-running is how an old setup catches up; to adopt one
-change, name it ("adopt koan:D-044") and apply it the same way. List each
-backfill in the report.
+line in "Start here". List each backfill in the report.
 
 ## 2. Wire the import
-CLAUDE.md/AGENTS.md imports **only the lean active log** so it rides along:
-```
-@docs/DECISIONS.md
-```
-**Do NOT import the archive** — keeping it out of context is the whole point. The
-active log keeps a one-line index pointing at the archive for on-demand lookup.
+CLAUDE.md imports the active log: `@docs/DECISIONS.md`.
+AGENTS.md explicitly says: `Read docs/DECISIONS.md at session start.`
+Never auto-load the archive.
+
+When adding a second host, keep the existing constitution:
+- AGENTS.md primary → new CLAUDE.md contains `@AGENTS.md`.
+- CLAUDE.md primary → new AGENTS.md says:
+  `Read CLAUDE.md and docs/DECISIONS.md at session start.`
+If both exist, preserve their content and reconcile wiring; don't duplicate facts.
+Without lifecycle skills, replace slash commands with the corresponding plain steps.
 
 ## 3. Seed from reality (don't leave templates blank)
 - The manifest or its equivalent (`package.json`, Makefile, pyproject, a playbook,
@@ -67,11 +69,10 @@ active log keeps a one-line index pointing at the archive for on-demand lookup.
   a route and a test, a playbook role, a runbook, a chapter → paths under
   "Canonical examples". Pointers only, never paste; prefer the most recently
   touched one that follows current conventions.
-- State that lives **outside git** (a box, a database, a live site) → a
-  pointed-to `docs/<name>.md` plus a read-trigger line in "Start here". Record
-  identities; values that change without a commit are queried, never mirrored.
-- Already have a single notes file mixing everything? SPLIT it: constraints →
-  CLAUDE.md gotchas; choices-with-rationale → DECISIONS.md; status → HANDOFF.md.
+- Mixed notes or durable material beyond the core three files? Read
+  [document routing](references/document-routing.md). Reuse existing procedures,
+  references, evidence and briefs; create a home only for concrete content with
+  a distinct read trigger. Preserve evidence and decision rationale when moving.
 - **Budgets from day one:** DECISIONS ≤ ~30k chars, HANDOFF ≤ ~15k, constitution
   ≤ ~20k. If the seeded DECISIONS already exceeds ~30k, apply `koan-wrap`'s
   archive rules immediately.
@@ -93,7 +94,6 @@ writing anything.
 Skip this when the repo already answers it — seed from reality per step 3.
 
 ## 4. Report
-List files created and one line each on what you seeded, plus the Shape line as
-written. Note current char counts of HANDOFF (vs ~15k) and DECISIONS (vs ~30k)
-so the user knows the headroom. Suggest they review CLAUDE.md before relying on it.
-<!-- koan v0.1.0 · build a252d189 -->
+Report files created/backfilled, Shape, and HANDOFF/DECISIONS sizes (vs ~15k/~30k).
+Suggest reviewing the constitution before relying on it.
+<!-- koan v0.1.0 · build b69ba406 -->

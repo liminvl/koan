@@ -15,11 +15,8 @@ tooling, a gate, or how a change is judged? Read `docs/DECISIONS-method.md` —
 both are deliberately outside the auto-loaded log ([[D-033]]).
 
 **Phase:** harden
-<!-- Both shortcuts dispositioned (D-038): build.mjs's "add an adapter" note was
-     never debt — two targets is the intended set, since Cursor/Copilot/Codex read
-     AGENTS.md natively — and the continuity fixture's DB stub cites D-001, which
-     is what accepting a shortcut now means. In `harden`, a choice lands on the
-     safe side: prefer the boring fix, and new surface needs a reason, not just a use. -->
+<!-- In harden, prefer the boring fix; new surface needs a reason. Native
+     Claude/Codex bundles and the AGENTS core share src (D-002). -->
 
 ## Stack
 Node.js ≥ 22 (ESM, `.mjs`, no dependencies). Plain Markdown skill sources. No
@@ -27,7 +24,7 @@ build framework — the build is a handful of `.mjs` scripts.
 
 ## How to run
 - Build all targets: `npm run build` (src → dist/)
-- Push into a project: `node push.mjs <path> [--target claude|agents]`; refresh
+- Push into a project: `node push.mjs <path> [--target claude|codex|both|agents]`; refresh
   the user-level skills: `node push.mjs --target user`. Add `--check` to any of
   these to report drift and write nothing (exit 1 if a copy is stale).
 - Install as a plugin (the only target that ships the SessionStart hook):
@@ -48,7 +45,7 @@ build framework — the build is a handful of `.mjs` scripts.
 - The Checks run at commit time via `hooks/pre-commit`; wiring is one-time per
   clone: `git config core.hooksPath hooks`.
 - The compact `<!-- koan:core:start/end -->` markers in `src/koan.skill.md` define
-  what AGENTS.md ships. Rules outside them reach the full Claude skill only.
+  what AGENTS.md ships. Rules outside them reach the full Claude and Codex skills only.
 - Benchmark Stage 1/2 runners spend API credits; their `--selftest` paths are offline.
 - Files under `hooks/` don't hot-reload the way a `SKILL.md` does — after pushing the
   plugin target, restart Claude Code or `/reload-plugins`.

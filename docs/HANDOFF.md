@@ -11,6 +11,22 @@ into existing projects, and benchmarks itself against regression as it grows.
 Done when: the skill is content-complete, builds cleanly, and Stages 0–2 run.
 
 ## Current state
+**Supporting-doc routing** ([[D-048]], 2026-10-23): init/wrap share an on-demand
+reference for procedures, reference, evidence and briefs. Decisions retain rationale;
+consumer limits stay unchanged. `koan-lint --context <path>` (repeatable) estimates
+core + selected whole-file context, with an advisory 50k threshold. Artifact
+ceilings ratcheted after trims; the lint increase pays for diagnostic guidance.
+**Native Codex support** ([[D-002]], 2026-10-23): six generated skill bundles
+install to `.agents/skills`; `--target claude|codex|both` selects hosts and
+`--global` selects user scope. Combined installs preflight both hosts before
+writing. Existing instructions and continuity docs are preserved. Claude's
+SessionStart hook stays plugin-only; Codex gets explicit lifecycle invocation.
+**Refactor review implemented** ([[D-047]], 2026-10-23): install drift checks
+compare content; jazz creates its worktree branch; trail requires an actual
+choice/rationale entry; onecheck executes tests and mutation checks. Core prefers
+maintainable simplicity and sufficient coverage; readback continues authorized
+work unless blocked; non-importing hosts get explicit reads; checkpoints have
+bounded state and a single owner. Model evidence no longer transfers by tier.
 **koan fits non-app repos** ([[D-044]], 2026-09-23). The constitution carries a
 free-text `**Shape:**` line and a 20k budget (lint check names the largest
 section); `koan-init` §0 reads the repo's shape and proof before seeding, with
@@ -54,9 +70,9 @@ live only in that session's transcript — the durable facts are in the entry.
   `compact` start finds uncommitted work newer than HANDOFF ([[D-046]]).
 - Build system (`build/`) — single source → dist targets ([[D-002]]); `restampDir()`
   hashes each finished skill dir, so the new `references/` dir needed no stamp
-  change. `push.mjs --check` dry-runs the stamp compare. `hooks/pre-commit` runs
+  change. `push.mjs --check` compares installed content. `hooks/pre-commit` runs
   `npm test`.
-- Stage 0 selfcheck — budgets (now 8 artifacts), canary, dogfood lint + **52
+- Stage 0 selfcheck — budgets (10 source ceilings, mirrored for native Codex), canary, dogfood lint + **70
   pinned doc shapes** ([[D-037]]), 17 trigger prompts ([[D-025]]), bundle
   self-containment ([[D-034]]), hook decision table (8 shapes), budget-number
   drift check.
@@ -67,15 +83,27 @@ live only in that session's transcript — the durable facts are in the entry.
 - Stage 1 (behavior, 7 probes) and Stage 2 (continuity, 7 questions) harnesses —
   construction in `docs/DECISIONS-benchmarks.md`; pricing in `docs/DECISIONS-method.md`.
 
-## Changes this session (2026-10-07, thirtieth sitting — readback + atlas)
-- No repo commits. Readback against git found Next steps 1–2 of the previous
-  sitting already done: D-046 landed as `9315e38`, the plugin install reads
-  current under `push.mjs --check`, and hostinger's runbook move is committed
-  there.
-- Built the **koan atlas** — an interactive isometric map of the kit (five
-  regions, 30 parts, two guided traces, six cross-cutting threads), authored
-  from the current `src/` and docs. Lives outside the repo as a private
-  artifact; see What's built.
+## Changes this session (2026-10-23 — supporting knowledge)
+- Added shared routing reference to init/wrap in both host bundles; updated
+  templates, guide and readback for purpose-based documents and task read triggers.
+- Added opt-in selected-context estimates, positive/negative lint fixtures,
+  and installation checks for the new references. Consumer limits unchanged.
+- Ratcheted build budgets and recorded sizes; lint growth is justified in D-048.
+- Roundtable fixes preserve unmanaged instructions, wire both host bridges, accept
+  combined log-read instructions, list retained extras, and distinguish the legacy
+  generated core from a project constitution. Generated core explicitly reads
+  shared docs; no local edit is needed to satisfy lint.
+- Commit-hook validation exposed Git environment leakage into scratch worktrees;
+  fixture Git calls now clear repository-local variables, with a polluted-index test.
+- `npm test` passed: 70 lint shapes, existing behavior/continuity grader selftests,
+  and both-host install matrix. Codex discovery found all six skills without errors.
+- Read-only ComfyUI check: core + engine findings = 132,429 chars; the diagnostic
+  warns while ordinary lint stays quiet about the stored reference's size.
+- Claude Opus 5.5 and DeepSeek V4 Pro roundtable complete. Ops and small-code
+  forward exercises preserved evidence and avoided needless documents. DeepSeek's
+  first creative wrap left a method only in HANDOFF; parent artifact review caught
+  it. After explicit pre-snapshot routing, the informed re-run placed it in the
+  existing brief. No blocking findings remain. Evidence/limits: benchmarks/README.md.
 
 ## In progress
 - Nothing half-coded.
@@ -83,10 +111,12 @@ live only in that session's transcript — the durable facts are in the entry.
 ## Next steps
 What survives is small on purpose; do not repopulate it to feel busy.
 
-1. **`git push`** — one commit ahead of origin; then watch the first real
-   auto-compaction in a field repo (the hook's `compact` branch is unexercised).
-2. **The other four over-20k constitutions**, one at a time — comfyUI (96k, a
-   lab notebook) is the big one. hostinger's move is the canonical example.
+1. **Watch the first real auto-compaction** in a field repo (the hook's
+   `compact` branch remains unexercised outside fixtures).
+2. **Review task retrieval in field repos**: ComfyUI's constitution is now 11.7k,
+   but engine findings are 87.4k with a broad trigger. Hostinger has distinct
+   inventory/contract/runbook homes; its handoff is 14,997 chars. These are
+   read-only observations from 2026-10-23, not requests to change those repos.
 3. **Replicate `shape`**: two more fable-5-1 runs (`--probes shape --model
    claude-fable-5-1`) for [[D-022]]'s 2-of-3, then one sonnet-5 row for the tier.
 4. **Re-measure trail before the next core addition** ([[D-030]]) — unchanged
@@ -103,6 +133,18 @@ What survives is small on purpose; do not repopulate it to feel busy.
    pointer-file case again, not a new rule.
 
 ## Not yet verified
+- Routing scenarios have reviewer forward exercises, including an informed creative
+  re-run after an initial failure. No replicated baseline comparison, dedicated
+  research-notebook scenario, or fresh-session retrieval evidence yet.
+- The task-context diagnostic is a whole-file estimate: core, direct imports and
+  explicitly selected files. It does not infer prose triggers or trace host context.
+- Revised skill wording has not had a replicated baseline/koan model comparison.
+  The new onecheck fixture and stricter trail grades are not comparable with old
+  scores. Run `--probes trail,onecheck --arms baseline,koan --model <id>` on an
+  explicit model; each invocation records one sample per cell.
+- Prompt-trigger discovery cases (`benchmarks/discovery-cases.json`) are prepared
+  but not executed. Codex registration/parsing is host-verified; that does not
+  establish implicit routing. TF-IDF remains a lexical check.
 - **The compaction nudge has fired only in fixtures** — selfcheck's 8 pins and
   one scratch repo driven through the built CLI with hand-made events. No real
   auto-compaction has exercised it, and `source`'s values come from Claude
@@ -114,11 +156,8 @@ What survives is small on purpose; do not repopulate it to feel busy.
   files alone, so the next line in either file trips it there.
 - **Dead ends have one Stage 2 question and no run**; no field HANDOFF has been
   read for where its dead ends currently land.
-- **koan's Output rule is unmeasured on code quality** ([[D-039]] retired the
-  axis). context-mode cites Moonshot's report that far harsher brevity prompts
-  ("one word answers are best") cost kimi-k2.5 4–7 points on two coding
-  benchmarks; koan's wording is milder and carries the explanation guard, but
-  nothing here would see the effect if it existed.
+- **Revised Output guidance remains unmeasured across real tasks.** The duration
+  correctness guard checks one narrow task; it is not broad code-quality evidence.
 - **`shape` is n=1 on one model.** One fable-5-1 flip after [[D-045]]; the
   first run (arm without its bundle) is recorded in the same results file as
   the null it was. [[D-022]]'s 2-of-3 is not met and sonnet-5 is unmeasured.

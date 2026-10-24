@@ -19,43 +19,82 @@ of this README covers installation and development.
 
 ## Install
 
-**Claude Code (easiest):** add this repo as a plugin marketplace — no clone, no
-runtime needed:
+**Download from GitHub** (clone or Download ZIP), open a terminal in the extracted
+`koan` folder, and choose your host. Generated bundles are included; no build or
+`npm install` is needed. The installer and executable checks require Node ≥ 22.
+
+```bash
+node push.mjs /path/to/project --target claude
+node push.mjs /path/to/project --target codex
+node push.mjs /path/to/project --target both
+```
+
+- **Claude:** all six skills and resources in `<project>/.claude/skills/`.
+- **Codex:** all six native skills and resources in `<project>/.agents/skills/`.
+- **Both:** both directories; existing project instructions and continuity docs
+  are preserved. Run init in each host to wire its entrypoint, sharing one
+  handoff and decision log rather than copying project facts.
+
+For every project on your machine, use `--global` instead of a project path:
+
+```bash
+node push.mjs --target claude --global  # ~/.claude/skills/
+node push.mjs --target codex --global   # ~/.agents/skills/
+node push.mjs --target both --global   # both locations
+```
+
+Use `/koan-init` in Claude Code or `$koan-init` in Codex. Codex also lists the
+skills under `/skills`; matching requests can activate them implicitly. Restart
+the host if new skills do not appear. Avoid installing the same skills at both
+project and user scope: hosts may list duplicates.
+See [Codex's official skill locations and invocation rules](https://learn.chatgpt.com/docs/build-skills).
+
+**Claude's automatic SessionStart check** requires the plugin install. Native
+skill-directory installs (`claude`, `codex`, `both`) provide all six workflows,
+including callable lint, but do not register hooks or edit host settings.
+For Claude's plugin, use the marketplace:
 
 ```
 /plugin marketplace add liminvl/koan
 /plugin install koan@koan
 ```
 
-That installs all six skills plus the SessionStart hook. Then run `/koan-init`
-once in a project to set up the continuity docs.
+If using that plugin alongside Codex, install only `--target codex` with this
+script. Do not add loose Claude skills on top of a plugin. The installer detects
+its local plugin layout; marketplace/user-level duplicates should be removed
+through the host before installing another copy.
 
-**Other tools (Cursor, Copilot, Codex, …):** they read `AGENTS.md` natively —
-the de-facto cross-tool standard — so drop `dist/agents/AGENTS.md` into the
-project root (it's the compact core: the four koans + both practices, under ~5.2k
-chars). From a clone, `node push.mjs <project>` does the copy and stamps it.
-
-**From a clone**, `push.mjs` covers every layout:
+**Update or check an install:**
 
 ```bash
-node push.mjs <project>                   # AGENTS.md into a project root
-node push.mjs <project> --target claude   # skills into <project>/.claude/skills/
-node push.mjs --target user               # skills into ~/.claude/skills/ (no hook)
-node push.mjs [<project>] --target plugin # full plugin incl. hook; no path ⇒ ~/.claude/skills/koan/
-node push.mjs <project> --check           # report drift, write nothing (exit 1 if stale)
+node push.mjs /path/to/project --target both --check
+node push.mjs /path/to/project --target both --force
+node push.mjs --help
 ```
 
-Generated files carry a build stamp; re-running `push` skips copies that are
-already current and names stale ones. Plugin and flat installs provide the same
-skills, so `push` refuses to add one on top of the other and names what to
-remove. Changes under `hooks/` don't hot-reload the way a `SKILL.md` does —
-restart Claude Code or run `/reload-plugins` after pushing.
+`--check` writes nothing. It compares content, resources and stamps; a partial
+or changed install exits 1. No install at all reports that fact and exits 0.
+An ordinary install preserves modified files and reports conflicts before writing
+either host. `--force` explicitly overwrites changed files, but never removes
+unknown additions or retired skill directories; remaining drift is reported.
+Project and `--global` scope are mutually exclusive.
+
+**Manual copying:** copy the six directories under `dist/claude/skills/` or
+`dist/codex/skills/` into the corresponding skill location above. Copy entire
+skill directories, including templates, references and scripts. Instructions
+alone need no Node runtime; `koan-lint` and Claude's hook do.
+
+**Legacy options remain available:** `node push.mjs <project>` installs only the
+compact core as AGENTS.md; `--target user` aliases Claude `--global`;
+`--target plugin` retains the local Claude plugin layout (omitting the project
+selects user scope). The AGENTS-only target supplies no native skills or hooks;
+preserve existing project rules rather than overwriting them with the core.
 
 ## The session loop
 1. `/koan-init` once — reads what kind of repo this is and what proves a change, then seeds CLAUDE.md, `docs/HANDOFF.md`, `docs/DECISIONS.md` from what the repo already contains (or interviews you, if nothing exists yet). Any repo-backed work fits: an app, an ops estate, a data pipeline, an AI system, a manuscript.
 2. Work — the lens keeps output minimal and routes every durable fact to its one home.
 3. `/koan-wrap` when stopping — HANDOFF becomes a pruned snapshot a cold session can resume from; settled decisions get archived.
-4. `/koan-readback` when resuming — the agent plays its understanding back for correction *before* touching code.
+4. `/koan-readback` when resuming — the agent cross-checks context and surfaces discrepancies; it waits only for blocking answers or an explicitly requested confirmation.
 5. `/koan-lint` any time the docs feel off — deterministic checks, read-only.
 
 ## What it looks like
@@ -66,21 +105,19 @@ The generated AGENTS.md opens with the four koans:
 > - **One fact, one home.** Every fact lives in exactly one place; everywhere else points to it.
 > - **Snapshot, not diary.** State what *is*, delete what *was*. History is what git is for.
 
-**Designed for frontier models.** The behavior deltas that earn each rule its
-tokens are verified on **frontier-tier** models (current Opus/Fable class) and
-degrade partially one tier down; small fast models do not act on standing rules
-at all (D-023). On weaker models the docs still help — the rules just don't
-self-enforce. The stance is per tier, not per model ID: a new release inherits
-its tier's evidence until a run says otherwise.
+**Evidence is model-specific.** Historical behavior runs target frontier models;
+results live in `benchmarks/results/`. A new model or harness version is unverified
+until tested: tier membership is a compatibility hypothesis, not inherited proof.
+Offline selftests validate the tools and graders, not model adherence.
 
 ## Develop it
 Edit **`src/`** only — `dist/` is generated; never hand-edit it. Node ≥ 22 is
-needed for development and for `koan-lint`'s script; installing or *using* the
-skills needs no runtime.
+needed for development, the installer, lint and the hook. Reading skill
+instructions alone needs no runtime.
 
 ```bash
 git config core.hooksPath hooks    # once per clone: wires the pre-commit gate (npm test)
-npm run build                      # src/ → dist/ (Claude plugin + AGENTS.md)
+npm run build                      # src/ → dist/ (Claude + Codex bundles + AGENTS.md)
 npm run selfcheck                  # Stage 0: budgets + canary + dogfood lint
 npm test                           # build + selfcheck + benchmark selftests (all offline)
 ```

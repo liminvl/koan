@@ -4,6 +4,8 @@
 > gotchas, canonical examples. Now-state lives in docs/HANDOFF.md, not here.
 
 @docs/DECISIONS.md
+<!-- AGENTS.md / hosts without imports: replace the line above with an explicit
+     instruction to read docs/DECISIONS.md at session start. -->
 
 ## Start here
 Read docs/HANDOFF.md for current state and next steps. On a cold start or tool
@@ -15,11 +17,14 @@ after a gap → `/koan-readback`. Docs feel off → `/koan-lint`. About to
 <!-- multi-tool project? Each tool's local memory is invisible to the others —
      git + these docs are the ONLY shared channel. Route anything a resume
      needs here, never to tool memory. -->
-<!-- State that lives OUTSIDE git — a box, a database, a live site, a measured
-     behavior — gets a pointed-to file and a read-trigger line here:
-     "Operating <thing>? Read docs/<name>.md first." That file records
-     identities (IDs, hosts, paths) and dates measurements; values that change
-     without a commit are queried, never mirrored. -->
+<!-- Supporting docs are read on demand, for code and non-code work:
+     "Restoring a service? Read docs/restore.md first."
+     "Reviewing character continuity? Read films/current/brief.md first."
+     Reuse existing homes for procedures, reference, evidence and specs/briefs.
+     Add a file only for concrete durable content with a distinct read trigger;
+     don't create an empty taxonomy. Large docs need section/search pointers.
+     Record stable identities; query changing live values. Preserve measurements
+     as dated evidence with conditions/version/source, not claims of current state. -->
 
 **Phase:** build
 <!-- Sets ONE thing: where a choice lands. Name what would move it —
@@ -29,7 +34,7 @@ after a gap → `/koan-readback`. Docs feel off → `/koan-lint`. About to
      build   · DEFAULT. A choice worth not re-litigating → docs/DECISIONS.md.
      harden  · as build, plus every `koan:` shortcut needs a disposition.
      UNCHANGED in every phase: the build-less ladder, the safety carve-outs
-     (validation, data loss, security, accessibility), the Nevers. explore
+     (validation, data loss, security, accessibility), the core constraints. explore
      defers permanence, never discipline. Delete this line to get `build`. -->
 
 **Shape:** <one line — what this repo is, and what proves a change>

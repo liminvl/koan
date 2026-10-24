@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "cases": [
+    {"prompt":"This feels over-engineered. Review the implementation and suggest simplifications.","required":["koan"],"allowed":["koan"],"writes":false},
+    {"prompt":"Set up koan continuity docs in this new project.","required":["koan-init"],"allowed":["koan","koan-init"],"writes":true},
+    {"prompt":"Wrap up this session and update the handoff.","required":["koan-wrap"],"allowed":["koan","koan-wrap","koan-lint"],"writes":true},
+    {"prompt":"Save our current progress before compaction; I am continuing afterwards.","required":["koan-wrap"],"allowed":["koan","koan-wrap"],"writes":true},
+    {"prompt":"Resume this project, check your understanding, then fix the reported bug.","required":["koan-readback"],"allowed":["koan","koan-readback"],"writes":true},
+    {"prompt":"Validate the continuity docs without editing them.","required":["koan-lint"],"allowed":["koan","koan-lint"],"writes":false},
+    {"prompt":"What does a Zen koan mean in Buddhism? This is unrelated to this repository.","required":[],"allowed":[],"writes":false},
+    {"prompt":"Translate 'good morning' into French. No repository work is needed.","required":[],"allowed":[],"writes":false},
+    {"prompt":"Explain what wrapping up a session would do; do not run it or change files.","required":[],"allowed":["koan","koan-wrap"],"writes":false}
+  ]
+}

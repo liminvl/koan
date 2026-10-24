@@ -83,24 +83,10 @@ caps, never publish, product truth); canonical artifacts = the chapter or brief
 that nails the voice; Objective often a steady state or a series. External
 services (accounts, credits, expiring URLs) → a pointer file.
 
-## State outside git — the routing rule
+## Supporting knowledge
 
-When the repo *describes* a system rather than *being* it — a box, a database, a
-live site, a hosted tool, a model's measured behavior — git stops being the
-truth for that state. Don't mirror it into HANDOFF (it drifts on every change
-that isn't a commit) and don't pile it into Gotchas (they're permanent
-constraints, and a constitution over ~20k chars stops landing).
-
-- One pointed-to file, `docs/<name>.md`, named in the constitution's *Start here*
-  with a read-trigger: `Operating <thing>? Read docs/<name>.md first.`
-- **Identities are recorded** (host, ID, path, account, which file holds the
-  credential). **Values are queried** (status, counts, versions, what's running)
-  — write the command, not the answer. **Measurements are dated.**
-- HANDOFF keeps only dated verifications ("restore drill passed 2026-09-10 on
-  `a1b2c3d`") and what the work needs next.
-
-Two field shapes this replaces: an ops repo whose HANDOFF became a 14 KB mirror
-of the platform and drifted on every change (fixed with an inventory of IDs +
-query commands); a config workspace whose real state was rows in the tool's
-database, with nothing in git saying so (fixed with one line: what is versioned,
-what is queried, and how).
+For mixed notes or material beyond the core files, use
+[document routing](document-routing.md). This applies equally to a service
+inventory, a research notebook and a film bible. Reuse their existing homes.
+Current live values are queried; experimental measurements retain dated
+conditions, versions and evidence so later sessions can reproduce or challenge them.

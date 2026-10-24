@@ -2,7 +2,7 @@
 name: koan-readback
 description: >-
   Cold-start sanity check: play your understanding of the project back for the
-  human to correct, BEFORE doing any work. Use on
+  human to correct before acting on stale context. Use on
   "/koan-readback", when resuming after a long gap, or on the first session after
   working in another tool (Windsurf, Cursor, Copilot). Catches misread context
   before it becomes wrong work. Read-only.
@@ -10,13 +10,10 @@ description: >-
 
 # Koan readback
 
-Before doing work on a cold start or a tool switch, confirm you actually
-understand the project — don't just trust that the injected context landed right.
-A misread that becomes work is the expensive kind.
-
 ## Do this
 1. Read `CLAUDE.md` (or `AGENTS.md`), `docs/DECISIONS.md`, and `docs/HANDOFF.md`.
-   Open `docs/DECISIONS-archive.md` only if a current task touches an archived ID.
+   Follow read triggers for the current task, including local status and evidence.
+   Open the archive only when the task touches an archived ID.
 2. Cross-check against git: `git log --oneline -10` + `git status`. Where
    HANDOFF's Current state disagrees, git wins — flag the mismatch.
 3. Play it back, in **≤10 bullets** with a blank line between each (readability
@@ -28,13 +25,15 @@ A misread that becomes work is the expensive kind.
 4. Close with two headed sections:
    - **`### Recommended Next Steps`** — a short numbered list: what you'd do
      next, and which canonical example you'd follow.
-   - **`### Open Questions for the Sentient Meatsack (Human)`** — anything only
+   - **`### Open questions`** — anything only
      the human can answer (HANDOFF's open questions, mismatches you can't
      resolve). Omit the section if there are none.
-5. Ask the human to correct any of it. **Stop and wait** — don't start work yet.
+5. Invite corrections. Continue with already-authorized work unless an unresolved
+   discrepancy changes its scope or correctness. Stop and wait for that answer,
+   or when the user explicitly asks to confirm the readback before proceeding.
 
 ## Then
-Once they confirm, proceed. For a large delegation, do ONE small task first and
+Once blocking questions are resolved, proceed. For a large delegation, do ONE small task first and
 check it matches the canonical examples before going further. This skill makes no
 edits — it only reads and reflects back.
-<!-- koan v0.1.0 · build 80982ceb -->
+<!-- koan v0.1.0 · build 5818bb90 -->

@@ -33,12 +33,12 @@ jam; treat the request normally.
 and stop — without a quarantine there is nothing to suspend the ladder *inside*,
 and an unbounded jam on a working branch is just over-building with permission.
 
-1. `git status --short` — dirty tree ⇒ commit or stash on the CURRENT branch
-   first. Never carry uncommitted work into a jam; it strands real changes on a
-   branch you intend to throw away.
-2. `git switch -c jazz/<topic>` — or `git worktree add ../<repo>-jazz-<topic>
-   jazz/<topic>` if you need the main tree left alone (long builds, a running
-   dev server, a second agent working).
+1. `git status --short` — preserve existing work. With a dirty tree or another
+   session using this checkout, use a separate worktree from committed HEAD;
+   uncommitted edits stay in the original tree. Commit or stash only if authorized.
+2. In a clean, dedicated checkout: `git switch -c jazz/<topic>`. Otherwise:
+   `git worktree add -b jazz/<topic> ../<repo>-jazz-<topic> HEAD`.
+   Use the host's workspace tool instead when it manages checkout bindings.
 3. State three things back, in three lines — and get the question right, because
    everything else is scored against it:
    - **Question:** the one thing this jam answers. "Does X beat Y?" not "try X".
@@ -54,8 +54,7 @@ shortest-diff rule. "No unrequested abstractions."
 
 **Still on, non-negotiable:** the safety carve-outs — input validation at trust
 boundaries, error handling that prevents data loss, security, accessibility.
-You improvise over the form; you don't improvise over the form. A jam that
-touches production data or real credentials isn't a jam.
+A jam never touches production data or real credentials.
 
 Don't narrate the suspension. You're not building carefully, so don't explain
 carefully either — the explanation budget is spent at the return, once.

@@ -1,7 +1,7 @@
 # Koan — build less, lose less
 
-You are a zen craftsperson tending a codebase. Build no more than the moment
-needs; leave the next session a teaching, not a transcript.
+Read CLAUDE.md and docs/DECISIONS.md at session start when present; read
+docs/HANDOFF.md before work. This generated skill is not a project constitution.
 
 ## The four koans
 
@@ -32,7 +32,7 @@ Climb the ladder. Stop at the first rung that holds:
 3. **Stdlib does it?** Use it.
 4. **Native platform feature covers it?** `<input type="date">` over a picker lib, CSS over JS, DB constraint over app code.
 5. **Already-installed dependency solves it?** Use it. Never add a new one for what a few lines can do.
-6. **Can it be one line?** One line.
+6. **Can it be simpler without hiding intent?** Prefer that.
 7. **Only then:** the minimum code that works.
 
 The ladder is a reflex, not a research project — but it runs *after* you
@@ -53,32 +53,31 @@ up without you in the room. On every non-trivial change, leave the trail:
 2. **Decision worth not re-litigating?** Log it as choice + why + what would reopen it. A constraint with no real alternative is not a decision — it's a gotcha.
 3. **Leave a resumable trail**, not a transcript: what's the state, what's next, what's unproven. Overwrite the stale line; don't append forever.
 
-For the full session-boundary rituals, hand off to `koan-init` (set up),
-`koan-wrap` (stop), `koan-readback` (resume), `koan-lint` (check).
+In shared work, one session owns continuity docs; workers report findings to it.
+
+If installed, use `koan-init` (set up), `koan-wrap` (stop), `koan-readback`
+(resume), `koan-lint` (check). Otherwise read the existing project instructions,
+active decisions and handoff on resume; update the snapshot when stopping.
 
 ## Rules
 
 - No unrequested abstractions: no interface with one implementation, no factory for one product, no config for a value that never changes.
 - Deletion over addition. Boring over clever — clever is what someone decodes at 3am.
-- Shortest working diff wins — but only once you understand the problem. The smallest change in the wrong place isn't lazy, it's a second bug.
+- Prefer the simplest maintainable change that satisfies the requirements. A small change in the wrong place is a second bug.
 - Two stdlib options, same size? Take the one that's correct on edge cases. Lazy means writing less code, not picking the flimsier algorithm.
-- Lazy code without its check is unfinished. Non-trivial logic (a branch, a loop, a parser, a money/security path) leaves ONE runnable check behind — the smallest thing that fails if the logic breaks: an `assert` self-check or one tiny test. No frameworks or fixtures unless asked; trivial one-liners need none — YAGNI applies to tests too.
+- Lazy code without its check is unfinished. Use the project's existing checks; for non-trivial logic, add the smallest regression coverage that catches the failure. Reuse existing test frameworks and fixtures. Add new test infrastructure only when needed; trivial edits need none.
 - Mark deliberate simplifications with a `koan:` comment naming the ceiling and the upgrade path: `# koan: global lock, per-account locks if throughput matters`.
 - Never drop a safety carve-out to shave lines: input validation at trust boundaries, error handling that prevents data loss, security, accessibility, anything explicitly requested. User insists → build it, no re-arguing.
 - Collapsing context into `<details>` or "archive" blocks hides text from humans, not from the model — it still costs full tokens. Delete it or move it out of the loaded file.
 
 ## Output
 
-Code first. Then at most three short lines: what was skipped, when to add it.
-No essays. If the explanation is longer than the code, delete the explanation —
-every paragraph defending a simplification is complexity smuggled back as prose.
-Explanation the user explicitly asked for (a report, a walkthrough) is not debt;
-give it in full.
-
-Pattern: `[code] → skipped: [X], add when [Y]. trail: [what you logged, where].`
+Lead with the result. Briefly state what changed, what was checked, and what
+remains unproven. Name a skipped feature and its trigger only when useful.
+Reports and walkthroughs requested by the user get the detail they need.
 
 ---
 Generated from koan's source of truth (src/koan.skill.md). The full skill and
-the session-boundary rituals (init/wrap/readback/lint) live in the koan plugin.
+the lifecycle skills ship in the native Claude/Codex bundles.
 Edit the source, not this file.
-<!-- koan v0.1.0 · build 040a05fe -->
+<!-- koan v0.1.0 · build d0bc4db8 -->

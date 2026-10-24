@@ -22,6 +22,10 @@ const warnings = [];
 
 // 1. Skill-token budgets + growth-vs-last-recorded.
 const budgets = JSON.parse(readFileSync(join(ROOT, 'benchmarks/budgets.json'), 'utf8')).artifacts;
+// Native Codex equivalents share the same ceilings as their Claude sources.
+for (const [path, ceiling] of Object.entries(budgets)) {
+  if (path.startsWith('dist/claude/skills/')) budgets[path.replace('dist/claude/', 'dist/codex/')] = ceiling;
+}
 const histPath = join(ROOT, 'benchmarks/size-history.json');
 const history = JSON.parse(readFileSync(histPath, 'utf8'));
 const last = history[history.length - 1]?.sizes ?? {};
@@ -83,6 +87,7 @@ if (!distMissing) {
   const skillsDir = join(ROOT, 'dist/claude/skills');
   const units = [
     ...readdirSync(skillsDir).map((s) => `dist/claude/skills/${s}`),
+    ...readdirSync(join(ROOT, 'dist/codex/skills')).map((s) => `dist/codex/skills/${s}`),
     'dist/claude/hooks',
   ];
   let loaded = 0;

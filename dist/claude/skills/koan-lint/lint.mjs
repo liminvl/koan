@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // koan-lint: deterministic checks on a project's koan docs. Read-only.
 // Exported `lint(root)` is reused by benchmarks/selfcheck.mjs (one engine, one home).
-import { readFileSync, existsSync, readdirSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { readFileSync, existsSync, readdirSync, realpathSync, statSync } from 'node:fs';
+import { join, resolve, relative, isAbsolute } from 'node:path';
 import { execSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import { harvest } from './debt.mjs';
@@ -55,16 +55,24 @@ export const CHAIN_BUDGET = CONSTITUTION_BUDGET + DECISIONS_BUDGET;
 
 const read = (p) => (existsSync(p) ? readFileSync(p, 'utf8') : null);
 
-export function lint(root = '.') {
+export function lint(root = '.', { contextFiles = [] } = {}) {
   root = resolve(root);
   const errors = [];
   const warnings = [];
   const p = (f) => join(root, f);
 
   // 1. constitution file
-  const constitution = existsSync(p('CLAUDE.md')) ? 'CLAUDE.md'
-    : existsSync(p('AGENTS.md')) ? 'AGENTS.md' : null;
-  if (!constitution) errors.push('No CLAUDE.md or AGENTS.md at project root.');
+  const claudeText = read(p('CLAUDE.md'));
+  const agentsText = read(p('AGENTS.md'));
+  const generatedCore = agentsText?.includes("Generated from koan's source of truth (src/koan.skill.md)")
+    && /<!-- koan v\S+ · build [0-9a-f]+ -->/.test(agentsText);
+  const agentsBridge = claudeText && /(?:^|\n)\s*@AGENTS\.md\s*(?:\n|$)/.test(claudeText)
+    && !/^##\s+Checks\b/m.test(claudeText) && agentsText && !generatedCore;
+  const constitution = agentsBridge ? 'AGENTS.md' : existsSync(p('CLAUDE.md')) ? 'CLAUDE.md'
+    : agentsText && !generatedCore ? 'AGENTS.md' : null;
+  if (!constitution) errors.push(generatedCore
+    ? 'Generated AGENTS.md is skill guidance, not a project constitution. Keep project facts in CLAUDE.md or migrate to native skills; do not edit the generated core.'
+    : 'No CLAUDE.md or AGENTS.md at project root.');
   const constText = constitution ? read(p(constitution)) ?? '' : '';
 
   // Project phase — sets where a choice lands, nothing else. Absent or
@@ -84,10 +92,18 @@ export function lint(root = '.') {
   if (decisions == null) errors.push('Missing docs/DECISIONS.md.');
   if (archive == null) warnings.push('Missing docs/DECISIONS-archive.md (created on first archive).');
 
-  // 2. import wiring
+  const readsAtStart = (text) => text.split('\n').some((line) =>
+    /\bread\b.*\bdocs\/DECISIONS\.md\b/i.test(line) && /session start/i.test(line)
+    && !/\b(?:never|do not|don't)\s+read\b/i.test(line));
+  const readsLog = readsAtStart(constText);
+  if (claudeText && agentsText && !generatedCore && !agentsBridge && !readsAtStart(agentsText))
+    warnings.push('AGENTS.md needs an explicit instruction to read docs/DECISIONS.md at session start; Codex does not follow Claude imports.');
+
+  // 2. import/read wiring
   if (constitution) {
-    if (!/@docs\/DECISIONS\.md/.test(constText))
-      warnings.push(`${constitution} does not import @docs/DECISIONS.md.`);
+    if (!/@docs\/DECISIONS\.md/.test(constText)
+        && !readsLog)
+      warnings.push(`${constitution} does not import @docs/DECISIONS.md or explicitly read it at session start.`);
     if (/@docs\/DECISIONS-archive\.md/.test(constText))
       errors.push(`${constitution} imports the archive — it must stay out of context.`);
     // Importing a set re-imposes the tax the split removed — the whole point is
@@ -113,18 +129,18 @@ export function lint(root = '.') {
       const where = fattest ? ` Largest section: "${fattest[0]}" (${(fattest[1] / 1000).toFixed(1)}k).` : '';
       warnings.push(`${constitution} is ${n} chars (> ${CONSTITUTION_BUDGET}) and is auto-loaded every session.${where} Runbook, findings or inventory material belongs in a pointed-to file the Start-here line names, not the constitution.`);
     }
-    // 3b. The loaded chain: this file plus every @-import that resolves (one
+    // 3b. The loaded chain: explicit active-log reads plus @-imports (one
     // that points at nothing loads nothing). Reported as `loaded` on the budget
     // line so the number a session actually pays stays visible even when every
     // single file is under its own ceiling; warns only past the sum.
-    const imports = [...new Set([...constText.matchAll(/(?:^|\s)@((?:[\w.-]+\/)*[\w.-]+\.md)\b/gm)].map((m) => m[1]))]
+    const imports = [...new Set([...constText.matchAll(/(?:^|\s)@((?:[\w.-]+\/)*[\w.-]+\.md)\b/gm)].map((m) => m[1]).concat(readsLog ? ['docs/DECISIONS.md'] : []))]
       .filter((f) => existsSync(p(f)))
       .map((f) => [f, read(p(f)).length]);
     const loaded = n + imports.reduce((sum, [, size]) => sum + size, 0);
     if (imports.length) budget.push(`loaded ${loaded}/${CHAIN_BUDGET}`);
     if (loaded > CHAIN_BUDGET) {
       const list = imports.sort((a, b) => b[1] - a[1]).map(([f, size]) => `${f} ${(size / 1000).toFixed(1)}k`).join(', ');
-      warnings.push(`${constitution} plus its ${imports.length} @-import${imports.length > 1 ? 's' : ''} load ${loaded} chars every session (> ${CHAIN_BUDGET}): ${list}. An import that is not the decision log is a pointed-to file wearing an @ — name it in Start here with a read-trigger instead.`);
+      warnings.push(`${constitution} plus its ${imports.length} session document${imports.length > 1 ? 's' : ''} load ${loaded} chars every session (> ${CHAIN_BUDGET}): ${list}. An import that is not the decision log is a pointed-to file wearing an @ — name it in Start here with a read-trigger instead.`);
     }
   }
   if (handoff != null) {
@@ -153,13 +169,43 @@ export function lint(root = '.') {
         })
         .sort((a, b) => b[1] - a[1]).slice(0, 3)
         .map(([id, s]) => `${id} ${(s / 1000).toFixed(1)}k`).join(', ');
-      warnings.push(`docs/DECISIONS.md is ${n} chars (> ${DECISIONS_BUDGET}). Archive settled entries, or compress the largest — ${fat} — to five short fields; overflow reasoning belongs in the commit.`);
+      warnings.push(`docs/DECISIONS.md is ${n} chars (> ${DECISIONS_BUDGET}). Archive settled entries, or compress the largest — ${fat} — to five short fields; keep rationale clear and link supporting research or design detail.`);
     }
   }
   for (const s of setFiles) {
     budget.push(`${s.name.replace('docs/DECISIONS-', '').replace('.md', '')} ${s.text.length}/${SET_BUDGET}`);
     if (s.text.length > SET_BUDGET)
       warnings.push(`${s.name} is ${s.text.length} chars (> ${SET_BUDGET}). Split the domain or archive settled entries.`);
+  }
+
+  // Optional whole-file task estimate. Explicit selection avoids guessing which
+  // natural-language read triggers apply. Storage growth alone is not a fault.
+  if (contextFiles.length) {
+    const selected = new Map();
+    const rootReal = realpathSync(root);
+    const add = (file, required = false) => {
+      try {
+        if (isAbsolute(file)) throw new Error('must be project-relative');
+        const full = realpathSync(p(file));
+        const rel = relative(rootReal, full);
+        if (rel === '..' || rel.startsWith('../') || rel.startsWith('..\\') || isAbsolute(rel))
+          throw new Error('must be inside the project');
+        if (!statSync(full).isFile()) throw new Error('not a file');
+        if (!selected.has(full)) selected.set(full, [rel, readFileSync(full, 'utf8').length]);
+      } catch (err) {
+        if (required) errors.push(`Task context file ${file}: ${err.message}`);
+      }
+    };
+    for (const file of [constitution, 'docs/HANDOFF.md', 'docs/DECISIONS.md'])
+      if (file) add(file);
+    for (const m of constText.matchAll(/(?:^|\s)@((?:[\w.-]+\/)*[\w.-]+\.md)\b/gm)) add(m[1]);
+    for (const file of contextFiles) add(file, true);
+    const files = [...selected.values()].sort((a, b) => b[1] - a[1]);
+    const total = files.reduce((sum, [, size]) => sum + size, 0);
+    budget.push(`task-context ${total}/${CHAIN_BUDGET} (whole files; core + direct imports + selected)`);
+    budget.push(`task-files ${files.map(([file, size]) => `${file} ${size}`).join(', ')}`);
+    if (total > CHAIN_BUDGET)
+      warnings.push(`Selected task context is ${total} chars (> ${CHAIN_BUDGET}). Review the largest files and broad read triggers; use section pointers or split by task before cutting evidence. This is a whole-file estimate, not a measured model context.`);
   }
 
   // 4. decision-ID integrity
@@ -383,7 +429,17 @@ if (isMain) {
     process.exit(0);
   }
 
-  const { errors, warnings, budget, phase } = lint(root);
+  const contextFiles = [];
+  for (let j = 2; j < process.argv.length; j++) {
+    if (process.argv[j] !== '--context') continue;
+    const file = process.argv[++j];
+    if (!file || file.startsWith('--')) {
+      console.error('ERROR: --context requires a project-relative file path (repeat for each file).');
+      process.exit(2);
+    }
+    contextFiles.push(file);
+  }
+  const { errors, warnings, budget, phase } = lint(root, { contextFiles });
   for (const e of errors) console.error(`ERROR: ${e}`);
   for (const w of warnings) console.error(`WARN:  ${w}`);
   if (budget.length) console.log(`budget: ${budget.join(' · ')} · phase ${phase}`);

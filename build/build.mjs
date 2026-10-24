@@ -1,20 +1,18 @@
 #!/usr/bin/env node
 // Build every target from the single source.
-// Two targets is the intended set, not a shortcut: Cursor, Copilot and Codex all
-// read AGENTS.md natively, so an adapter for them would generate a file nothing
-// reads. Add one under targets/ only for a tool that demonstrably does NOT read
-// AGENTS.md — verify per-tool first (D-002).
+// Native skill bundles for Claude and Codex, plus the portable AGENTS core.
 import { cleanDist } from './lib.mjs';
 import { buildClaude } from './targets/claude.mjs';
+import { buildCodex } from './targets/codex.mjs';
 import { buildAgents } from './targets/agents.mjs';
 import { runCanary } from './canary.mjs';
 
 cleanDist();
-const results = [buildClaude(), buildAgents()];
+const results = [buildClaude(), buildCodex(), buildAgents()];
 
 console.log('Built targets:');
 for (const r of results) {
-  if (r.skills) console.log(`  claude  → ${r.skills.length} skills: ${r.skills.join(', ')}`);
+  if (r.skills) console.log(`  ${r.target.padEnd(7)} → ${r.skills.length} skills: ${r.skills.join(', ')}`);
   if (r.chars != null) console.log(`  agents  → AGENTS.md (${r.chars} chars)`);
 }
 
