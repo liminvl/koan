@@ -1,0 +1,32 @@
+schema_version: "1.1"
+name: lens-ordinary-task
+description: >-
+  An ordinary coding task that never mentions koan. The lens must fire from its
+  description alone, and the trail (D-entry, koan: ceiling comment) must land.
+tags: [lens, routing]
+runs: 1
+execution:
+  prompt: Add sliding-window rate limiting to the POST /api/orders handler in app.js.
+  max_turns: 30
+  allowed_tools: [Read, Glob, Grep, Skill]
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: koan-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?koan"'
+  - name: decision-logged
+    type: regex
+    target: { source: file, path: docs/DECISIONS.md }
+    pattern: '^### D-002'
+    flags: m
+  - name: shortcut-marked
+    type: regex
+    target: trace
+    pattern: 'koan: [a-z]'
+  - name: handoff-updated
+    type: regex
+    target: { source: file, path: docs/HANDOFF.md }
+    pattern: 'rate.?limit'
+    flags: i

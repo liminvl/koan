@@ -96,4 +96,4 @@ Skip this when the repo already answers it — seed from reality per step 3.
 ## 4. Report
 Report files created/backfilled, Shape, and HANDOFF/DECISIONS sizes (vs ~15k/~30k).
 Suggest reviewing the constitution before relying on it.
-<!-- koan v0.1.0 · build b69ba406 -->
+<!-- koan v0.1.0 · build c1015cec -->

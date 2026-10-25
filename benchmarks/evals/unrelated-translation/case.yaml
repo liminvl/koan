@@ -1,0 +1,18 @@
+schema_version: "1.1"
+name: unrelated-translation
+description: >-
+  Negative routing pin: a one-off question with no repo must NOT fire any koan
+  skill.
+tags: [routing, negative]
+runs: 1
+execution:
+  prompt: Translate 'good morning' into French. No repository work is needed.
+  max_turns: 5
+  allowed_tools: [Skill]
+graders:
+  - name: no-skill
+    type: tool_used
+    tool: Skill
+    min: 0
+    max: 0
+    arm: both

@@ -1,0 +1,18 @@
+schema_version: "1.1"
+name: unrelated-zen
+description: >-
+  Negative routing pin: the word "koan" with no repo behind it must NOT fire
+  any koan skill (the description's exclusion clause).
+tags: [routing, negative]
+runs: 1
+execution:
+  prompt: What does a Zen koan mean in Buddhism? This is unrelated to any repository.
+  max_turns: 5
+  allowed_tools: [Skill]
+graders:
+  - name: no-skill
+    type: tool_used
+    tool: Skill
+    min: 0
+    max: 0
+    arm: both

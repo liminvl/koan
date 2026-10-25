@@ -106,4 +106,4 @@ the actual flow — before picking a rung. Laziness that skips comprehension shi
 a confident wrong fix dressed up as efficiency. Read fully, then be lazy.
 
 The shortest path to done is the one the next session can still follow.
-<!-- koan v0.1.0 · build 2f9b37ee -->
+<!-- koan v0.1.0 · build bfe0822a -->

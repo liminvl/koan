@@ -84,11 +84,11 @@ Project and `--global` scope are mutually exclusive.
 skill directories, including templates, references and scripts. Instructions
 alone need no Node runtime; `koan-lint` and Claude's hook do.
 
-**Legacy options remain available:** `node push.mjs <project>` installs only the
-compact core as AGENTS.md; `--target user` aliases Claude `--global`;
-`--target plugin` retains the local Claude plugin layout (omitting the project
-selects user scope). The AGENTS-only target supplies no native skills or hooks;
-preserve existing project rules rather than overwriting them with the core.
+**Other targets:** `--target agents` installs only the compact core as
+AGENTS.md (no skills, no hook — for hosts that read nothing else); `--target
+user` aliases Claude `--global`; `--target plugin` installs the local Claude
+plugin layout (omitting the project selects user scope). `--target` is always
+required; there is no default host.
 
 ## The session loop
 1. `/koan-init` once — reads what kind of repo this is and what proves a change, then seeds CLAUDE.md, `docs/HANDOFF.md`, `docs/DECISIONS.md` from what the repo already contains (or interviews you, if nothing exists yet). Any repo-backed work fits: an app, an ops estate, a data pipeline, an AI system, a manuscript.
@@ -109,6 +109,21 @@ The generated AGENTS.md opens with the four koans:
 results live in `benchmarks/results/`. A new model or harness version is unverified
 until tested: tier membership is a compatibility hypothesis, not inherited proof.
 Offline selftests validate the tools and graders, not model adherence.
+
+| Rule (probe) | What flips | Latest reading | Record |
+|---|---|---|---|
+| decision trail (`trail`) | a real choice lands a D-entry unprompted | sonnet-5 2/3 · fable-5 ~1/4 · opus-5 0/3 — seat held by the tier (D-030) | `results/2026-08-07-…` |
+| regression check (`onecheck`) | non-trivial logic ships a runnable test | flips on fable-5 | `results/2026-08-07-…` |
+| interview (`greenfield`) | koan-init asks instead of inventing an Objective | flips on fable-5 and opus-5 | `results/2026-08-07-…` |
+| phase routing (`phase`) | explore ⇒ bet in HANDOFF, build ⇒ D-entry | 3/3 variant delta on opus-5 (D-028) | `results/2026-07-11-…` |
+| quarantine (`jazz`) | the spike stays off the working branch | only the skill arm quarantines, 5/5 readable runs; the finding gate is null (D-032) | `results/2026-08-07-…` |
+| real proof (`shape`) | Checks seeded from the repo's actual proof | flips on fable-5-1, n=1 | `results/2026-09-23-…` |
+| cold resume (Stage 2) | a fresh agent resumes from the wrapped docs | wrapped 15/15 vs equal-size diary 14/15 on opus-4.8 — a near tie on a small fixture (D-039) | `results/2026-07-11-…` |
+| discovery (plugin eval) | the installed plugin fires from its descriptions alone | 3/3 prompts routed on fable-5-1, n=1 | `results/2026-10-25-…` |
+
+Read the nulls as honestly as the flips: on the newest models some deltas are
+closing from the top down, which is why the core stops growing until trail is
+re-measured (D-049).
 
 ## Develop it
 Edit **`src/`** only — `dist/` is generated; never hand-edit it. Node ≥ 22 is

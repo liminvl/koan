@@ -13,9 +13,11 @@ switch, run `$koan-readback` before doing work.
 _When to suggest a ritual:_ stopping/switching tasks → `$koan-wrap`. Resuming
 after a gap → `$koan-readback`. Docs feel off → `$koan-lint`. About to
 `/compact` → checkpoint first (compaction is lossy; HANDOFF isn't).
-<!-- multi-tool project? Each tool's local memory is invisible to the others —
-     git + these docs are the ONLY shared channel. Route anything a resume
-     needs here, never to tool memory. -->
+When compacting, preserve: files changed this session, the Checks command, and
+HANDOFF's next step.
+<!-- Tool memory (Claude's auto memory, Codex memories) is per machine and
+     invisible to other tools and teammates — git + these docs are the ONLY
+     shared channel. Route anything a resume needs here, never to tool memory. -->
 <!-- Supporting docs are read on demand, for code and non-code work:
      "Restoring a service? Read docs/restore.md first."
      "Reviewing character continuity? Read films/current/brief.md first."

@@ -7,17 +7,17 @@ import { homedir } from 'node:os';
 
 const DIST = join(dirname(fileURLToPath(import.meta.url)), 'dist');
 const TARGETS = ['agents', 'claude', 'codex', 'both', 'user', 'plugin'];
-const HELP = `Usage: node push.mjs [<project>] [--target claude|codex|both|agents|user|plugin] [--global] [--check] [--force]
+const HELP = `Usage: node push.mjs [<project>] --target claude|codex|both|agents|user|plugin [--global] [--check] [--force]
 
   claude   All six skills in <project>/.claude/skills
   codex    All six skills in <project>/.agents/skills
   both     Both native skill bundles (no automatic hook)
-  agents   Compact AGENTS.md only (legacy default)
+  agents   Compact AGENTS.md only (legacy; no skills, no hook)
   user     Alias for --target claude --global
-  plugin   Claude plugin with SessionStart hook (legacy layout)
+  plugin   Claude plugin with SessionStart hook (no project ⇒ ~/.claude/skills/koan)
 
+--target is required: there is no default host.
 --global installs skills in your home directory instead of a project.
-Without a project, plugin retains its legacy user-wide default.
 --check reports drift without writes; --force overwrites changed files.
 Native skill installs preserve project instructions and continuity docs.
 The legacy agents target writes AGENTS.md; prefer --target codex for Codex skills.
@@ -60,7 +60,7 @@ const statusOf = ({ to, from }) => {
 // home is injectable for offline user-scope tests; normal CLI uses the OS home.
 export function main(args = process.argv.slice(2), { home = homedir() } = {}) {
   if (args.includes('--help') || args.includes('-h')) { console.log(HELP); return 0; }
-  let target = 'agents', dest, global = false, check = false, force = false, selected = false;
+  let target, dest, global = false, check = false, force = false, selected = false;
   for (let i = 0; i < args.length; i++) {
     const value = args[i];
     if (value === '--target') {
@@ -72,6 +72,10 @@ export function main(args = process.argv.slice(2), { home = homedir() } = {}) {
     else if (value.startsWith('-') || dest) { console.error(`Unexpected argument: ${value}\n${HELP}`); return 2; }
     else dest = value;
   }
+  // No silent default: the old `agents` fallback installed a hookless, skill-less
+  // core for anyone who forgot the flag, and the README had to carry a "legacy
+  // default" paragraph to explain the surprise.
+  if (!selected) { console.error(`--target is required.\n${HELP}`); return 2; }
   if (target === 'user') { target = 'claude'; global = true; }
   if (target === 'plugin' && !dest) global = true;
   if ((global && dest) || (global && target === 'agents') || (!global && !dest)) {

@@ -10,6 +10,8 @@
 Read docs/HANDOFF.md for current state and next steps. On a cold start, run
 `/koan-readback`. Stopping → `/koan-wrap`. Docs feel off → `npm run selfcheck`.
 About to `/compact` → checkpoint first (compaction is lossy; HANDOFF isn't).
+When compacting, preserve: files changed this session, the Checks command, and
+HANDOFF's next step.
 Touching `benchmarks/`? Read `docs/DECISIONS-benchmarks.md` first. Changing the
 tooling, a gate, or how a change is judged? Read `docs/DECISIONS-method.md` —
 both are deliberately outside the auto-loaded log ([[D-033]]).
@@ -24,7 +26,7 @@ build framework — the build is a handful of `.mjs` scripts.
 
 ## How to run
 - Build all targets: `npm run build` (src → dist/)
-- Push into a project: `node push.mjs <path> [--target claude|codex|both|agents]`; refresh
+- Push into a project: `node push.mjs <path> --target claude|codex|both|agents`; refresh
   the user-level skills: `node push.mjs --target user`. Add `--check` to any of
   these to report drift and write nothing (exit 1 if a copy is stale).
 - Install as a plugin (the only target that ships the SessionStart hook):
@@ -36,6 +38,9 @@ build framework — the build is a handful of `.mjs` scripts.
 - build: `npm run build` (includes the generation canary)
 - selfcheck: `npm run selfcheck` (budgets + canary + dogfood lint)
 - tests: `npm test` (build + selfcheck + benchmark selftests, all offline)
+- discovery evals (API spend, D-049): `claude plugin eval ./dist/claude --scaffold
+  --trust-plugin --allow-tools Write Edit --max-cost-usd 15` — does the installed
+  plugin fire from its descriptions? See `benchmarks/evals/README.md`.
 - human sign-off: that a rule change still reads as koan — voice, and whether a new
   rule earns its tokens. No command can price a skill line; only a benchmark run or
   your judgement can.

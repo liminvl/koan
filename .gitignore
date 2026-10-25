@@ -5,4 +5,5 @@ node_modules/
 docs/FIELD.local.md
 ingest/
 benchmarks/runs/
+dist/claude/evals/results/
 *.log

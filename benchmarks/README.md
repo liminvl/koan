@@ -55,12 +55,12 @@ answers, generated duration files, and `results.json`. Unresolved default models
 are not model-qualified evidence. Independent repetitions remain required for
 promotion; passing offline selftests proves graders, not model improvement.
 
-`discovery-cases.json` is a host-level invocation suite, separate from lexical
-TF-IDF checks. Run each prompt in a fresh, disposable repo with the six skills
-installed, and inspect actual Skill tool invocations. Record host/model versions,
-skill hashes, invoked skills and unexpected writes. A synthetic description
-ranker does not establish host discovery behavior. Cases allowing multiple
-skills express valid combinations rather than forcing a single winner.
+**Discovery evals** (`evals/`, D-049) are the host-level invocation suite,
+separate from the lexical TF-IDF check: `claude plugin eval` runs the built
+plugin against prompts a user would type, with a no-plugin baseline arm, and
+reports which skills fired and whether the outcome landed. Stage 1 injects the
+core as a system prompt, so it can never see a skill that failed to fire; this
+suite can. See `evals/README.md` for the command and its limits.
 
 ## Native installation checks
 

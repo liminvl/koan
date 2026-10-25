@@ -288,10 +288,7 @@ export function lint(root = '.', { contextFiles = [] } = {}) {
   if (constitution && !/##\s*Checks/i.test(constText))
     warnings.push(`${constitution} has no ## Checks section (defines "done").`);
 
-  // 8. (retired 2026-08-05) The retired-ritual check. Its regex hardcoded koan's
-  // own June-2026 rename (handoff-*/ponytail-*/radar-*), so no consumer who never
-  // used those names could trip it, and it needed a scaffolding-stripper purely to
-  // stop firing on koan's own archive. The three legacy repos were fixed by hand.
+  // 8. retired — the retired-ritual check; D-036 (docs/DECISIONS-method.md) records why.
 
   // 9. archive candidates — settled, old, uncited, claiming no seat.
   // Skipped in the explore phase: the few entries a prototype does mint are the
@@ -365,17 +362,7 @@ export function lint(root = '.', { contextFiles = [] } = {}) {
     if (owed) warnings.push(`Phase is harden and ${owed} shortcut${owed > 1 ? 's remain' : ' remains'} without a disposition — run \`lint.mjs --debt\`, then either fix it or accept it by naming the decision that took it in the note, e.g. "(D-014)".`);
   }
 
-  // 13. (attempted and rejected 2026-08-06) A commit-hash check for `## Current
-  // state` — D-027's deferred "lint the stale hash" item. Built, pinned, and run
-  // against 14 real repos: 13 hits, and only 5 were live claims that rot ("on HEAD
-  // `aa58785`", "live at `f87cee8`"). The other 8 were durable references that never
-  // go stale ("tagged v1.0.0 on `4f92c21`", "the reorg is committed in `ee78a8f`").
-  // Verification (`git cat-file`) and a same-line date exemption were not enough —
-  // the only thing left separating the two is prose wording ("committed ON" vs
-  // "committed IN"), and a regex fitted to one author's phrasing is exactly why
-  // check 8 was retired. D-027's condition was "if it can be done without false
-  // positives"; the measured answer is no. Recorded on D-027's revisit-if — do not
-  // rebuild it without a discriminator that isn't wording.
+  // 13. rejected — a Current-state commit-hash check; D-027's revisit-if records why.
 
   // 14. parallel decision series — a hand-rolled ID scheme inside the main log
   // (field: ~25k of one repo's 30k budget sat in a ## W-001…W-018 series) gets

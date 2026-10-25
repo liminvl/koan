@@ -376,6 +376,14 @@ into a pointed-to file with a read-trigger.
 separate refresh skill on purpose: the migration is a one-time prompt, and a
 permanent skill for it would be exactly the bloat koan exists to catch.
 
+**Claude Code has auto memory now. Doesn't that replace HANDOFF?**
+No — they answer different questions. Auto memory (and Codex memories) is
+per-machine, per-tool, and written by the model in the background; it is a
+recall aid, and both vendors say rules that must always apply belong in
+checked-in files. HANDOFF and DECISIONS travel in git, are shared by every tool
+and teammate, and are reviewed in a pull request. Let tool memory remember your
+preferences; route anything a *resume* needs to the docs.
+
 **Can I edit HANDOFF/DECISIONS by hand?**
 Yes — they're your files. Keep the routing rule in mind (one fact, one home)
 and let `/koan-lint` catch anything mechanical you break.

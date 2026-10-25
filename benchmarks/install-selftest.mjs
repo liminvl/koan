@@ -7,8 +7,10 @@ import { spawnSync } from 'node:child_process';
 import { fixtureGitEnv } from './claude-cli.mjs';
 
 const root = mkdtempSync(join(tmpdir(), 'koan-install-'));
-const push = (...args) => spawnSync(process.execPath, ['push.mjs', root, ...args], { encoding: 'utf8' });
+// The legacy AGENTS-only path is exercised explicitly; a bare call has no default.
+const push = (...args) => spawnSync(process.execPath, ['push.mjs', root, ...(args.some((a) => a === '--target') ? [] : ['--target', 'agents']), ...args], { encoding: 'utf8' });
 try {
+  assert.equal(spawnSync(process.execPath, ['push.mjs', root], { encoding: 'utf8' }).status, 2, 'a target is required');
   const ownInstructions = join(root, 'AGENTS.md');
   writeFileSync(ownInstructions, '# Project-owned instructions\n');
   const unmanaged = push();

@@ -1,7 +1,8 @@
 // Claude Code target: a plugin dir with the full skills verbatim (+ build stamp).
 import { buildSkill } from '../skills.mjs';
 import { join } from 'node:path';
-import { readSkill, listSources, write, copy, DIST, VERSION } from '../lib.mjs';
+import { cpSync } from 'node:fs';
+import { readSkill, listSources, write, copy, DIST, ROOT, VERSION } from '../lib.mjs';
 
 export function buildClaude() {
   const out = join(DIST, 'claude');
@@ -41,6 +42,11 @@ export function buildClaude() {
       alsoDirs: name === 'koan' ? [hooksDir] : [],
     }));
   }
+
+  // The discovery eval suite (D-049). `claude plugin eval` reads cases from
+  // inside the plugin dir, so the source under benchmarks/ is mirrored here.
+  // push.mjs copies named units only, so no install ever ships it.
+  cpSync(join(ROOT, 'benchmarks', 'evals'), join(out, 'evals'), { recursive: true });
 
   write(join(out, '.claude-plugin', 'plugin.json'), JSON.stringify({
     name: 'koan', version: VERSION,

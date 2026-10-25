@@ -1,0 +1,32 @@
+schema_version: "1.1"
+name: lens-review
+description: >-
+  A review request phrased as an over-engineering complaint. The lens should
+  fire, and on an eight-line file it should find nothing to remove rather than
+  invent restructuring.
+tags: [lens, routing]
+runs: 1
+execution:
+  prompt: This feels over-engineered. Review app.js and suggest simplifications.
+  max_turns: 15
+  allowed_tools: [Read, Glob, Grep, Skill]
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: koan-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?koan"'
+  - name: nothing-invented
+    type: llm
+    criteria: >-
+      PASS if the reply concludes that app.js is already minimal (nothing to
+      remove or simplify) and proposes no new abstraction, helper, module or
+      file. It may point out that `db` is undefined. FAIL if it proposes
+      restructuring, extracting helpers, adding layers, or new files.
+  - name: no-writes
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+    arm: both
